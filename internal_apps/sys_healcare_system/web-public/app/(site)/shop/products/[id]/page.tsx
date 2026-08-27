@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useCart } from '@/store/CartContext';
 import ProductCard from '@/components/shop/ProductCard';
-import { AiOutlineShoppingCart, AiOutlineHeart, AiOutlineInfoCircle, AiOutlineShop, AiOutlineCheckCircle } from 'react-icons/ai';
+import { AiOutlineShoppingCart, AiOutlineHeart, AiOutlineInfoCircle, AiOutlineShop, AiOutlineCheckCircle, AiOutlineArrowRight } from 'react-icons/ai';
 import { MdVerified, MdLocationOn } from 'react-icons/md';
 
 export default function ProductDetailPage() {

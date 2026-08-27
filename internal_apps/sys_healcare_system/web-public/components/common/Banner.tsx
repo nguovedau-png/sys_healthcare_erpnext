@@ -335,8 +335,7 @@ const BannerContent: React.FC<BannerProps> = ({ page }) => {
                       <div className="relative">
                         <input
                           type="text"
-                          name="keyword"
-                          ref={register}
+                          {...register('keyword')}
                           placeholder="Triệu chứng bệnh, bệnh viện, phòng khám, bác sĩ"
                           className="w-full h-[48px] md:h-[48px] lg:h-[48px] px-4 md:px-10 rounded-[5px] border border-[#5fad73] text-[17px] text-[#1e2225] bg-white placeholder:text-[#52575c] focus:outline-none focus:border-[#47af50] transition-colors md:shadow-sm"
                         />

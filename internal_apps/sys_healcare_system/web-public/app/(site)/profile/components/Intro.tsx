@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import ReactHtml from 'raw-html-react';
+import DOMPurify from 'isomorphic-dompurify';
 import Flaticon from '@/components/common/Flaticon';
 
 interface SocialContactItem {
@@ -114,7 +114,7 @@ const Intro: React.FC<IntroProps> = ({ data }) => {
           {userType === 'doctor' ? 'Kinh nghiệm làm việc' : 'Lịch sử hình thành'}
         </h3>
         <div className="prose prose-blue max-w-none text-gray-700">
-          <ReactHtml html={safeIntro?.exp || ''} componentMap={<></>} />
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(safeIntro?.exp || '') }} />
         </div>
       </div>
 
@@ -123,7 +123,7 @@ const Intro: React.FC<IntroProps> = ({ data }) => {
           {userType === 'doctor' ? 'Bằng cấp' : 'Chuyên khoa'}
         </h3>
         <div className="prose prose-blue max-w-none text-gray-700">
-          <ReactHtml html={userType === 'doctor' ? (safeIntro?.degree || '') : (speciality || '')} componentMap={<></>} />
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userType === 'doctor' ? (safeIntro?.degree || '') : (speciality || '')) }} />
         </div>
       </div>
 
@@ -132,7 +132,7 @@ const Intro: React.FC<IntroProps> = ({ data }) => {
           Hiệp hội và giải thưởng
         </h3>
         <div className="prose prose-blue max-w-none text-gray-700">
-          <ReactHtml html={safeIntro?.associationAward || ''} componentMap={<></>} />
+          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(safeIntro?.associationAward || '') }} />
         </div>
       </div>
     </div>

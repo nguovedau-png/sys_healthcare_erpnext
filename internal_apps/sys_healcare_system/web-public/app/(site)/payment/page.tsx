@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AiOutlineCheckCircle, AiOutlineLock, AiOutlineArrowRight, AiOutlineQrcode, AiOutlineBank, AiOutlineWallet } from 'react-icons/ai';
 
-export default function PaymentPage() {
+function PaymentContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const bookingId = searchParams.get('bookingId');
@@ -198,5 +198,14 @@ export default function PaymentPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+
+export default function PaymentPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#f8fafc]" aria-busy="true" />}>
+            <PaymentContent />
+        </Suspense>
     );
 }

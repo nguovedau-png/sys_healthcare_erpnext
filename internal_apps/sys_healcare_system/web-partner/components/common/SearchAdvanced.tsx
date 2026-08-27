@@ -61,7 +61,7 @@ const SearchAdvanced: React.FC<SearchAdvancedProps> = ({ onSearch, isShow = fals
                 options={WEEKDAY}
                 placeholder='Chọn ngày trong tuần'
               />
-              <input type="text" className="d-none" value={selectedWeekday.value} name="weekday" ref={register} readOnly />
+              <input type="text" className="d-none" value={selectedWeekday.value} {...register('weekday')} readOnly />
             </div>
           </div>
           <div className="col-lg col-md-6 col-12">
@@ -74,7 +74,7 @@ const SearchAdvanced: React.FC<SearchAdvancedProps> = ({ onSearch, isShow = fals
                 options={TIME}
                 placeholder='Chọn khung giờ'
               />
-              <input type="text" className="d-none" value={selectedTime.value} name="time" ref={register} readOnly />
+              <input type="text" className="d-none" value={selectedTime.value} {...register('time')} readOnly />
             </div>
           </div>
           <div className="col-lg col-md-6 col-12">
@@ -87,7 +87,7 @@ const SearchAdvanced: React.FC<SearchAdvancedProps> = ({ onSearch, isShow = fals
                 options={PRICE}
                 placeholder='Chọn giá khám'
               />
-              <input type="text" className="d-none" value={selectedPrice.value} name="price" ref={register} readOnly />
+              <input type="text" className="d-none" value={selectedPrice.value} {...register('price')} readOnly />
             </div>
           </div>
           <div className="col-lg col-md-6 col-12">
@@ -100,7 +100,7 @@ const SearchAdvanced: React.FC<SearchAdvancedProps> = ({ onSearch, isShow = fals
                 options={RADIUS}
                 placeholder='Chọn phạm vi bán kính'
               />
-              <input type="text" className="d-none" value={selectedRadius.value} name="radius" ref={register} readOnly />
+              <input type="text" className="d-none" value={selectedRadius.value} {...register('radius')} readOnly />
             </div>
           </div>
           <div className="col-lg col-12">

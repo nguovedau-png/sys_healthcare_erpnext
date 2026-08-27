@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import shopService, { ShopProduct, ShopCategory } from '@/services/shop.service';
@@ -17,7 +17,7 @@ const IconMap: Record<string, React.ElementType> = {
     'flaticon-healthcare': MdOutlineMedicalServices,
 };
 
-export default function ProductsPage() {
+function ProductsContent() {
     const searchParams = useSearchParams();
     const initialCategory = searchParams.get('category');
     
@@ -243,5 +243,14 @@ export default function ProductsPage() {
                 }
             `}</style>
         </div>
+    );
+}
+
+
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-50/50" aria-busy="true" />}>
+            <ProductsContent />
+        </Suspense>
     );
 }

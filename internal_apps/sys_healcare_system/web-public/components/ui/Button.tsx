@@ -4,7 +4,7 @@ import classNames from 'classnames';
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   type?: 'submit' | 'reset' | 'button';
   htmlType?: 'submit' | 'reset' | 'button';
-  variant?: 'primary' | 'default' | 'dashed' | 'text' | 'link' | 'danger';
+  variant?: 'primary' | 'default' | 'outline' | 'dashed' | 'text' | 'link' | 'danger';
   size?: 'large' | 'middle' | 'small';
   block?: boolean;
   loading?: boolean;
@@ -32,6 +32,7 @@ const Button: React.FC<ButtonProps> = ({
   const variantClasses = {
     primary: 'bg-primary text-white hover:bg-primary-dark border border-transparent shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
     default: 'bg-surface text-slate-700 border border-border hover:text-primary hover:border-primary shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+    outline: 'bg-transparent text-slate-700 border border-border hover:text-primary hover:border-primary',
     dashed: 'bg-surface text-slate-700 border border-dashed border-border hover:text-primary hover:border-primary',
     text: 'bg-transparent text-slate-700 hover:bg-slate-50',
     link: 'bg-transparent text-primary hover:text-primary-dark underline-offset-4 hover:underline',

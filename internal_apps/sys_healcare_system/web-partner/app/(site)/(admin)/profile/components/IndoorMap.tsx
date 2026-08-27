@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
 import Ratio from 'react-ratio';
-import Lightbox from 'react-image-lightbox';
-import 'react-image-lightbox/style.css';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import { USER_TYPE } from '@/components/common/Constant';
 
 interface MapItem {
@@ -19,22 +19,18 @@ interface IndoorMapProps {
   data: IndoorMapData;
 }
 
-interface LightboxState {
-  photoIndex: number;
-  isOpen: boolean;
-}
 
 const IndoorMap: React.FC<IndoorMapProps> = ({ data }) => {
   const { userType, indoorMap } = data;
-  const [lboxState, setLbState] = useState<LightboxState>({
-    photoIndex: 0,
-    isOpen: false,
-  });
-  const { photoIndex, isOpen } = lboxState;
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const safeMap = indoorMap || [];
+  const slides = safeMap.map((item) => ({ src: item.img }));
 
-  function openLightbox(e: React.MouseEvent<HTMLAnchorElement>) {
+  function openLightbox(e: React.MouseEvent<HTMLAnchorElement>, index: number) {
     e.preventDefault();
-    setLbState({ ...lboxState, isOpen: true });
+    setPhotoIndex(index);
+    setIsOpen(true);
   }
 
   return (
@@ -46,7 +42,7 @@ const IndoorMap: React.FC<IndoorMapProps> = ({ data }) => {
         <div className="row m-row">
           {_.map(indoorMap, (item, i) => (
             <div className="col-md-3 col-6" key={i}>
-              <a href="" onClick={openLightbox}>
+              <a href="" onClick={(event) => openLightbox(event, i)}>
                 <Ratio
                   ratio={1 / 1}
                   className=" profile-indoor-item"
@@ -57,26 +53,7 @@ const IndoorMap: React.FC<IndoorMapProps> = ({ data }) => {
               </a>
             </div>
           ))}
-          {isOpen && (
-            <Lightbox
-              mainSrc={indoorMap[photoIndex].img}
-              nextSrc={indoorMap[(photoIndex + 1) % indoorMap.length].img}
-              prevSrc={indoorMap[(photoIndex + indoorMap.length - 1) % indoorMap.length].img}
-              onCloseRequest={() => setLbState({ ...lboxState, isOpen: false })}
-              onMovePrevRequest={() =>
-                setLbState({
-                  ...lboxState,
-                  photoIndex: (photoIndex + indoorMap.length - 1) % indoorMap.length
-                })
-              }
-              onMoveNextRequest={() =>
-                setLbState({
-                  ...lboxState,
-                  photoIndex: (photoIndex + 1) % indoorMap.length,
-                })
-              }
-            />
-          )}
+          <Lightbox open={isOpen} close={() => setIsOpen(false)} index={photoIndex} slides={slides} on={{ view: ({ index }) => setPhotoIndex(index) }} />
         </div>
       </div>
     </div>

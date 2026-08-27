@@ -33,7 +33,7 @@
     "verify:data": "ts-node -r tsconfig-paths/register apps/user-service/prisma/verify-data.ts",
     "auto:setup": "bash auto-seed.sh",
     "test:api": "curl -s http://localhost:3006/users | jq .",
-    "prisma:generate": "npx prisma generate",
+    "prisma:generate": "bash scripts/generate-prisma-clients.sh",
     "dev:setup": "npm run docker:dev && npm install && npm run migrate:all && npm run seed",
     "dev:start": "npm run dev:setup && npm run start:dev",
     "dev:full": "bash start-dev.sh",

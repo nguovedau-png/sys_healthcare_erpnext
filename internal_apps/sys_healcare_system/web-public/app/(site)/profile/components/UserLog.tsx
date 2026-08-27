@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import ReactHtml from 'raw-html-react';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface Target {
   slug: string;
@@ -61,13 +61,14 @@ const UserLog: React.FC<UserLogProps> = ({ isTab = false }) => {
               </div>
               <div className="col-xl-8">
                 <div className="content" title={item.content}>
-                  <ReactHtml
-                    html={
-                      (!isTab && item.content.length > 65)
-                        ? item.content.substring(0, 65) + '...'
-                        : item.content
-                    }
-                    componentMap={<></>}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(
+                        (!isTab && item.content.length > 65)
+                          ? item.content.substring(0, 65) + '...'
+                          : item.content,
+                      ),
+                    }}
                   />
                 </div>
               </div>
