@@ -1,10 +1,21 @@
-export type ErpNextDocType =
-  | 'Patient'
-  | 'Healthcare Practitioner'
-  | 'Patient Appointment'
-  | 'Patient Encounter'
-  | 'Sales Invoice'
-  | 'Item';
+export const ERP_NEXT_DOCTYPES = [
+  'Customer',
+  'Employee',
+  'Healthcare Practitioner',
+  'Item',
+  'Lead',
+  'Patient',
+  'Patient Appointment',
+  'Patient Encounter',
+  'Payment Entry',
+  'Purchase Invoice',
+  'Sales Invoice',
+  'Stock Entry',
+  'Supplier',
+  'Warehouse',
+] as const;
+
+export type ErpNextDocType = (typeof ERP_NEXT_DOCTYPES)[number];
 
 export interface ErpNextRequestContext {
   tenantId: string;
@@ -36,4 +47,13 @@ export interface SyncHealthStatus {
   lastSuccessAt?: string;
   lastFailureAt?: string;
   consecutiveFailures: number;
+}
+
+export type SyncOperationStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'DEAD_LETTER';
+
+export interface SyncResult {
+  operationId: string;
+  status: SyncOperationStatus;
+  replayed: boolean;
+  data?: Record<string, unknown>;
 }

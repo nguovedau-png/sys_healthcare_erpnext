@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Badge, Dropdown, List, Button, Empty, Spin } from 'antd';
 import { BellOutlined } from '@ant-design/icons';
 import api from '../services/api';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 interface Notification {
     id: string;
@@ -15,7 +15,6 @@ interface Notification {
 const NotificationBell: React.FC = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(false);
-    const [socket, setSocket] = useState<Socket | null>(null);
     const [unreadCount, setUnreadCount] = useState(0);
 
     useEffect(() => {
@@ -24,7 +23,7 @@ const NotificationBell: React.FC = () => {
         // Initialize Socket.IO
         const newSocket = io(import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:3000', {
             auth: {
-                token: localStorage.getItem('token')
+                token: localStorage.getItem('accessToken')
             }
         });
 
@@ -32,8 +31,6 @@ const NotificationBell: React.FC = () => {
             setNotifications(prev => [notification, ...prev]);
             setUnreadCount(prev => prev + 1);
         });
-
-        setSocket(newSocket);
 
         return () => {
             newSocket.close();

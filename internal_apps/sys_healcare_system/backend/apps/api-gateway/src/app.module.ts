@@ -1,6 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { LoggingInterceptor, CircuitBreakerInterceptor, AuditInterceptor } from '@app/common';
@@ -38,9 +39,11 @@ import { AppService } from './app.service';
 import { NotificationGateway } from './gateway/notification.gateway';
 import { NotificationEventController } from './notification-event.controller';
 import { ChatGateway } from './gateway/chat.gateway';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
+    JwtModule.register({ secret: process.env.JWT_SECRET || 'development-insecure-secret-change-me' }),
     ThrottlerModule.forRoot([{
       ttl: 60000,
       limit: 100,
@@ -366,6 +369,7 @@ import { ChatGateway } from './gateway/chat.gateway';
     },
     NotificationGateway,
     ChatGateway,
+    JwtAuthGuard,
   ],
   exports: [NotificationGateway, ChatGateway],
 })

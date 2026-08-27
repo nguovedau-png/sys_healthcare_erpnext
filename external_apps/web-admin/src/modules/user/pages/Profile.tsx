@@ -13,8 +13,6 @@ const Profile: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
     const [passwordForm] = Form.useForm();
-    const [qrCode, setQrCode] = useState('');
-    const [totpSecret, setTotpSecret] = useState('');
 
     useEffect(() => {
         if (user) {
@@ -65,8 +63,6 @@ const Profile: React.FC = () => {
         try {
             const res = await api.post('/auth/setup-2fa');
             if (res.data.success) {
-                setQrCode(res.data.data.qrCode);
-                setTotpSecret(res.data.data.secret);
                 Modal.info({
                     title: 'Setup 2FA',
                     width: 500,

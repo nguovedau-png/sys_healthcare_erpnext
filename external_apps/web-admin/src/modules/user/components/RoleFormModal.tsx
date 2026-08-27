@@ -86,7 +86,6 @@ const groupPermissions = (permissions: any[]) => {
 const RoleFormModal: React.FC<RoleFormModalProps> = ({ visible, onCancel, onSuccess, role }) => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-    const [permissions, setPermissions] = useState<any[]>([]);
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
     const [groupedPermissions, setGroupedPermissions] = useState<{ [key: string]: any[] }>({});
 
@@ -117,7 +116,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({ visible, onCancel, onSucc
         try {
             const res = await api.get('/permissions');
             if (res.data.success) {
-                setPermissions(res.data.data);
                 setGroupedPermissions(groupPermissions(res.data.data));
             }
         } catch (error) {

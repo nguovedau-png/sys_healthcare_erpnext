@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../../services/api';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../store/authSlice';
 
 const { Title, Text } = Typography;
 
@@ -9,7 +11,9 @@ const TwoFactorVerify = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
-    const { email, tempToken } = location.state || {};
+    const dispatch = useDispatch();
+    const { email } = location.state || {};
+    const storedTempToken = location.state?.tempToken || localStorage.getItem('tempToken');
 
     const onFinish = async (values: { code: string }) => {
         setLoading(true);
@@ -17,16 +21,18 @@ const TwoFactorVerify = () => {
             const response = await api.post('/auth/verify-2fa', {
                 email,
                 code: values.code,
-                tempToken
+                tempToken: storedTempToken
             });
 
-            if (response.data.success) {
-                message.success('2FA verified successfully');
-                // Store tokens and navigate to dashboard
-                localStorage.setItem('token', response.data.data.accessToken);
-                localStorage.setItem('refreshToken', response.data.data.refreshToken);
-                navigate('/');
-            }
+            const payload = response.data?.data ?? response.data;
+            const accessToken = payload?.accessToken ?? payload?.access_token;
+            if (!accessToken) throw new Error('2FA response did not include an access token');
+            localStorage.setItem('accessToken', accessToken);
+            if (payload?.refreshToken) localStorage.setItem('refreshToken', payload.refreshToken);
+            localStorage.removeItem('tempToken');
+            dispatch(setCredentials({ user: payload?.user, accessToken, refreshToken: payload?.refreshToken }));
+            message.success('2FA verified successfully');
+            navigate('/');
         } catch (error: any) {
             message.error(error.response?.data?.message || '2FA verification failed');
         } finally {

@@ -26,6 +26,11 @@ export class AuthController {
     return this.passwordAuthService.register(data.email, data.password);
   }
 
+  @MessagePattern({ cmd: 'auth.refresh' })
+  refresh(@Payload() data: { refreshToken: string }) {
+    return this.passwordAuthService.refresh(data?.refreshToken);
+  }
+
   @MessagePattern({ cmd: 'auth.generatePasswordlessCode' })
   generatePasswordlessCode(@Payload() email: string) {
     return this.passwordlessAuthService.generateCode(email);

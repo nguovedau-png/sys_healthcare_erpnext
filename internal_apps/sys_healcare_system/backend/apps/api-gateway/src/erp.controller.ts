@@ -3,6 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { ErpNextUpsertDto } from './dto/erpnext-upsert.dto';
 import { ErpNextSyncGuard } from './guards/erpnext-sync.guard';
+import { ErpNextSyncOperationsQueryDto } from './dto/erpnext-sync-query.dto';
 
 @Controller('erp')
 export class ErpController {
@@ -29,6 +30,18 @@ export class ErpController {
     @UseGuards(ErpNextSyncGuard)
     upsertErpNext(@Body() document: ErpNextUpsertDto) {
         return this.erpClient.send({ cmd: 'erpnext.upsert' }, document);
+    }
+
+    @Get('integrations/erpnext/sync-operations')
+    @UseGuards(ErpNextSyncGuard)
+    listErpNextSyncOperations(@Query() query: ErpNextSyncOperationsQueryDto) {
+        return this.erpClient.send({ cmd: 'erpnext.sync_operations' }, query);
+    }
+
+    @Get('integrations/erpnext/sync-operations/:id')
+    @UseGuards(ErpNextSyncGuard)
+    getErpNextSyncOperation(@Param('id') id: string, @Query('tenantId') tenantId: string) {
+        return this.erpClient.send({ cmd: 'erpnext.sync_operation' }, { id, tenantId });
     }
 
     @Get('keys/:userId')

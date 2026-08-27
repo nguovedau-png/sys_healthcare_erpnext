@@ -23,6 +23,7 @@ import MediaManager from './modules/media/pages/MediaManager';
 import WebhookManager from './modules/system/pages/WebhookManager';
 import OidcClientManager from './modules/system/pages/OidcClientManager';
 import SystemStatus from './modules/system/pages/SystemStatus';
+import HealthcareOperations from './modules/healthcare/pages/Operations';
 import { useSelector } from 'react-redux';
 import { RootState } from './store';
 
@@ -60,13 +61,13 @@ function App() {
           <Route path="/chat" element={<Chat />} />
           <Route path="/roles" element={<Roles />} />
           <Route path="/audit-logs" element={<AuditLogs />} />
-          <Route path="/audit-logs" element={<AuditLogs />} />
           <Route path="/cache" element={<CacheManager />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/media" element={<MediaManager />} />
           <Route path="/webhooks" element={<WebhookManager />} />
           <Route path="/oidc-clients" element={<OidcClientManager />} />
           <Route path="/system/status" element={<SystemStatus />} />
+          <Route path="/healthcare/operations" element={<HealthcareOperations />} />
           <Route path="/settings" element={<Settings />} />
           {/* Add more routes here */}
         </Route>

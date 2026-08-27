@@ -44,6 +44,16 @@ export class ErpController {
     return this.erpNext.upsert(document);
   }
 
+  @MessagePattern({ cmd: 'erpnext.sync_operations' })
+  listSyncOperations(@Payload() params: { tenantId: string; facilityId?: string; status?: string; page?: number; limit?: number }) {
+    return this.erpNext.listSyncOperations(params);
+  }
+
+  @MessagePattern({ cmd: 'erpnext.sync_operation' })
+  getSyncOperation(@Payload() params: { id: string; tenantId: string }) {
+    return this.erpNext.getSyncOperation(params.id, params.tenantId);
+  }
+
   // --- Inventory ---
   @MessagePattern({ cmd: 'get_inventory_items' })
   getInventoryItems() {

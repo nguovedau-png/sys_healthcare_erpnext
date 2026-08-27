@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, List, Input, Button, Avatar, Typography, Modal, Select, message, Badge } from 'antd';
-import { SendOutlined, PlusOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons';
+import { SendOutlined, UserOutlined, TeamOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import api from '../../../services/api';
@@ -47,7 +47,7 @@ const Chat: React.FC = () => {
         // Initialize Socket.IO
         const newSocket = io(import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:3000', {
             auth: {
-                token: localStorage.getItem('token')
+                token: localStorage.getItem('accessToken')
             }
         });
 

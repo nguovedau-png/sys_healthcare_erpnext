@@ -151,7 +151,8 @@ const Departments: React.FC = () => {
             <DepartmentFormModal
                 visible={modalVisible}
                 department={selectedDepartment}
-                onClose={handleModalClose}
+                onCancel={() => handleModalClose(false)}
+                onSuccess={() => handleModalClose(true)}
             />
         </div>
     );

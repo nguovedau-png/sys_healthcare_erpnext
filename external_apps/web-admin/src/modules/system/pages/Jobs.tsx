@@ -231,11 +231,7 @@ const Jobs: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <Title level={2} style={{ margin: 0 }}>Jobs & Queues</Title>
                 <div style={{ display: 'flex', gap: 12 }}>
-                    <Select placeholder="Filter Type" style={{ width: 120 }} allowClear onChange={(val) => {
-                        // We will need to update state and fetch triggered by useEffect or explicit call
-                        // For simplicity, let's add filters to state and refetch
-                        // NOTE: This snippet assumes we add filter state to the component
-                    }}>
+                    <Select placeholder="Filter Type" style={{ width: 120 }} allowClear value={filterType} onChange={setFilterType}>
                         <Option value="email">Email</Option>
                         <Option value="notification">Notification</Option>
                         <Option value="heavy">Heavy</Option>

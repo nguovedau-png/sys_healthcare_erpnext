@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Card, Button, Typography, Space, Input, Modal, message, Popconfirm, Drawer, Descriptions } from 'antd';
-import { ReloadOutlined, DeleteOutlined, EyeOutlined, ClearOutlined, SearchOutlined } from '@ant-design/icons';
+import { Table, Card, Button, Typography, Space, Input, message, Popconfirm, Drawer, Descriptions } from 'antd';
+import { ReloadOutlined, DeleteOutlined, EyeOutlined, ClearOutlined } from '@ant-design/icons';
 import api from '../../../services/api';
-import dayjs from 'dayjs';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 const CacheManager: React.FC = () => {
     const [keys, setKeys] = useState<string[]>([]);
@@ -77,7 +76,7 @@ const CacheManager: React.FC = () => {
         }
     };
 
-    const columns = [
+    const columns: import('antd/es/table').ColumnsType<{ key: string }> = [
         {
             title: 'Key',
             dataIndex: 'key',
@@ -88,10 +87,10 @@ const CacheManager: React.FC = () => {
             title: 'Action',
             key: 'action',
             width: 150,
-            render: (_: any, record: string) => (
+            render: (_: unknown, record: { key: string }) => (
                 <Space>
-                    <Button icon={<EyeOutlined />} size="small" onClick={() => handleView(record)} />
-                    <Popconfirm title="Delete this key?" onConfirm={() => handleDelete(record)}>
+                    <Button icon={<EyeOutlined />} size="small" onClick={() => handleView(record.key)} />
+                    <Popconfirm title="Delete this key?" onConfirm={() => handleDelete(record.key)}>
                         <Button icon={<DeleteOutlined />} size="small" danger />
                     </Popconfirm>
                 </Space>

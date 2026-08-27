@@ -3,7 +3,6 @@ import { Table, Typography, Tag, Input, DatePicker } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import api from '../../../services/api';
 import type { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -25,7 +24,7 @@ const AuditLogs: React.FC = () => {
     const [logs, setLogs] = useState<AuditLog[]>([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({ current: 1, pageSize: 20, total: 0 });
-    const [filters, setFilters] = useState({ search: '', dateRange: [] });
+    const [filters, setFilters] = useState<{ search: string; dateRange: string[] }>({ search: '', dateRange: [] });
 
     const fetchLogs = async (page = 1) => {
         setLoading(true);
@@ -42,8 +41,6 @@ const AuditLogs: React.FC = () => {
             }
 
             const res = await api.get('/audit-logs', { params });
-            console.log('Audit Logs Response:', res.data); // Debug response
-
             if (res.data.success) {
                 // Backend returns { success: true, data: [...], pagination: { ... } }
                 // Note: controller spreads result, which is { data, pagination }

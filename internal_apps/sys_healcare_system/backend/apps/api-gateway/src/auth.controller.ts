@@ -17,4 +17,11 @@ export class AuthController {
     async register(@Body() data: any) {
         return firstValueFrom(this.authService.send({ cmd: 'auth.register' }, data));
     }
+
+    @Post('refresh-token')
+    async refreshToken(@Body() data: { token?: string; refreshToken?: string }) {
+        const refreshToken = data?.refreshToken || data?.token;
+        if (!refreshToken) throw new Error('Refresh token is required');
+        return firstValueFrom(this.authService.send({ cmd: 'auth.refresh' }, { refreshToken }));
+    }
 }

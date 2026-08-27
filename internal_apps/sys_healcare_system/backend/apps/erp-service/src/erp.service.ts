@@ -7,16 +7,14 @@ export class ErpService implements OnModuleInit {
   constructor(private prisma: PrismaService) { }
 
   async onModuleInit() {
-    console.log('ERP Service Initialized');
-    await this.seedData();
+    if (process.env.SEED_DEMO_DATA === 'true') {
+      await this.seedData();
+    }
   }
 
   private async seedData() {
-    console.log('Seeding ERP Data...');
     const invCount = await this.prisma.inventoryItem.count();
-    console.log('Current Inventory Count:', invCount);
     if (invCount === 0) {
-      console.log('Inserting seed items...');
       await this.prisma.inventoryItem.createMany({
         data: [
           { name: "Panadol Extra", sku: "PAN-500", category: "Thuốc giảm đau", manufacturer: "GSK Global", price: 150000, stock: 120, minStock: 50, expiry: "12/2025", status: "In Stock" },

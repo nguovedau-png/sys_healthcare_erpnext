@@ -7,6 +7,7 @@ import {
     SettingOutlined,
     LogoutOutlined,
     DashboardOutlined,
+    CalendarOutlined,
     ApartmentOutlined,
     MessageOutlined,
     SafetyOutlined,
@@ -16,7 +17,6 @@ import {
     PictureOutlined,
     ApiOutlined,
     DatabaseOutlined, // For Jobs
-    FileImageOutlined, // For Media
     KeyOutlined, // For OIDC
     GlobalOutlined
 } from '@ant-design/icons';
@@ -84,6 +84,12 @@ const DashboardLayout: React.FC = () => {
             icon: <DashboardOutlined />,
             label: t('common.dashboard'),
             permission: null, // Always visible
+        },
+        {
+            key: '/healthcare/operations',
+            icon: <CalendarOutlined />,
+            label: 'Vận hành phòng khám',
+            permission: null,
         },
         {
             key: '/users',
@@ -167,15 +173,8 @@ const DashboardLayout: React.FC = () => {
 
     // Filter menu items based on permissions
     const menuItems = useMemo(() => {
-        console.log('=== Menu Filtering Debug ===');
-        console.log('User:', user);
-        console.log('User Role:', userRole);
-        console.log('User Permissions:', userPermissions);
-        console.log('Is Admin:', isAdmin(userRole));
-
         // Admin sees everything
         if (isAdmin(userRole)) {
-            console.log('Admin detected - showing all menus');
             return allMenuItems;
         }
 
@@ -185,11 +184,9 @@ const DashboardLayout: React.FC = () => {
             if (!item.permission) return true;
             // Check if user has the required permission
             const hasAccess = hasPermission(userPermissions, item.permission);
-            console.log(`Menu ${item.label}: ${hasAccess ? 'SHOW' : 'HIDE'}`);
             return hasAccess;
         });
 
-        console.log('Filtered menu items:', filtered.length);
         return filtered;
     }, [userPermissions, userRole, user]);
 

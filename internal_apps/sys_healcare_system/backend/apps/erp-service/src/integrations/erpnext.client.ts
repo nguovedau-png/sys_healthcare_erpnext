@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { ErpNextClientOptions, ErpNextDocument, SyncHealthStatus } from './erpnext.types';
-import { isRetryableErpNextError, redactForLog, retryDelayMs } from './erpnext.retry';
+import { isRetryableErpNextError, retryDelayMs } from './erpnext.retry';
 
 export class ErpNextClient {
   private readonly http: AxiosInstance;
@@ -8,15 +8,32 @@ export class ErpNextClient {
   private status: SyncHealthStatus;
 
   constructor(options: ErpNextClientOptions, httpClient?: AxiosInstance) {
-    if (!options.baseUrl || !options.apiKey || !options.apiSecret) {
+    const baseUrl = options.baseUrl?.trim().replace(/\/+$/, '');
+    if (!baseUrl || !options.apiKey?.trim() || !options.apiSecret?.trim()) {
       throw new Error('ERPNext integration is not configured');
     }
-    this.options = {
-      timeoutMs: 10_000,
-      maxRetries: 3,
-      retryBaseDelayMs: 250,
-      ...options,
-    };
+
+    try {
+      const parsed = new URL(baseUrl);
+      if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Unsupported ERPNext URL protocol');
+    } catch {
+      throw new Error('ERPNext base URL must be a valid HTTP(S) URL');
+    }
+
+    const timeoutMs = options.timeoutMs ?? 10_000;
+    const maxRetries = options.maxRetries ?? 3;
+    const retryBaseDelayMs = options.retryBaseDelayMs ?? 250;
+    if (!Number.isInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 120_000) {
+      throw new Error('ERPNext timeout must be an integer between 100 and 120000 milliseconds');
+    }
+    if (!Number.isInteger(maxRetries) || maxRetries < 0 || maxRetries > 8) {
+      throw new Error('ERPNext maxRetries must be an integer between 0 and 8');
+    }
+    if (!Number.isInteger(retryBaseDelayMs) || retryBaseDelayMs < 0 || retryBaseDelayMs > 10_000) {
+      throw new Error('ERPNext retryBaseDelayMs must be an integer between 0 and 10000 milliseconds');
+    }
+
+    this.options = { baseUrl, apiKey: options.apiKey.trim(), apiSecret: options.apiSecret.trim(), timeoutMs, maxRetries, retryBaseDelayMs };
     this.http = httpClient ?? axios.create();
     this.status = {
       configured: true,
@@ -35,6 +52,7 @@ export class ErpNextClient {
       'X-Idempotency-Key': document.context.idempotencyKey,
       'X-Tenant-Id': document.context.tenantId,
       'X-Facility-Id': document.context.facilityId,
+      Accept: 'application/json',
       'Content-Type': 'application/json',
     };
 
@@ -42,7 +60,7 @@ export class ErpNextClient {
       try {
         const response = await this.http.request<Record<string, unknown>>({
           method,
-          url: `${this.options.baseUrl.replace(/\/$/, '')}${path}`,
+          url: `${this.options.baseUrl}${path}`,
           headers,
           timeout: this.options.timeoutMs,
           data: document.data,
@@ -57,7 +75,6 @@ export class ErpNextClient {
         };
         if (attempt > this.options.maxRetries || !isRetryableErpNextError(error)) throw error;
         await new Promise((resolve) => setTimeout(resolve, retryDelayMs(attempt, this.options.retryBaseDelayMs)));
-        void redactForLog({ attempt, doctype: document.doctype, sourceId: document.context.sourceId });
       }
     }
     throw new Error('ERPNext request exhausted retries');

@@ -74,6 +74,9 @@ bench_log_fix.txt
 .env.local
 .env.*.local
 *.env
+# Never commit environment files containing deployment credentials.
+internal_apps/sys_healcare_system/web-partner/.env.production
+internal_apps/sys_healcare_system/web-public/.env.production
 
 # IDE and Editors
 .vscode/

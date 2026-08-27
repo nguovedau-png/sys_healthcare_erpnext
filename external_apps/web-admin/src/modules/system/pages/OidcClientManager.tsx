@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Card, Modal, Form, Input, message, Tag, Space, Typography } from 'antd';
+import { Table, Button, Card, Modal, Form, Input, message, Tag, Typography } from 'antd';
 import { PlusOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
-import { useAppDispatch } from '../../../hooks/redux';
-import axios from 'axios';
+import api from '../../../services/api';
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 interface OidcClient {
     id: string;
@@ -25,7 +24,7 @@ const OidcClientManager: React.FC = () => {
     const fetchClients = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('/api/v1/oidc/clients');
+            const res = await api.get('/oidc/clients');
             setClients(res.data.data);
         } catch (error) {
             message.error('Failed to load clients');
@@ -43,7 +42,7 @@ const OidcClientManager: React.FC = () => {
             // Split redirect URIs by comma or newline
             const redirectUris = values.redirectUris.split(/[\n,]+/).map((u: string) => u.trim()).filter((u: string) => u);
 
-            const res = await axios.post('/api/v1/oidc/clients', {
+            const res = await api.post('/oidc/clients', {
                 clientName: values.clientName,
                 redirectUris,
                 clientUri: values.clientUri,
@@ -62,7 +61,7 @@ const OidcClientManager: React.FC = () => {
 
     const handleDelete = async (id: string) => {
         try {
-            await axios.delete(`/api/v1/oidc/clients/${id}`);
+            await api.delete(`/oidc/clients/${id}`);
             message.success('Client deleted');
             fetchClients();
         } catch (error) {

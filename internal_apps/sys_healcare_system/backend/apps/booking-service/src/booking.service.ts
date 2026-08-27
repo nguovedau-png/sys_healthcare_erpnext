@@ -2,6 +2,13 @@ import { Injectable, OnModuleInit, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PrismaService } from './prisma';
 import { PaginationDto, getPaginationOptions, createPaginatedResponse, buildSearchQuery } from '@app/common';
+import {
+    assertAppointmentInput,
+    assertAppointmentTransition,
+    assertConsultationUpdateAllowed,
+    normalizeVietnamesePhone,
+    sanitizeAppointmentData,
+} from './booking.rules';
 
 @Injectable()
 export class BookingService implements OnModuleInit {
@@ -14,7 +21,9 @@ export class BookingService implements OnModuleInit {
     async onModuleInit() {
         await this.gamificationClient.connect();
         await this.surveyClient.connect();
-        await this.seedData();
+        if (process.env.SEED_DEMO_DATA === 'true') {
+            await this.seedData();
+        }
     }
 
     private async seedData() {
@@ -138,7 +147,7 @@ export class BookingService implements OnModuleInit {
 
     async getAppointments(query: PaginationDto) {
         const { skip, take, orderBy } = getPaginationOptions(query);
-        const where = buildSearchQuery(query.search, 'patientName', 'doctorName', 'specialty', 'reason');
+        const where = buildSearchQuery(query.search, 'patientName', 'doctorName', 'service', 'note');
 
         const [data, total] = await Promise.all([
             this.prisma.appointment.findMany({
@@ -157,14 +166,35 @@ export class BookingService implements OnModuleInit {
         return this.prisma.appointment.findUnique({ where: { id } });
     }
 
-    async createAppointment(data: any) {
-        return this.prisma.appointment.create({ data });
+    async createAppointment(data: Record<string, unknown>) {
+        const sanitized = sanitizeAppointmentData(data);
+        assertAppointmentInput(sanitized);
+        const normalizedData = { ...sanitized, patientPhone: normalizeVietnamesePhone(sanitized.patientPhone) };
+        if (normalizedData.doctorId && normalizedData.appointmentDate) {
+            const existing = await this.prisma.appointment.findFirst({
+                where: {
+                    doctorId: String(normalizedData.doctorId),
+                    appointmentDate: new Date(String(normalizedData.appointmentDate)),
+                    status: { notIn: ['cancelled', 'no_show'] },
+                },
+            });
+            if (existing) throw new Error('Practitioner already has an appointment at this time');
+        }
+        return this.prisma.appointment.create({ data: normalizedData as any });
     }
 
-    async updateAppointment(id: number, data: any) {
-        const appointment = await this.prisma.appointment.update({ where: { id }, data });
+    async updateAppointment(id: number, data: Record<string, unknown>) {
+        const current = await this.prisma.appointment.findUnique({ where: { id } });
+        if (!current) throw new Error('Appointment not found');
+        const sanitized = sanitizeAppointmentData(data);
+        assertAppointmentInput({ ...current, ...sanitized });
+        if (sanitized.status !== undefined) assertAppointmentTransition(current.status, String(sanitized.status));
+        const appointment = await this.prisma.appointment.update({
+            where: { id },
+            data: { ...sanitized, patientPhone: sanitized.patientPhone ? normalizeVietnamesePhone(sanitized.patientPhone) : undefined } as any,
+        });
 
-        if (data.status === 'COMPLETED') {
+        if (current.status !== 'completed' && appointment.status === 'completed') {
             const eventPayload = {
                 userId: appointment.patientId, // Assuming patientId maps to userId
                 appointmentId: appointment.id,
@@ -186,7 +216,7 @@ export class BookingService implements OnModuleInit {
     // --- Lab Tests ---
     async getLabTests(query: PaginationDto) {
         const { skip, take, orderBy } = getPaginationOptions(query);
-        const where = buildSearchQuery(query.search, 'testName', 'patientName', 'labName', 'status');
+        const where = buildSearchQuery(query.search, 'testType', 'patientName', 'hospital', 'status');
 
         const [data, total] = await Promise.all([
             this.prisma.labTest.findMany({
@@ -220,7 +250,7 @@ export class BookingService implements OnModuleInit {
     // --- Pharmacy Orders ---
     async getPharmacyOrders(query: PaginationDto) {
         const { skip, take, orderBy } = getPaginationOptions(query);
-        const where = buildSearchQuery(query.search, 'orderNumber', 'patientName', 'pharmacyName', 'status');
+        const where = buildSearchQuery(query.search, 'code', 'customerName', 'pharmacy', 'status');
 
         const [data, total] = await Promise.all([
             this.prisma.pharmacyOrder.findMany({
@@ -345,8 +375,11 @@ export class BookingService implements OnModuleInit {
         return this.prisma.consultation.create({ data });
     }
 
-    async updateConsultation(id: number, data: any) {
-        return this.prisma.consultation.update({ where: { id }, data });
+    async updateConsultation(id: number, data: Record<string, unknown>) {
+        const current = await this.prisma.consultation.findUnique({ where: { id } });
+        if (!current) throw new Error('Consultation not found');
+        assertConsultationUpdateAllowed(current.status, data);
+        return this.prisma.consultation.update({ where: { id }, data: data as any });
     }
 
     async deleteConsultation(id: number) {

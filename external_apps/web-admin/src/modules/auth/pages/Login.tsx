@@ -17,19 +17,20 @@ const Login: React.FC = () => {
         setLoading(true);
         try {
             const res = await api.post('/auth/login', values);
-            if (res.data.success) {
-                if (res.data.data.requires2FA) {
-                    localStorage.setItem('tempToken', res.data.data.tempToken);
-                    navigate('/2fa-verify');
-                } else {
-                    const { accessToken, refreshToken, user } = res.data.data;
-                    localStorage.setItem('accessToken', accessToken);
-                    localStorage.setItem('refreshToken', refreshToken);
-                    dispatch(setCredentials({ user, accessToken, refreshToken }));
-                    message.success('Login successful!');
-                    navigate('/');
-                }
+            const payload = res.data?.data ?? res.data;
+            if (payload?.requires2FA) {
+                localStorage.setItem('tempToken', payload.tempToken);
+                navigate('/2fa-verify', { state: { email: values.email, tempToken: payload.tempToken } });
+                return;
             }
+            const accessToken = payload?.accessToken ?? payload?.access_token;
+            if (!accessToken) throw new Error('Login response did not include an access token');
+            const refreshToken = payload?.refreshToken;
+            localStorage.setItem('accessToken', accessToken);
+            if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+            dispatch(setCredentials({ user: payload?.user, accessToken, refreshToken }));
+            message.success('Login successful!');
+            navigate('/');
         } catch (error: any) {
             message.error(error.response?.data?.message || 'Login failed');
         } finally {

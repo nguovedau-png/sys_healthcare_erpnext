@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Upload, Button, Image, List, Typography, message, Modal, Row, Col, Popconfirm } from 'antd';
+import { Card, Upload, Button, Image as AntImage, List, Typography, message, Modal, Popconfirm } from 'antd';
 import { UploadOutlined, DeleteOutlined, FileOutlined, InboxOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
 import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
@@ -92,7 +92,7 @@ const MediaManager: React.FC = () => {
                 reader.onload = () => resolve(reader.result as string);
             });
         }
-        const image = new Image();
+        const image = new window.Image();
         image.src = src;
         const imgWindow = window.open(src);
         imgWindow?.document.write(image.outerHTML);
@@ -122,9 +122,9 @@ const MediaManager: React.FC = () => {
                             cover={
                                 <div style={{ height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f2f5', overflow: 'hidden' }}>
                                     {item.type === 'image' ? (
-                                        <Image
+                                        <AntImage
                                             alt={item.filename}
-                                            src={`http://localhost:3000${item.url}`} // Hardcoded localhost for now, ideally configured from env
+                                            src={`${import.meta.env.VITE_API_ORIGIN || 'http://localhost:3000'}${item.url}`}
                                             style={{ objectFit: 'cover', height: '100%', width: '100%' }}
                                             height={150}
                                         />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Statistic, Row, Col, Badge, Typography, Button, Spin, Descriptions, Alert } from 'antd';
+import { Card, Row, Col, Badge, Typography, Button, Spin, Descriptions, Alert } from 'antd';
 import { ReloadOutlined, DatabaseOutlined, FolderOpenOutlined, DashboardOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import axios from 'axios';
+import api from '../../../services/api';
 
 const { Title, Text } = Typography;
 
@@ -14,8 +14,8 @@ const SystemStatus: React.FC = () => {
     const fetchStatus = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('/api/v1/system/health');
-            setStatus(res.data.data);
+            const res = await api.get('/health');
+            setStatus(res.data?.data ?? res.data);
             setLastUpdated(new Date());
             setError(null);
         } catch (err: any) {
@@ -35,6 +35,11 @@ const SystemStatus: React.FC = () => {
     const StatusBadge = ({ up }: { up: boolean }) => (
         <Badge status={up ? 'success' : 'error'} text={up ? 'Operational' : 'Down'} />
     );
+    const serviceMap = status?.services
+        ? Array.isArray(status.services)
+            ? Object.fromEntries(status.services.map((service: any) => [service.service || service.name, service]))
+            : status.services
+        : {};
 
     return (
         <div className="p-6">
@@ -75,9 +80,9 @@ const SystemStatus: React.FC = () => {
                         <Col span={8}>
                             <Card title={<span><DatabaseOutlined /> Database</span>}>
                                 <div className="text-center py-4">
-                                    <StatusBadge up={status.services?.database?.status === 'up'} />
-                                    {status.services?.database?.error && (
-                                        <div className="mt-2 text-red-500 text-xs">{status.services.database.error}</div>
+                                    <StatusBadge up={serviceMap.database?.status === 'up'} />
+                                    {serviceMap.database?.error && (
+                                        <div className="mt-2 text-red-500 text-xs">{serviceMap.database.error}</div>
                                     )}
                                 </div>
                             </Card>
@@ -87,10 +92,10 @@ const SystemStatus: React.FC = () => {
                         <Col span={8}>
                             <Card title={<span><FolderOpenOutlined /> Storage (Uploads)</span>}>
                                 <div className="text-center py-4">
-                                    <StatusBadge up={status.services?.uploads?.status === 'up'} />
-                                    {status.services?.uploads?.path && (
-                                        <div className="mt-2 text-gray-400 text-xs truncate max-w-full px-4" title={status.services.uploads.path}>
-                                            {status.services.uploads.path}
+                                    <StatusBadge up={serviceMap.uploads?.status === 'up'} />
+                                    {serviceMap.uploads?.path && (
+                                        <div className="mt-2 text-gray-400 text-xs truncate max-w-full px-4" title={serviceMap.uploads.path}>
+                                            {serviceMap.uploads.path}
                                         </div>
                                     )}
                                 </div>
@@ -101,9 +106,9 @@ const SystemStatus: React.FC = () => {
                         <Col span={8}>
                             <Card title={<span><DashboardOutlined /> Server Resource</span>}>
                                 <Descriptions column={1} size="small" bordered>
-                                    <Descriptions.Item label="Uptime">{status.system?.uptime}</Descriptions.Item>
-                                    <Descriptions.Item label="Memory (RSS)">{status.system?.memory?.rss}</Descriptions.Item>
-                                    <Descriptions.Item label="Heap Used">{status.system?.memory?.heapUsed}</Descriptions.Item>
+                                    <Descriptions.Item label="Checked At">{status.timestamp ? new Date(status.timestamp).toLocaleString() : '-'}</Descriptions.Item>
+                                    <Descriptions.Item label="Services">{Object.keys(serviceMap).length}</Descriptions.Item>
+                                    <Descriptions.Item label="Overall">{status.status || '-'}</Descriptions.Item>
                                 </Descriptions>
                             </Card>
                         </Col>

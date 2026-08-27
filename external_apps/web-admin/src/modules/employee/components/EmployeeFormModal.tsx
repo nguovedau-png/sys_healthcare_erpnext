@@ -150,7 +150,7 @@ const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({ visible, employee
                         loading={users.length === 0}
                         showSearch
                         filterOption={(input, option) =>
-                            (option?.children as string).toLowerCase().includes(input.toLowerCase())
+                            String(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                         }
                     >
                         {users.map((user) => (

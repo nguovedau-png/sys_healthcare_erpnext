@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Inject, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Inject, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PaginationDto } from '@app/common';
+import { CreateAppointmentDto, UpdateAppointmentDto } from './dto/booking.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('bookings')
+@UseGuards(JwtAuthGuard)
 export class BookingController {
     constructor(@Inject('BOOKING_SERVICE') private readonly client: ClientProxy) { }
 
@@ -18,12 +21,12 @@ export class BookingController {
     }
 
     @Post('appointments')
-    createAppointment(@Body() data: any) {
+    createAppointment(@Body() data: CreateAppointmentDto) {
         return this.client.send({ cmd: 'create_appointment' }, data);
     }
 
     @Put('appointments/:id')
-    updateAppointment(@Param('id') id: string, @Body() data: any) {
+    updateAppointment(@Param('id') id: string, @Body() data: UpdateAppointmentDto) {
         return this.client.send({ cmd: 'update_appointment' }, { id: parseInt(id), data });
     }
 

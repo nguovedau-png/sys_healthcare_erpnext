@@ -39,6 +39,32 @@ model InventoryItem {
   @@index([category])
 }
 
+model SyncOperation {
+  id             String   @id @default(cuid())
+  tenantId       String
+  facilityId     String
+  sourceSystem   String
+  sourceId       String
+  idempotencyKey String
+  doctype        String
+  documentName   String?
+  requestHash    String
+  status         String   @default("PENDING")
+  attemptCount   Int      @default(0)
+  nextAttemptAt  DateTime?
+  lastErrorCode  String?
+  lastError      String?
+  requestSummary Json?
+  responseData   Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  completedAt    DateTime?
+
+  @@unique([tenantId, sourceSystem, sourceId, idempotencyKey])
+  @@index([tenantId, facilityId, status, nextAttemptAt])
+  @@index([doctype, sourceId])
+}
+
 model DrugReference {
   id                Int      @id @default(autoincrement())
   name              String
