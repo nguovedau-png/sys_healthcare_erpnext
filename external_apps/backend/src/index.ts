@@ -123,6 +123,7 @@ import auditLogRoutes from './modules/audit-log/audit-log.routes';
 import systemRoutes from './modules/system/system.routes';
 import chatRoutes from './modules/chat/chat.routes';
 import jobRoutes from './modules/job/job.routes';
+import healthcareRoutes from './modules/healthcare/healthcare.routes';
 
 
 // ...
@@ -170,6 +171,7 @@ async function setupRoutes() {
 
         // OIDC Management API
         app.use('/api/v1/oidc', oidcRoutes);
+        app.use('/api/v1/healthcare', healthcareRoutes);
 
         // OIDC Provider Middleware (Mounts at /oidc)
         const oidc = await initOidcProvider(process.env.API_URL || 'http://localhost:3000');

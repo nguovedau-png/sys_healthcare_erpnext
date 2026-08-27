@@ -42,52 +42,55 @@ model User {
   twoFactorSecret String?
   isActive        Boolean   @default(true)
   lastLoginAt     DateTime?
-  pushToken       String?       // Expo Push Token
+  pushToken       String? // Expo Push Token
   refreshToken    String?   @db.Text
   tempToken       String?   @db.Text
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-  
+
   // Relations
-  roleId          String?
-  role            Role?     @relation(fields: [roleId], references: [id])
-  employee        Employee?
-  
-  auditLogs       AuditLog[]
-  messages        Message[]
-  createdChannels Channel[] @relation("CreatedChannels")
-  channelMembers  ChannelMember[]
-  readMessages    MessageRead[]
-  media           Media[]
-  socialAccounts  SocialAccount[]
-  oidcApps        OidcClientApp[] // OIDC Provider Apps created by user
+  roleId   String?
+  role     Role?     @relation(fields: [roleId], references: [id])
+  employee Employee?
+
+  auditLogs           AuditLog[]
+  messages            Message[]
+  createdChannels     Channel[]           @relation("CreatedChannels")
+  channelMembers      ChannelMember[]
+  readMessages        MessageRead[]
+  media               Media[]
+  socialAccounts      SocialAccount[]
+  oidcApps            OidcClientApp[] // OIDC Provider Apps created by user
+  roleScopes          UserRoleScope[]
+  createdPatients     PatientProjection[] @relation("PatientCreatedBy")
+  createdAppointments Appointment[]       @relation("AppointmentCreatedBy")
 
   @@map("users")
 }
 
 model SocialAccount {
-  id          String   @id @default(uuid())
-  userId      String
-  provider    String   // 'google', 'facebook', 'tiktok', etc.
-  providerId  String
-  email       String?
-  avatar      String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  userId     String
+  provider   String // 'google', 'facebook', 'tiktok', etc.
+  providerId String
+  email      String?
+  avatar     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerId])
   @@map("social_accounts")
 }
 
 model Role {
-  id          String       @id @default(uuid())
-  name        String       @unique
+  id          String   @id @default(uuid())
+  name        String   @unique
   description String?
-  isSystem    Boolean      @default(false) // Admin role cannot be deleted
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  isSystem    Boolean  @default(false) // Admin role cannot be deleted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   users       User[]
   permissions RolePermission[]
@@ -97,13 +100,13 @@ model Role {
 
 model Permission {
   id          String   @id @default(uuid())
-  resource    String   // e.g., 'user', 'role', 'job'
-  action      String   // e.g., 'create', 'read', 'update', 'delete', 'manage'
+  resource    String // e.g., 'user', 'role', 'job'
+  action      String // e.g., 'create', 'read', 'update', 'delete', 'manage'
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  roles       RolePermission[]
+  roles RolePermission[]
 
   @@unique([resource, action])
   @@map("permissions")
@@ -128,13 +131,13 @@ model AuditLog {
   resource  String
   ipAddress String?
   userAgent String?
-  method    String?  // HTTP method
-  path      String?  // Request path
-  before    Json?    // Data before change
-  after     Json?    // Data after change
+  method    String? // HTTP method
+  path      String? // Request path
+  before    Json? // Data before change
+  after     Json? // Data after change
   createdAt DateTime @default(now())
 
-  user      User?    @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id])
 
   @@map("audit_logs")
 }
@@ -151,14 +154,14 @@ model Language {
 }
 
 model Setting {
-  id        String   @id @default(uuid())
-  key       String   @unique
-  value     Json
-  type      String   // 'string', 'number', 'boolean', 'json'
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  type        String // 'string', 'number', 'boolean', 'json'
   description String?
-  isPublic  Boolean  @default(false) // Can be accessed without auth
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isPublic    Boolean  @default(false) // Can be accessed without auth
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("settings")
 }
@@ -186,23 +189,23 @@ model Department {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  employees   Employee[]
+  employees Employee[]
 
   @@map("departments")
 }
 
 model Employee {
-  id           String   @id @default(uuid())
-  userId       String   @unique
+  id           String    @id @default(uuid())
+  userId       String    @unique
   departmentId String?
   position     String?
   hireDate     DateTime?
   salary       Decimal?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  department   Department? @relation(fields: [departmentId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department Department? @relation(fields: [departmentId], references: [id])
 
   @@map("employees")
 }
@@ -211,16 +214,16 @@ model Employee {
 
 model Channel {
   id        String   @id @default(uuid())
-  name      String?  // Nullable for 1-1 chats
+  name      String? // Nullable for 1-1 chats
   isGroup   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  creatorId String?
-  creator   User?    @relation("CreatedChannels", fields: [creatorId], references: [id])
 
-  members   ChannelMember[]
-  messages  Message[]
+  creatorId String?
+  creator   User?   @relation("CreatedChannels", fields: [creatorId], references: [id])
+
+  members  ChannelMember[]
+  messages Message[]
 
   @@map("channels")
 }
@@ -231,11 +234,11 @@ model ChannelMember {
   joinedAt  DateTime @default(now())
   isAdmin   Boolean  @default(false)
 
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
   // User relation is implicit or we can define it if needed for back-relation from User, 
   // currently we didn't add the back-relation in User model for members. 
   // Let's keep it simple for now, but User usually has many ChannelMembers.
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([channelId, userId])
   @@map("channel_members")
@@ -250,10 +253,10 @@ model Message {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  sender    User    @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  
-  readBy    MessageRead[]
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  sender  User    @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  readBy MessageRead[]
 
   @@map("messages")
 }
@@ -263,8 +266,8 @@ model MessageRead {
   userId    String
   readAt    DateTime @default(now())
 
-  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([messageId, userId])
   @@map("message_reads")
@@ -273,28 +276,28 @@ model MessageRead {
 model Media {
   id         String   @id @default(uuid())
   filename   String
-  url        String   // Relative path or full URL
-  type       String   // image, video, file
+  url        String // Relative path or full URL
+  type       String // image, video, file
   mimeType   String
   size       Int
   uploadedBy String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  uploader   User?    @relation(fields: [uploadedBy], references: [id])
+  uploader User? @relation(fields: [uploadedBy], references: [id])
 
   @@map("media")
 }
 
 model Webhook {
-  id        String   @id @default(uuid())
+  id        String       @id @default(uuid())
   url       String
   secret    String
   events    String[] // Array of event names, e.g. ['user.created', 'job.failed']
-  isActive  Boolean  @default(true)
-  headers   Json?    // Optional custom headers
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive  Boolean      @default(true)
+  headers   Json? // Optional custom headers
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   logs      WebhookLog[]
 
   @@map("webhooks")
@@ -302,30 +305,30 @@ model Webhook {
 
 // OIDC Provider
 model OidcClientApp {
-  id                    String   @id @default(uuid())
-  clientId              String   @unique
-  clientSecret          String
-  clientName            String
-  clientUri             String?
-  logoUri               String?
-  redirectUris          String[] // PostgreSQL array
+  id                     String   @id @default(uuid())
+  clientId               String   @unique
+  clientSecret           String
+  clientName             String
+  clientUri              String?
+  logoUri                String?
+  redirectUris           String[] // PostgreSQL array
   postLogoutRedirectUris String[]
-  responseTypes         String[]
-  grantTypes            String[]
-  scope                 String   @default("openid profile email")
-  
-  user                  User?    @relation(fields: [userId], references: [id])
-  userId                String?
+  responseTypes          String[]
+  grantTypes             String[]
+  scope                  String   @default("openid profile email")
 
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
 }
 
 model OidcStorage {
   id         String    @id
-  type       String    // Session, AccessToken, RefreshToken, etc.
+  type       String // Session, AccessToken, RefreshToken, etc.
   payload    Json
   grantId    String?
   userCode   String?
@@ -340,28 +343,283 @@ model OidcStorage {
 }
 
 model WebhookLog {
-  id           String   @id @default(uuid())
-  webhookId    String
-  event        String
-  payload      Json
+  id             String   @id @default(uuid())
+  webhookId      String
+  event          String
+  payload        Json
   responseStatus Int?
-  responseBody String?
-  success      Boolean
-  createdAt    DateTime @default(now())
+  responseBody   String?
+  success        Boolean
+  createdAt      DateTime @default(now())
 
-  webhook      Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  webhook Webhook @relation(fields: [webhookId], references: [id], onDelete: Cascade)
 
   @@map("webhook_logs")
 }
 
-model Demo {
-  id           String   @id @default(uuid())
-  webhookId    String
-  event        String
-  payload      Json
-  responseStatus Int?
-  responseBody String?
-  success      Boolean
-  createdAt    DateTime @default(now())
+model Tenant {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  timezone  String   @default("Asia/Ho_Chi_Minh")
+  currency  String   @default("VND")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  facilities     Facility[]
+  roleScopes     UserRoleScope[]
+  patients       PatientProjection[]
+  appointments   Appointment[]
+  encounters     Encounter[]
+  orders         HealthcareOrder[]
+  billingIntents BillingIntent[]
+  syncOperations SyncOperation[]
+}
+
+model Facility {
+  id        String   @id @default(uuid())
+  tenantId  String
+  code      String
+  name      String
+  timezone  String   @default("Asia/Ho_Chi_Minh")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant         Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  roleScopes     UserRoleScope[]
+  patients       PatientProjection[]
+  appointments   Appointment[]
+  encounters     Encounter[]
+  orders         HealthcareOrder[]
+  billingIntents BillingIntent[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId, isActive])
+}
+
+model UserRoleScope {
+  id         String   @id @default(uuid())
+  userId     String
+  tenantId   String
+  facilityId String?
+  role       String
+  createdAt  DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility Facility? @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId, facilityId, role])
+  @@index([tenantId, facilityId, role])
+}
+
+model PatientProjection {
+  id              String    @id @default(uuid())
+  tenantId        String
+  facilityId      String
+  externalId      String?
+  normalizedPhone String
+  phoneLast4      String
+  fullName        String
+  dateOfBirth     DateTime?
+  sex             String?
+  address         String?
+  status          String    @default("active")
+  createdById     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility     Facility          @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  createdBy    User?             @relation("PatientCreatedBy", fields: [createdById], references: [id])
+  appointments Appointment[]
+  encounters   Encounter[]
+  orders       HealthcareOrder[]
+  consents     ConsentRecord[]
+
+  @@unique([tenantId, facilityId, normalizedPhone])
+  @@index([tenantId, facilityId, fullName])
+}
+
+model Appointment {
+  id                     String   @id @default(uuid())
+  tenantId               String
+  facilityId             String
+  patientId              String
+  practitionerExternalId String
+  serviceCode            String
+  startsAt               DateTime
+  endsAt                 DateTime
+  status                 String   @default("pending")
+  idempotencyKey         String
+  notes                  String?
+  createdById            String?
+  version                Int      @default(1)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  tenant     Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility   Facility          @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  patient    PatientProjection @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  createdBy  User?             @relation("AppointmentCreatedBy", fields: [createdById], references: [id])
+  encounters Encounter[]
+
+  @@unique([tenantId, facilityId, idempotencyKey])
+  @@index([tenantId, facilityId, practitionerExternalId, startsAt, endsAt])
+  @@index([patientId, startsAt])
+}
+
+model Encounter {
+  id                     String    @id @default(uuid())
+  tenantId               String
+  facilityId             String
+  patientId              String
+  appointmentId          String?
+  practitionerExternalId String
+  reason                 String
+  assessment             String
+  status                 String    @default("draft")
+  signedAt               DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility    Facility            @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  patient     PatientProjection   @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  appointment Appointment?        @relation(fields: [appointmentId], references: [id])
+  amendments  ClinicalAmendment[]
+  orders      HealthcareOrder[]
+
+  @@index([tenantId, facilityId, patientId, createdAt])
+}
+
+model ClinicalAmendment {
+  id          String    @id @default(uuid())
+  encounterId String
+  reason      String
+  patch       Json
+  createdById String?
+  createdAt   DateTime  @default(now())
+  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+}
+
+model HealthcareOrder {
+  id          String    @id @default(uuid())
+  tenantId    String
+  facilityId  String
+  patientId   String
+  encounterId String?
+  orderType   String
+  status      String    @default("draft")
+  payload     Json
+  signedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility  Facility          @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  patient   PatientProjection @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  encounter Encounter?        @relation(fields: [encounterId], references: [id])
+
+  @@index([tenantId, facilityId, status, orderType])
+}
+
+model BillingIntent {
+  id             String   @id @default(uuid())
+  tenantId       String
+  facilityId     String
+  appointmentId  String?
+  patientId      String
+  correlationKey String
+  amount         Decimal  @db.Decimal(18, 2)
+  currency       String   @default("VND")
+  status         String   @default("pending")
+  erpnextName    String?
+  lastError      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, correlationKey])
+  @@index([tenantId, facilityId, status])
+}
+
+model ExternalReference {
+  id           String   @id @default(uuid())
+  tenantId     String
+  sourceSystem String
+  sourceId     String
+  entityType   String
+  localId      String
+  payloadHash  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([tenantId, sourceSystem, sourceId, entityType])
+  @@index([tenantId, entityType, localId])
+}
+
+model SyncOperation {
+  id             String    @id @default(uuid())
+  tenantId       String
+  facilityId     String?
+  sourceSystem   String
+  sourceId       String
+  operation      String
+  idempotencyKey String
+  payloadHash    String
+  status         String    @default("pending")
+  retryCount     Int       @default(0)
+  lastError      String?
+  nextRetryAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, sourceSystem, sourceId, idempotencyKey])
+  @@index([status, nextRetryAt])
+}
+
+model WebhookReceipt {
+  id          String    @id @default(uuid())
+  tenantId    String
+  eventId     String
+  eventType   String
+  version     Int?
+  modifiedAt  DateTime?
+  payloadHash String
+  status      String    @default("received")
+  createdAt   DateTime  @default(now())
+
+  @@unique([tenantId, eventId])
+  @@index([tenantId, eventType, modifiedAt])
+}
+
+model ConsentRecord {
+  id         String            @id @default(uuid())
+  tenantId   String
+  facilityId String
+  patientId  String
+  purpose    String
+  status     String
+  capturedAt DateTime          @default(now())
+  expiresAt  DateTime?
+  patient    PatientProjection @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, facilityId, patientId, purpose])
+}
+
+model Demo {
+  id             String   @id @default(uuid())
+  webhookId      String
+  event          String
+  payload        Json
+  responseStatus Int?
+  responseBody   String?
+  success        Boolean
+  createdAt      DateTime @default(now())
 }
