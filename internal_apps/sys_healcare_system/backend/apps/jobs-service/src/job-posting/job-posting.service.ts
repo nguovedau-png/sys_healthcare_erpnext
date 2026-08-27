@@ -1,9 +1,11 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateJobPostingDto, UpdateJobPostingDto } from './dto/job-posting.dto';
 
 @Injectable()
 export class JobPostingService implements OnModuleInit {
+    private readonly logger = new Logger(JobPostingService.name);
+
     constructor(private prisma: PrismaService) { }
 
     async onModuleInit() {
@@ -49,7 +51,11 @@ export class JobPostingService implements OnModuleInit {
     }
 
     async findAll(filters?: { pharmacyId?: string; status?: string; type?: string }) {
-        console.log('JobPostingService.findAll executing with:', filters);
+        this.logger.debug('Querying job postings', {
+            hasPharmacyFilter: Boolean(filters?.pharmacyId),
+            status: filters?.status,
+            type: filters?.type,
+        });
         return this.prisma.jobPosting.findMany({
             where: {
                 ...(filters?.pharmacyId && { pharmacyId: filters.pharmacyId }),

@@ -1,10 +1,12 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { JobPostingService } from './job-posting.service';
 import { CreateJobPostingDto, UpdateJobPostingDto } from './dto/job-posting.dto';
 
 @Controller()
 export class JobPostingController {
+    private readonly logger = new Logger(JobPostingController.name);
+
     constructor(private readonly jobPostingService: JobPostingService) { }
 
     @MessagePattern({ cmd: 'create_job_posting' })
@@ -14,7 +16,11 @@ export class JobPostingController {
 
     @MessagePattern({ cmd: 'get_job_postings' })
     findAll(filters?: { pharmacyId?: string; status?: string; type?: string }) {
-        console.log('JobPostingController.findAll called with:', filters);
+        this.logger.debug('Listing job postings', {
+            hasPharmacyFilter: Boolean(filters?.pharmacyId),
+            status: filters?.status,
+            type: filters?.type,
+        });
         return this.jobPostingService.findAll(filters);
     }
 
