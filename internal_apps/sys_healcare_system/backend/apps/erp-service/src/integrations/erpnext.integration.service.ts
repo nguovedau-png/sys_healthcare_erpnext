@@ -25,6 +25,9 @@ export class ErpNextIntegrationService implements OnModuleInit {
   }
 
   getHealth() {
-    return this.client?.getHealth() ?? { configured: false, consecutiveFailures: 0 };
+    const health = this.client?.getHealth();
+    if (!health) return { configured: false, consecutiveFailures: 0 };
+    const { baseUrl: _baseUrl, ...publicHealth } = health;
+    return publicHealth;
   }
 }

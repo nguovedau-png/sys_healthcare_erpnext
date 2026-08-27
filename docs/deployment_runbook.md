@@ -48,3 +48,15 @@ When ERPNext is unavailable, healthcare workflows should remain readable and que
 ## Deployment checklist
 
 Before release, verify that migrations are applied in the target environment, the ERPNext integration variables are present in the secret manager, the sync token is rotated from any development value, health endpoints return expected configuration status, and the backend/web/mobile checks above pass. Confirm that `git diff --check` is clean and that no secret-like values are present in the commit.
+
+
+## Automated API coverage
+
+The gateway E2E suite is isolated from external infrastructure and verifies the HTTP contract for public health metadata, rejected unauthenticated writes, validated authenticated upserts, and DTO whitelisting. Run it with:
+
+```bash
+cd internal_apps/sys_healcare_system/backend
+npm run test:e2e -- --runInBand
+```
+
+The public health response intentionally excludes the ERPNext base URL. The sync guard compares the internal write token using a constant-time comparison and rejects missing, malformed or invalid credentials.

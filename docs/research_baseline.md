@@ -30,3 +30,10 @@ Explicit non-goals for the first increment are unsupported national claims submi
 [2]: https://pmc.ncbi.nlm.nih.gov/articles/PMC8867296/ — Digital Health Policy and Programs for Hospital Care in Vietnam: Scoping Review (JMIR, 2022).
 [3]: https://docs.frappe.io/erpnext/frappe-healthcare — Healthcare Module in ERPNext documentation.
 [4]: https://fpt-is.com/en/emr/ — FPT IS FPT.EMR product overview.
+
+
+## Follow-up research — August 2026
+
+Recent sources reinforce that the next product gaps are interoperability and privacy-by-design rather than duplicating ERPNext finance/HR/accounting. Vietnamese digital-health studies identify fragmented hospital systems and recommend standards such as HL7 FHIR for exchange; the product should therefore maintain canonical healthcare records locally while mapping ERPNext-owned CRM/ERP/HR/Accounting documents through explicit adapters. Health data must be treated as sensitive personal data: production deployment requires least-privilege access, auditable exports, consent/retention controls, secret-manager storage and a documented incident/replay process.
+
+The implementation priority remains: (1) secure tenant/facility authorization and auditability, (2) idempotent ERPNext synchronization with retry and dead-letter/replay visibility, (3) Vietnamese localization for patient identity, phone/address, appointment and invoice workflows, and (4) FHIR-compatible boundary models without forcing a full FHIR server into the current milestone.
