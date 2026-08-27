@@ -1,5 +1,11 @@
 // Simple test script to verify API calls
-const API_BASE_URL = 'http://192.168.1.8:1337';
+const API_BASE_URL = process.env.API_BASE_URL;
+const TEST_USER_IDENTIFIER = process.env.TEST_USER_IDENTIFIER;
+const TEST_USER_PASSWORD = process.env.TEST_USER_PASSWORD;
+
+if (!API_BASE_URL || !TEST_USER_IDENTIFIER || !TEST_USER_PASSWORD) {
+  throw new Error('Set API_BASE_URL, TEST_USER_IDENTIFIER and TEST_USER_PASSWORD before running this script');
+}
 
 async function testCoursesAPI() {
   try {
@@ -10,8 +16,8 @@ async function testCoursesAPI() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        identifier: 'admin',
-        password: '123456'
+        identifier: TEST_USER_IDENTIFIER,
+        password: TEST_USER_PASSWORD
       })
     });
 

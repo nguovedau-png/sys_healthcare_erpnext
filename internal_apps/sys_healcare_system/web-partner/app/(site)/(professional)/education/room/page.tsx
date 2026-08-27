@@ -150,7 +150,7 @@ export default function LivestreamRoom() {
                         <Checkbox.Group>
                             <Space direction="vertical">
                                 <Checkbox value="A">Sưng đau khớp liên tục</Checkbox>
-                                <Checkbox value="B">Cứng khớp buổi sáng > 1h</Checkbox>
+                                <Checkbox value="B">Cứng khớp buổi sáng {'>'} 1h</Checkbox>
                                 <Checkbox value="C">Tăng acid uric máu</Checkbox>
                             </Space>
                         </Checkbox.Group>

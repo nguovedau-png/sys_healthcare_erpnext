@@ -1,6 +1,6 @@
-import _ from 'lodash';
 import React from 'react';
-import ReactHtml from 'raw-html-react';
+import _ from 'lodash';
+import { sanitizeRichText } from '@/lib/sanitize-html';
 
 interface Target {
   slug: string;
@@ -61,13 +61,10 @@ const UserLog: React.FC<UserLogProps> = ({ isTab = false }) => {
               </div>
               <div className="col-xl-8">
                 <div className="content" title={item.content}>
-                  <ReactHtml
-                    html={
-                      (!isTab && item.content.length > 65)
-                        ? item.content.substring(0, 65) + '...'
-                        : item.content
-                    }
-                    componentMap={<></>}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeRichText((!isTab && item.content.length > 65) ? item.content.substring(0, 65) + '...' : item.content),
+                    }}
                   />
                 </div>
               </div>

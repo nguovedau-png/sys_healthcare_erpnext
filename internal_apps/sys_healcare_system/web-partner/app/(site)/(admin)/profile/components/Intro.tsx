@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import ReactHtml from 'raw-html-react';
+import { sanitizeRichText } from '@/lib/sanitize-html';
 import Flaticon from '@/components/common/Flaticon';
 
 interface SocialContactItem {
@@ -109,7 +109,7 @@ const Intro: React.FC<IntroProps> = ({ data }) => {
           {userType === 'doctor' ? 'Kinh nghiệm làm việc' : 'Lịch sử hình thành'}
         </h3>
         <div className="prose prose-blue max-w-none text-gray-700">
-          <ReactHtml html={intro?.exp} componentMap={<></>} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(intro?.exp) }} />
         </div>
       </div>
 
@@ -118,7 +118,7 @@ const Intro: React.FC<IntroProps> = ({ data }) => {
           {userType === 'doctor' ? 'Bằng cấp' : 'Chuyên khoa'}
         </h3>
         <div className="prose prose-blue max-w-none text-gray-700">
-          <ReactHtml html={userType === 'doctor' ? intro?.degree : speciality} componentMap={<></>} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(userType === 'doctor' ? intro?.degree : speciality) }} />
         </div>
       </div>
 
@@ -127,7 +127,7 @@ const Intro: React.FC<IntroProps> = ({ data }) => {
           Hiệp hội và giải thưởng
         </h3>
         <div className="prose prose-blue max-w-none text-gray-700">
-          <ReactHtml html={intro?.associationAward} componentMap={<></>} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(intro?.associationAward) }} />
         </div>
       </div>
     </div>

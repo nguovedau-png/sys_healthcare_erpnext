@@ -15,9 +15,10 @@ export class ErpNextClient {
 
     try {
       const parsed = new URL(baseUrl);
+      if (parsed.username || parsed.password) throw new Error('Credentials must not be embedded in ERPNext URL');
       if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('Unsupported ERPNext URL protocol');
     } catch {
-      throw new Error('ERPNext base URL must be a valid HTTP(S) URL');
+      throw new Error('ERPNext base URL must be a valid HTTP(S) URL without credentials');
     }
 
     const timeoutMs = options.timeoutMs ?? 10_000;
@@ -66,7 +67,7 @@ export class ErpNextClient {
           data: document.data,
         });
         this.status = { ...this.status, lastSuccessAt: new Date().toISOString(), consecutiveFailures: 0 };
-        return response.data;
+        return this.unwrapFrappeResponse(response.data);
       } catch (error) {
         this.status = {
           ...this.status,
@@ -82,5 +83,13 @@ export class ErpNextClient {
 
   getHealth(): SyncHealthStatus {
     return { ...this.status };
+  }
+
+  private unwrapFrappeResponse(payload: Record<string, unknown>): Record<string, unknown> {
+    const nested = payload?.data;
+    if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+      return nested as Record<string, unknown>;
+    }
+    return payload;
   }
 }

@@ -3,24 +3,24 @@ import { Alert } from 'react-native'
 import { Link, router } from 'expo-router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { YStack, XStack, H1, H4, Text, Paragraph, Card, ScrollView } from 'tamagui'
+import { YStack, XStack, H1, Text, Paragraph, ScrollView } from 'tamagui'
 import { Mail } from '@tamagui/lucide-icons'
 import { useAuth } from '../../contexts/AuthContext'
 import { loginSchema, type LoginFormData } from '../../lib/schemas'
 import { FormField } from '../../components/forms/FormField'
 import { PasswordField } from '../../components/forms/PasswordField'
-import { PrimaryButton, SecondaryButton } from '../../components/ui'
+import { PrimaryButton } from '../../components/ui'
 
 export default function LoginScreen() {
   const { login } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { control, handleSubmit, setValue } = useForm<LoginFormData>({
+  const { control, handleSubmit } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: 'onBlur',
     defaultValues: {
-      identifier: 'admin',
-      password: '123456',
+      identifier: '',
+      password: '',
     },
   })
 
@@ -42,10 +42,6 @@ export default function LoginScreen() {
     }
   }
 
-  const fillDemoCredentials = () => {
-    setValue('identifier', 'admin')
-    setValue('password', '123456')
-  }
 
   return (
     <YStack flex={1} bg="$background">
@@ -61,18 +57,6 @@ export default function LoginScreen() {
             </Paragraph>
           </YStack>
 
-          {/* Demo Info Card */}
-          <Card bg="$blue2" borderColor="$blue6" p="$4">
-            <YStack gap="$2">
-              <H4 color="$blue11">Demo Credentials</H4>
-              <Paragraph color="$blue11" size="$3">
-                Default: admin / 123456
-              </Paragraph>
-              <SecondaryButton size="$2" onPress={fillDemoCredentials} mt="$2">
-                Fill Demo Credentials
-              </SecondaryButton>
-            </YStack>
-          </Card>
 
           {/* Login Form */}
           <YStack gap="$4">

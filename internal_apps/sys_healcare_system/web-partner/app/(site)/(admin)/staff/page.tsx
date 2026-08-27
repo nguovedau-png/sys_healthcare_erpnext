@@ -42,7 +42,7 @@ export default function StaffPage() {
 
     const handleAdd = async (values: any) => {
         try {
-            await staffService.createStaff({ ...values, email: `staff${Date.now()}@example.com`, password: 'password123' });
+            await staffService.createStaff({ ...values, email: values.email || `staff${Date.now()}@example.com` });
             message.success("Đã thêm nhân sự mới!");
             setAddOpen(false);
             fetchData();
@@ -74,10 +74,10 @@ export default function StaffPage() {
     };
 
     const stats = [
-        { label: "Tổng nhân sự", value: 145, icon: <StarFilled /> },
-        { label: "Bác sĩ chuyên khoa", value: 42, color: '#0050b3' },
-        { label: "Đang làm việc", value: 36, color: '#52c41a' },
-        { label: "Rating TB", value: 4.85, color: '#faad14' },
+        { label: "Tổng nhân sự", value: data.length, icon: <StarFilled /> },
+        { label: "Bác sĩ chuyên khoa", value: data.filter((staff) => /bác sĩ|doctor/i.test(staff.position || '')).length, color: '#0050b3' },
+        { label: "Đang làm việc", value: data.filter((staff) => staff.status === 'On Duty').length, color: '#52c41a' },
+        { label: "Rating TB", value: data.length ? '—' : '—', color: '#faad14' },
     ];
 
     return (
