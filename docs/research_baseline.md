@@ -37,3 +37,13 @@ Explicit non-goals for the first increment are unsupported national claims submi
 Recent sources reinforce that the next product gaps are interoperability and privacy-by-design rather than duplicating ERPNext finance/HR/accounting. Vietnamese digital-health studies identify fragmented hospital systems and recommend standards such as HL7 FHIR for exchange; the product should therefore maintain canonical healthcare records locally while mapping ERPNext-owned CRM/ERP/HR/Accounting documents through explicit adapters. Health data must be treated as sensitive personal data: production deployment requires least-privilege access, auditable exports, consent/retention controls, secret-manager storage and a documented incident/replay process.
 
 The implementation priority remains: (1) secure tenant/facility authorization and auditability, (2) idempotent ERPNext synchronization with retry and dead-letter/replay visibility, (3) Vietnamese localization for patient identity, phone/address, appointment and invoice workflows, and (4) FHIR-compatible boundary models without forcing a full FHIR server into the current milestone.
+
+
+## Competitive follow-up — August 2026
+
+A review of Vietnamese clinic-management and EMR offerings reinforces that the baseline expectation is an end-to-end operational flow: patient registration, appointment/queue, clinical record, billing and role-based access. Products in this category compete on configurable workflows, cloud deployment, longitudinal records and faster front-desk operations rather than on isolated clinical screens. The practical differentiation for this repository remains a modular healthcare layer over ERPNext, Vietnamese operational UX, mobile staff access, auditability and standards-ready integration.
+
+The next implementation priority is therefore not another dashboard. It is to make the existing lifecycle more reliable at the boundaries: enforce input contracts, preserve clinical review, keep finance/HR/CRM ownership in ERPNext, expose safe operational status, and ensure test coverage around authorization and message payloads.
+
+[5]: https://flexclinic.vn/en/ — FLEX|Clinic clinic management platform overview.
+[6]: https://production.vietnammedicalpractice.com/ — Medics hospital/clinic management platform overview.
