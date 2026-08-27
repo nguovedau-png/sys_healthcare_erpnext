@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Inject, Post, Query, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, Param, Put, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { ErpNextUpsertDto } from './dto/erpnext-upsert.dto';
 import { ErpNextSyncGuard } from './guards/erpnext-sync.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ErpNextSyncOperationsQueryDto } from './dto/erpnext-sync-query.dto';
 
 @Controller('erp')
@@ -12,6 +13,7 @@ export class ErpController {
     ) { }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     createApiKey(@Body() body: { userId: string; name: string }): Observable<any> {
         return this.erpClient.send({ cmd: 'erp.create' }, body);
     }
@@ -45,38 +47,45 @@ export class ErpController {
     }
 
     @Get('keys/:userId')
+    @UseGuards(JwtAuthGuard)
     getErpKeys(@Param('userId') userId: string) {
         return this.erpClient.send({ cmd: 'get_erp_keys' }, userId);
     }
 
     // --- Inventory ---
     @Get('inventory')
+    @UseGuards(JwtAuthGuard)
     getInventoryItems() {
         return this.erpClient.send({ cmd: 'get_inventory_items' }, {});
     }
 
     @Get('drug-reference')
+    @UseGuards(JwtAuthGuard)
     getDrugReferences(@Query('search') search?: string) {
         return this.erpClient.send({ cmd: 'get_drug_references' }, { search });
     }
 
     @Get('inventory/:id')
-    getInventoryItem(@Param('id') id: string) {
-        return this.erpClient.send({ cmd: 'get_inventory_item' }, parseInt(id));
+    @UseGuards(JwtAuthGuard)
+    getInventoryItem(@Param('id', ParseIntPipe) id: number) {
+        return this.erpClient.send({ cmd: 'get_inventory_item' }, id);
     }
 
     @Post('inventory')
-    createInventoryItem(@Body() data: any) {
+    @UseGuards(JwtAuthGuard)
+    createInventoryItem(@Body() data: Record<string, unknown>) {
         return this.erpClient.send({ cmd: 'create_inventory_item' }, data);
     }
 
     @Put('inventory/:id')
-    updateInventoryItem(@Param('id') id: string, @Body() data: any) {
-        return this.erpClient.send({ cmd: 'update_inventory_item' }, { id: parseInt(id), data });
+    @UseGuards(JwtAuthGuard)
+    updateInventoryItem(@Param('id', ParseIntPipe) id: number, @Body() data: Record<string, unknown>) {
+        return this.erpClient.send({ cmd: 'update_inventory_item' }, { id, data });
     }
 
     @Delete('inventory/:id')
-    deleteInventoryItem(@Param('id') id: string) {
-        return this.erpClient.send({ cmd: 'delete_inventory_item' }, parseInt(id));
+    @UseGuards(JwtAuthGuard)
+    deleteInventoryItem(@Param('id', ParseIntPipe) id: number) {
+        return this.erpClient.send({ cmd: 'delete_inventory_item' }, id);
     }
 }

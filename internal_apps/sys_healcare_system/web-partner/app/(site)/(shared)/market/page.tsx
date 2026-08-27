@@ -345,11 +345,11 @@ export default function MarketPage() {
                 }}>
                     <Space size={24}>
                         <div>
-                            <Text type="secondary" display="block">Tổng số lượng trong giỏ:</Text>
+                            <Text type="secondary" style={{ display: 'block' }}>Tổng số lượng trong giỏ:</Text>
                             <Text strong style={{ fontSize: 18 }}>{cartCount} sản phẩm</Text>
                         </div>
                         <div>
-                            <Text type="secondary" display="block">Tổng tiền tạm tính:</Text>
+                            <Text type="secondary" style={{ display: 'block' }}>Tổng tiền tạm tính:</Text>
                             <Text strong style={{ fontSize: 20, color: '#ff4d4f' }}>{cartTotal.toLocaleString()}đ</Text>
                         </div>
                     </Space>
@@ -671,17 +671,17 @@ export default function MarketPage() {
                         <Title level={5}>Thông tin thanh toán & Giao hàng</Title>
                         <Row gutter={24} style={{ background: '#fafafa', padding: 16, borderRadius: 8 }}>
                             <Col span={12}>
-                                <Text type="secondary" display="block">Phương thức thanh toán:</Text>
+                                <Text type="secondary" style={{ display: 'block' }}>Phương thức thanh toán:</Text>
                                 <Text strong>{selectedOrder.paymentMethod}</Text>
                                 <div style={{ marginTop: 12 }}>
-                                    <Text type="secondary" display="block">Tổng tiền:</Text>
+                                    <Text type="secondary" style={{ display: 'block' }}>Tổng tiền:</Text>
                                     <Title level={4} style={{ color: '#ff4d4f', margin: 0 }}>{selectedOrder.total.toLocaleString()}đ</Title>
                                 </div>
                             </Col>
                             <Col span={12}>
-                                <Text type="secondary" display="block">Giao đến:</Text>
+                                <Text type="secondary" style={{ display: 'block' }}>Giao đến:</Text>
                                 <Text strong>{selectedOrder.address}</Text>
-                                <Text type="secondary" display="block" style={{ marginTop: 8 }}>Số điện thoại:</Text>
+                                <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>Số điện thoại:</Text>
                                 <Text strong>{selectedOrder.phone}</Text>
                             </Col>
                         </Row>

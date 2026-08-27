@@ -743,7 +743,7 @@ export const ArticleTab: React.FC<{ data: any }> = ({ data }) => {
                                 <Tag color="blue">{art.type === 'video' ? 'Video' : 'Bài viết'}</Tag>
                             </div>
                             <Title level={5} ellipsis={{ rows: 2 }} style={{ marginBottom: 12, height: 48 }}>{art.title}</Title>
-                            <Text type="secondary" ellipsis={{ rows: 2 }} style={{ display: 'block', marginBottom: 16, fontSize: 13, height: 40 }}>{art.desc}</Text>
+                            <Text type="secondary" ellipsis={{ tooltip: art.desc }} style={{ display: 'block', marginBottom: 16, fontSize: 13, height: 40 }}>{art.desc}</Text>
                             
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f5f5f5', paddingTop: 12 }}>
                                 <Space style={{ fontSize: 12, color: '#8c8c8c' }}>

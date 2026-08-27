@@ -26,7 +26,7 @@ interface LearnerListDrawerProps {
 
 export default function LearnerListDrawer({ open, onClose, courseName }: LearnerListDrawerProps) {
     const handleExportExcel = () => {
-        const wsData = [
+        const wsData: Array<Array<string | number>> = [
             ['STT', 'CODE HỌC VIÊN', 'HỌC TÊN HỌC VIÊN', 'CODE NHÀ THUỐC', 'TÊN NHÀ THUỐC', 'SỐ ĐIỆN THOẠI', 'ĐỊA CHỈ', 'CODE CỦA REP', 'REP', 'CODE CỦA DM', 'DM', 'CODE CỦA RSM', 'RSM']
         ];
         

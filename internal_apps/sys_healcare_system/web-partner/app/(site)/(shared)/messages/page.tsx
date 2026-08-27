@@ -159,7 +159,7 @@ export default function MessagesPage() {
                         <Space size="large">
                             <Button type="text" icon={<PhoneOutlined style={{ fontSize: 20, color: '#1890ff' }} />} />
                             <Button type="text" icon={<VideoCameraOutlined style={{ fontSize: 20, color: '#1890ff' }} />} />
-                            <Dropdown overlay={<Menu items={[{key: '1', label: 'Xem hồ sơ'}, {key: '2', label: 'Tắt thông báo'}, {key: '3', label: 'Chặn tin nhắn'}]} />} trigger={['click']}>
+                            <Dropdown menu={{ items: [{ key: '1', label: 'Xem hồ sơ' }, { key: '2', label: 'Tắt thông báo' }, { key: '3', label: 'Chặn tin nhắn' }] }} trigger={['click']}>
                                 <Button type="text" icon={<MoreOutlined style={{ fontSize: 20 }} />} />
                             </Dropdown>
                         </Space>

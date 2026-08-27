@@ -109,7 +109,7 @@ export const getCourse = async (id: number, token?: string | null): Promise<Cour
 export const createCourseProgress = async (progressData: Partial<CourseProgress>, token?: string | null): Promise<CourseProgress> => {
     const response = await apiRequest<StrapiSingleResponse<CourseProgress>>('/course-progresses', {
         method: 'POST',
-        body: { data: { ...progressData } },
+        body: JSON.stringify({ data: { ...progressData } }),
         token
     });
     return response.data;

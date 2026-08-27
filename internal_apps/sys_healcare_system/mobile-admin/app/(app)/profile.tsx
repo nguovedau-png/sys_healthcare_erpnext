@@ -10,7 +10,7 @@ import { profileSchema, type ProfileFormData } from '../../lib/schemas'
 import { PrimaryButton, SecondaryButton } from '../../components/ui'
 
 export default function ProfileScreen() {
-  const { user } = useAuth()
+  const { user, updateProfile } = useAuth()
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -27,7 +27,7 @@ export default function ProfileScreen() {
   const onUpdateProfile = async (data: ProfileFormData) => {
     try {
       setIsLoading(true)
-      // In a real app, this would call an API to update the profile
+      await updateProfile(data)
       Alert.alert('Success', 'Profile updated successfully!')
       setIsEditingProfile(false)
     } catch (error) {

@@ -115,29 +115,6 @@ export default function AdminsManagement() {
         });
     };
 
-    const confirmReset = (user: User) => {
-        Modal.confirm({
-            title: 'Reset Mật Khẩu',
-            icon: <LockOutlined />,
-            content: (
-                <Space orientation="vertical">
-                    <Text>Bạn có chắc muốn đặt lại mật khẩu cho <Text strong>{user.name}</Text>?</Text>
-                    <Text type="secondary">Mật khẩu sẽ được đặt về mặc định: <Text code>password123</Text></Text>
-                </Space>
-            ),
-            okText: 'Xác nhận reset',
-            cancelText: 'Hủy bỏ',
-            onOk: async () => {
-                try {
-                    // Simulating API call for reset
-                    message.info('Tính năng đang được cập nhật cho API mới');
-                } catch (error: any) {
-                    message.error('Lỗi reset mật khẩu: ' + error.message);
-                }
-            },
-        });
-    };
-
     return (
         <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
             <Breadcrumb>
@@ -171,13 +148,6 @@ export default function AdminsManagement() {
                 searchPlaceholder="Tìm kiếm theo tên, email..."
                 actions={(row) => (
                     <Space size="small">
-                        <Tooltip title="Reset Mật khẩu">
-                            <Button
-                                type="text"
-                                icon={<LockOutlined style={{ color: '#fa8c16' }} />}
-                                onClick={() => confirmReset(row)}
-                            />
-                        </Tooltip>
                         <Tooltip title="Chỉnh sửa">
                             <Button
                                 type="text"

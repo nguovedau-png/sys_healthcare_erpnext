@@ -6,6 +6,11 @@ import {
     assertAppointmentInput,
     assertAppointmentTransition,
     assertConsultationUpdateAllowed,
+    assertConsultationInput,
+    assertLabTestInput,
+    assertPharmacyOrderInput,
+    assertPrescriptionInput,
+    assertRefundInput,
     normalizeVietnamesePhone,
     sanitizeAppointmentData,
 } from './booking.rules';
@@ -168,19 +173,28 @@ export class BookingService implements OnModuleInit {
 
     async createAppointment(data: Record<string, unknown>) {
         const sanitized = sanitizeAppointmentData(data);
-        assertAppointmentInput(sanitized);
-        const normalizedData = { ...sanitized, patientPhone: normalizeVietnamesePhone(sanitized.patientPhone) };
-        if (normalizedData.doctorId && normalizedData.appointmentDate) {
-            const existing = await this.prisma.appointment.findFirst({
-                where: {
-                    doctorId: String(normalizedData.doctorId),
-                    appointmentDate: new Date(String(normalizedData.appointmentDate)),
-                    status: { notIn: ['cancelled', 'no_show'] },
-                },
-            });
-            if (existing) throw new Error('Practitioner already has an appointment at this time');
+        assertAppointmentInput(sanitized, { requireSlot: true });
+        const normalizedData = {
+            ...sanitized,
+            patientPhone: normalizeVietnamesePhone(sanitized.patientPhone),
+            appointmentDate: new Date(String(sanitized.appointmentDate)),
+            status: sanitized.status ?? 'pending',
+        };
+        if (!normalizedData.doctorId) throw new Error('doctorId is required for a bookable appointment');
+        const existing = await this.prisma.appointment.findFirst({
+            where: {
+                doctorId: String(normalizedData.doctorId),
+                appointmentDate: normalizedData.appointmentDate,
+                status: { notIn: ['cancelled', 'no_show'] },
+            },
+        });
+        if (existing) throw new Error('Practitioner already has an appointment at this time');
+        try {
+            return await this.prisma.appointment.create({ data: normalizedData as any });
+        } catch (error) {
+            if (this.isUniqueViolation(error)) throw new Error('Practitioner already has an appointment at this time');
+            throw error;
         }
-        return this.prisma.appointment.create({ data: normalizedData as any });
     }
 
     async updateAppointment(id: number, data: Record<string, unknown>) {
@@ -189,12 +203,14 @@ export class BookingService implements OnModuleInit {
         const sanitized = sanitizeAppointmentData(data);
         assertAppointmentInput({ ...current, ...sanitized });
         if (sanitized.status !== undefined) assertAppointmentTransition(current.status, String(sanitized.status));
-        const appointment = await this.prisma.appointment.update({
-            where: { id },
-            data: { ...sanitized, patientPhone: sanitized.patientPhone ? normalizeVietnamesePhone(sanitized.patientPhone) : undefined } as any,
-        });
-
-        if (current.status !== 'completed' && appointment.status === 'completed') {
+        const updateData = {
+            ...sanitized,
+            ...(sanitized.patientPhone ? { patientPhone: normalizeVietnamesePhone(sanitized.patientPhone) } : {}),
+            ...(sanitized.appointmentDate ? { appointmentDate: new Date(String(sanitized.appointmentDate)) } : {}),
+        };
+        try {
+            const appointment = await this.prisma.appointment.update({ where: { id }, data: updateData as any });
+            if (current.status !== 'completed' && appointment.status === 'completed') {
             const eventPayload = {
                 userId: appointment.patientId, // Assuming patientId maps to userId
                 appointmentId: appointment.id,
@@ -202,15 +218,21 @@ export class BookingService implements OnModuleInit {
                 // specialty: appointment.service, // Use service instead? Or just omit
                 timestamp: new Date(),
             };
-            this.gamificationClient.emit('booking_completed', eventPayload);
-            this.surveyClient.emit('booking_completed', eventPayload);
+                this.gamificationClient.emit('booking_completed', eventPayload);
+                this.surveyClient.emit('booking_completed', eventPayload);
+            }
+            return appointment;
+        } catch (error) {
+            if (this.isUniqueViolation(error)) throw new Error('Practitioner already has an appointment at this time');
+            throw error;
         }
-
-        return appointment;
     }
 
     async deleteAppointment(id: number) {
-        return this.prisma.appointment.delete({ where: { id } });
+        const current = await this.prisma.appointment.findUnique({ where: { id } });
+        if (!current) throw new Error('Appointment not found');
+        assertAppointmentTransition(current.status, 'cancelled');
+        return this.prisma.appointment.update({ where: { id }, data: { status: 'cancelled' } });
     }
 
     // --- Lab Tests ---
@@ -235,12 +257,17 @@ export class BookingService implements OnModuleInit {
         return this.prisma.labTest.findUnique({ where: { id } });
     }
 
-    async createLabTest(data: any) {
-        return this.prisma.labTest.create({ data });
+    async createLabTest(data: Record<string, unknown>) {
+        assertLabTestInput(data);
+        return this.prisma.labTest.create({ data: data as any });
     }
 
-    async updateLabTest(id: number, data: any) {
-        return this.prisma.labTest.update({ where: { id }, data });
+    async updateLabTest(id: number, data: Record<string, unknown>) {
+        const current = await this.prisma.labTest.findUnique({ where: { id } });
+        if (!current) throw new Error('Lab test not found');
+        assertLabTestInput({ ...current, ...data });
+        if (current.status === 'completed' && Object.keys(data).some((key) => key !== 'status')) throw new Error('Completed lab test is immutable');
+        return this.prisma.labTest.update({ where: { id }, data: data as any });
     }
 
     async deleteLabTest(id: number) {
@@ -269,12 +296,17 @@ export class BookingService implements OnModuleInit {
         return this.prisma.pharmacyOrder.findUnique({ where: { id } });
     }
 
-    async createPharmacyOrder(data: any) {
-        return this.prisma.pharmacyOrder.create({ data });
+    async createPharmacyOrder(data: Record<string, unknown>) {
+        assertPharmacyOrderInput(data);
+        return this.prisma.pharmacyOrder.create({ data: data as any });
     }
 
-    async updatePharmacyOrder(id: number, data: any) {
-        return this.prisma.pharmacyOrder.update({ where: { id }, data });
+    async updatePharmacyOrder(id: number, data: Record<string, unknown>) {
+        const current = await this.prisma.pharmacyOrder.findUnique({ where: { id } });
+        if (!current) throw new Error('Pharmacy order not found');
+        assertPharmacyOrderInput({ ...current, ...data });
+        if (current.status === 'completed' && Object.keys(data).some((key) => key !== 'status')) throw new Error('Completed pharmacy order is immutable');
+        return this.prisma.pharmacyOrder.update({ where: { id }, data: data as any });
     }
 
     async deletePharmacyOrder(id: number) {
@@ -303,12 +335,17 @@ export class BookingService implements OnModuleInit {
         return this.prisma.refundRequest.findUnique({ where: { id } });
     }
 
-    async createRefundRequest(data: any) {
-        return this.prisma.refundRequest.create({ data });
+    async createRefundRequest(data: Record<string, unknown>) {
+        assertRefundInput(data);
+        return this.prisma.refundRequest.create({ data: data as any });
     }
 
-    async updateRefundRequest(id: number, data: any) {
-        return this.prisma.refundRequest.update({ where: { id }, data });
+    async updateRefundRequest(id: number, data: Record<string, unknown>) {
+        const current = await this.prisma.refundRequest.findUnique({ where: { id } });
+        if (!current) throw new Error('Refund request not found');
+        assertRefundInput({ ...current, ...data });
+        if (current.status !== 'pending' && Object.keys(data).some((key) => key !== 'status')) throw new Error('Processed refund request is immutable');
+        return this.prisma.refundRequest.update({ where: { id }, data: data as any });
     }
 
     async deleteRefundRequest(id: number) {
@@ -337,12 +374,16 @@ export class BookingService implements OnModuleInit {
         return this.prisma.prescription.findUnique({ where: { id } });
     }
 
-    async createPrescription(data: any) {
-        return this.prisma.prescription.create({ data });
+    async createPrescription(data: Record<string, unknown>) {
+        assertPrescriptionInput(data);
+        return this.prisma.prescription.create({ data: data as any });
     }
 
-    async updatePrescription(id: number, data: any) {
-        return this.prisma.prescription.update({ where: { id }, data });
+    async updatePrescription(id: number, data: Record<string, unknown>) {
+        const current = await this.prisma.prescription.findUnique({ where: { id } });
+        if (!current) throw new Error('Prescription not found');
+        assertPrescriptionInput({ ...current, ...data }, { existingStatus: current.status });
+        return this.prisma.prescription.update({ where: { id }, data: data as any });
     }
 
     async deletePrescription(id: number) {
@@ -371,8 +412,9 @@ export class BookingService implements OnModuleInit {
         return this.prisma.consultation.findUnique({ where: { id } });
     }
 
-    async createConsultation(data: any) {
-        return this.prisma.consultation.create({ data });
+    async createConsultation(data: Record<string, unknown>) {
+        assertConsultationInput(data);
+        return this.prisma.consultation.create({ data: data as any });
     }
 
     async updateConsultation(id: number, data: Record<string, unknown>) {
@@ -383,6 +425,13 @@ export class BookingService implements OnModuleInit {
     }
 
     async deleteConsultation(id: number) {
-        return this.prisma.consultation.delete({ where: { id } });
+        const current = await this.prisma.consultation.findUnique({ where: { id } });
+        if (!current) throw new Error('Consultation not found');
+        if (current.status === 'completed') throw new Error('Completed consultation is immutable');
+        return this.prisma.consultation.update({ where: { id }, data: { status: 'absent' } });
+    }
+
+    private isUniqueViolation(error: unknown): boolean {
+        return Boolean(error && typeof error === 'object' && (error as { code?: string }).code === 'P2002');
     }
 }

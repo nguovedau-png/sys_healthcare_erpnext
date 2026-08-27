@@ -6,7 +6,6 @@ import { CartProvider } from "@/store/CartContext";
 import { AuthProvider } from '@/providers/AuthProvider';
 import FloatingAIAssistant from '@/components/common/FloatingAIAssistant';
 import CookieConsent from '@/components/common/CookieConsent';
-import Header from '@/components/layout/Header';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 

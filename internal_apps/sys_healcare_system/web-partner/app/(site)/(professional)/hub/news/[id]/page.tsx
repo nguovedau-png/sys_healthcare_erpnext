@@ -7,12 +7,13 @@ import {
     HeartFilled, 
     MessageOutlined, 
     ShareAltOutlined, 
-    BookmarkOutlined, 
-    BookmarkFilled,
+    BookOutlined,
+    BookFilled,
     ArrowLeftOutlined,
     CheckCircleOutlined,
     QuestionCircleOutlined,
-    UserOutlined
+    UserOutlined,
+    TrophyOutlined
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
@@ -200,7 +201,7 @@ export default function NewsDetailPage() {
                                     <Button type="text" icon={<ShareAltOutlined />}>Chia sẻ</Button>
                                     <Button 
                                         type="text" 
-                                        icon={isSaved ? <BookmarkFilled style={{ color: '#1890ff' }} /> : <BookmarkOutlined />}
+                                        icon={isSaved ? <BookFilled style={{ color: '#1890ff' }} /> : <BookOutlined />}
                                         onClick={() => setIsSaved(!isSaved)}
                                     >
                                         Lưu bài viết

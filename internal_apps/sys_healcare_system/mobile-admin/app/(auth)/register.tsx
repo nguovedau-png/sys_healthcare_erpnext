@@ -9,13 +9,13 @@ import { useAuth } from '../../contexts/AuthContext'
 import { registerSchema, type RegisterFormData } from '../../lib/schemas'
 import { FormField } from '../../components/forms/FormField'
 import { PasswordField } from '../../components/forms/PasswordField'
-import { PrimaryButton, SecondaryButton } from '../../components/ui'
+import { PrimaryButton } from '../../components/ui'
 
 export default function RegisterScreen() {
   const { register } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
-  const { control, handleSubmit, setValue } = useForm<RegisterFormData>({
+  const { control, handleSubmit } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -41,13 +41,6 @@ export default function RegisterScreen() {
     }
   }
 
-  const fillDemoCredentials = () => {
-    setValue('name', 'Demo User')
-    setValue('email', 'demo@example.com')
-    setValue('password', 'password123')
-    setValue('confirmPassword', 'password123')
-  }
-
   return (
     <YStack flex={1} bg="$background">
       <ScrollView flex={1} showsVerticalScrollIndicator={false}>
@@ -69,9 +62,6 @@ export default function RegisterScreen() {
               <Paragraph color="$green11" size="$3">
                 Enter your name, email and a secure password to get started.
               </Paragraph>
-              <SecondaryButton size="$2" onPress={fillDemoCredentials} mt="$2">
-                Fill Sample Data
-              </SecondaryButton>
             </YStack>
           </Card>
 

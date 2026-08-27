@@ -98,7 +98,7 @@ export default function HubPortalPage() {
         setLoading(true);
         try {
             const [postsRes, leaderboardData] = await Promise.all([
-                contentService.getPosts(1, 10),
+                contentService.getPosts({ page: 1, limit: 10 }),
                 gamificationService.getLeaderboard()
             ]);
             
@@ -318,11 +318,11 @@ export default function HubPortalPage() {
                                                                     <Space size="large">
                                                                         <Space style={{ cursor: 'pointer' }} onClick={() => toggleLike(item.id)}>
                                                                             {item.isLiked ? <HeartFilled style={{ color: '#ff4d4f' }} /> : <HeartOutlined />}
-                                                                            <Text size="small">{item.likes}</Text>
+                                                                            <Text style={{ fontSize: 12 }}>{item.likes}</Text>
                                                                         </Space>
                                                                         <Space>
                                                                             <MessageOutlined />
-                                                                            <Text size="small">{item.comments}</Text>
+                                                                            <Text style={{ fontSize: 12 }}>{item.comments}</Text>
                                                                         </Space>
                                                                         <ShareAltOutlined style={{ cursor: 'pointer' }} />
                                                                     </Space>

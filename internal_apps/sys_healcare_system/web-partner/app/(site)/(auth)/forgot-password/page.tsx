@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 
-const styles = {
+const styles: Record<string, CSSProperties> = {
     container: {
         display: 'flex',
         flexDirection: 'column' as const,

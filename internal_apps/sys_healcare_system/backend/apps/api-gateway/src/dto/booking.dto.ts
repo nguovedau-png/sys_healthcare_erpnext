@@ -29,19 +29,17 @@ export class CreateAppointmentDto {
   @Length(1, 20)
   sex?: string;
 
-  @IsOptional()
   @IsString()
   @Length(1, 120)
-  doctorId?: string;
+  doctorId!: string;
 
   @IsOptional()
   @IsString()
   @Length(1, 160)
   doctorName?: string;
 
-  @IsOptional()
   @IsISO8601()
-  appointmentDate?: string;
+  appointmentDate!: string;
 
   @IsOptional()
   @IsString()
@@ -90,9 +88,8 @@ export class CreateAppointmentDto {
   @Length(0, 2000)
   treatmentInfo?: string;
 
-  @IsOptional()
-  @IsIn(APPOINTMENT_STATUSES)
-  status?: (typeof APPOINTMENT_STATUSES)[number];
+  // Appointment status is owned by the state machine. Clients create pending appointments
+  // and use explicit lifecycle operations for subsequent transitions.
 }
 
 export class UpdateAppointmentDto extends PartialType(CreateAppointmentDto) {}

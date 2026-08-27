@@ -41,9 +41,14 @@ import { NotificationEventController } from './notification-event.controller';
 import { ChatGateway } from './gateway/chat.gateway';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
+const jwtSecret = process.env.JWT_SECRET?.trim();
+if (process.env.NODE_ENV === 'production' && !jwtSecret) {
+  throw new Error('JWT_SECRET must be configured in production');
+}
+
 @Module({
   imports: [
-    JwtModule.register({ secret: process.env.JWT_SECRET || 'development-insecure-secret-change-me' }),
+    JwtModule.register({ secret: jwtSecret || 'local-development-only-secret' }),
     ThrottlerModule.forRoot([{
       ttl: 60000,
       limit: 100,

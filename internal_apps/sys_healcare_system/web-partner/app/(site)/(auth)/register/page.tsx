@@ -59,7 +59,6 @@ export default function RegisterPage() {
                         placeholder="Tên Cơ sở / Phòng khám"
                     />
                     <Select
-                        name="partnerType"
                         value={formData.partnerType}
                         onChange={(value) => setFormData(prev => ({ ...prev, partnerType: value }))}
                         style={{ padding: '12px 16px', backgroundColor: '#f9fafb', border: '1px solid transparent', borderRadius: '12px', fontSize: '14px', fontWeight: '500' }}
@@ -129,7 +128,7 @@ export default function RegisterPage() {
                             id="terms"
                             name="agreeToTerms"
                             checked={formData.agreeToTerms}
-                            onChange={handleInputChange}
+                            onChange={(event) => setFormData(prev => ({ ...prev, agreeToTerms: event.target.checked }))}
                             style={{ width: '16px', height: '16px', color: '#0f766e', backgroundColor: '#f9fafb', borderColor: '#d1d5db', borderRadius: '4px', accentColor: '#0f766e' }}
                         />
                     </div>

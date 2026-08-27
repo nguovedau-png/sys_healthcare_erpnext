@@ -41,6 +41,7 @@ export class ErpNextIntegrationService implements OnModuleInit {
   async upsert(document: ErpNextDocument): Promise<SyncResult> {
     this.validateDocument(document);
     if (!this.client) throw new Error('ERPNext integration is not configured');
+    this.validatePayload(document);
 
     const requestHash = createHash('sha256')
       .update(JSON.stringify({ doctype: document.doctype, name: document.name, data: document.data, context: document.context }))
@@ -92,8 +93,12 @@ export class ErpNextIntegrationService implements OnModuleInit {
       };
     }
 
-    const processing = await this.prisma.syncOperation.update({
-      where: { id: operation.id },
+    const claimed = await this.prisma.syncOperation.updateMany({
+      where: {
+        id: operation.id,
+        requestHash,
+        status: { in: ['PENDING', 'FAILED', 'DEAD_LETTER'] },
+      },
       data: {
         status: 'PROCESSING',
         attemptCount: { increment: 1 },
@@ -102,6 +107,17 @@ export class ErpNextIntegrationService implements OnModuleInit {
         lastErrorCode: null,
       },
     });
+    if (claimed.count === 0) {
+      const current = await this.prisma.syncOperation.findUniqueOrThrow({ where: { id: operation.id } });
+      if (current.requestHash !== requestHash) throw new ConflictException('The idempotency key was already used with a different payload');
+      return {
+        operationId: current.id,
+        status: current.status as SyncOperationStatus,
+        replayed: true,
+        data: this.asRecord(current.responseData),
+      };
+    }
+    const processing = await this.prisma.syncOperation.findUniqueOrThrow({ where: { id: operation.id } });
 
     try {
       const data = await this.client.upsert(document);
@@ -182,10 +198,19 @@ export class ErpNextIntegrationService implements OnModuleInit {
     if (!document || !ERP_NEXT_DOCTYPES.includes(document.doctype)) throw new Error('Unsupported ERPNext doctype');
     if (!document.context || document.context.sourceSystem !== 'healthcare-platform') throw new Error('Invalid ERPNext source system');
     for (const [field, value] of Object.entries(document.context)) {
-      if (typeof value !== 'string' || value.length === 0 || value.length > 128 || /[\r\n]/.test(value)) {
+      if (typeof value !== 'string' || value.length === 0 || value.length > 128 || !/^[a-zA-Z0-9._:-]+$/.test(value)) {
         throw new Error(`Invalid ERPNext context field: ${field}`);
       }
     }
+    if (document.name !== undefined && (typeof document.name !== 'string' || document.name.length > 140 || !/^[a-zA-Z0-9._:-]+$/.test(document.name))) {
+      throw new Error('Invalid ERPNext document name');
+    }
+  }
+
+  private validatePayload(document: ErpNextDocument): void {
+    if (!document.data || typeof document.data !== 'object' || Array.isArray(document.data)) throw new Error('ERPNext document data must be an object');
+    const serialized = JSON.stringify(document.data);
+    if (serialized.length > 256_000) throw new Error('ERPNext document data exceeds the 256KB limit');
   }
 
   private requireContextValue(value: unknown, field: string): string {

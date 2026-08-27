@@ -167,7 +167,7 @@ export default function HubAdminDashboard() {
                                                             { title: 'Tiêu đề', dataIndex: 'title', key: 'title' },
                                                             { title: 'Chuyên mục', dataIndex: 'category', key: 'category' },
                                                             { title: 'Lượt xem', dataIndex: 'views', key: 'views' },
-                                                            { title: 'Tương tác', key: 'engagement', render: (_, record) => <Space><Text size="small"><EyeOutlined /> {record.views}</Text><Text size="small"><MessageOutlined /> {record.comments}</Text></Space> },
+                                                            { title: 'Tương tác', key: 'engagement', render: (_, record) => <Space><Text style={{ fontSize: 12 }}><EyeOutlined /> {record.views}</Text><Text style={{ fontSize: 12 }}><MessageOutlined /> {record.comments}</Text></Space> },
                                                             { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (val) => <Tag color={val==='Published'?'blue':'default'}>{val}</Tag> },
                                                             { title: 'Thao tác', key: 'action', render: () => <Space><Button type="text" icon={<EditOutlined />} /><Button type="text" danger icon={<DeleteOutlined />} /></Space> }
                                                         ]}

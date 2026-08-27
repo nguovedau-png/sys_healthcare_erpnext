@@ -1,5 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
 import { ErpController } from '../src/erp.controller';
 import { of } from 'rxjs';
 import request = require('supertest');
@@ -16,7 +17,10 @@ describe('ERPNext gateway (e2e)', () => {
     process.env.ERPNEXT_SYNC_TOKEN = 'e2e-sync-token';
     const moduleRef = await Test.createTestingModule({
       controllers: [ErpController],
-      providers: [{ provide: 'ERP_SERVICE', useValue: { send } }],
+      providers: [
+        { provide: 'ERP_SERVICE', useValue: { send } },
+        { provide: JwtService, useValue: { verify: jest.fn() } },
+      ],
     }).compile();
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
@@ -26,7 +30,7 @@ describe('ERPNext gateway (e2e)', () => {
   afterAll(async () => {
     if (originalToken === undefined) delete process.env.ERPNEXT_SYNC_TOKEN;
     else process.env.ERPNEXT_SYNC_TOKEN = originalToken;
-    await app.close();
+    if (app) await app.close();
   });
 
   it('exposes sanitized health metadata', async () => {

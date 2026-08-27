@@ -200,7 +200,7 @@ export default function JobMarketPage() {
                 width={500}
             >
                 <div style={{ marginBottom: 24, padding: 16, background: '#f0f5ff', borderRadius: 8 }}>
-                    <Text strong display="block">Tổ chức:</Text> <Text>{selectedJob?.pharmacy}</Text>
+                    <Text strong style={{ display: 'block' }}>Tổ chức:</Text> <Text>{selectedJob?.pharmacy}</Text>
                 </div>
 
                 <Form layout="vertical" form={form} onFinish={handleApplySubmit}>

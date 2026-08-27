@@ -38,6 +38,7 @@ model Appointment {
   @@index([doctorId])
   @@index([status])
   @@index([date])
+  @@unique([doctorId, appointmentDate])
 }
 
 model LabTest {

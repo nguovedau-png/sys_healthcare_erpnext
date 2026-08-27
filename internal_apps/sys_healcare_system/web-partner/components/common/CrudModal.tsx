@@ -22,7 +22,7 @@ export interface CrudField {
   type: FieldType;
   placeholder?: string;
   required?: boolean;
-  options?: { value: string | number; label: string }[];
+  options?: { value: string | number | boolean; label: string }[];
   span?: 1 | 2;
   rows?: number;
 }
@@ -144,7 +144,6 @@ export default function CrudModal({
       styles={{
         header: { display: "none" },
         body: { padding: 0 },
-        content: { borderRadius: 4, overflow: "hidden", padding: 0 },
         mask: { backdropFilter: "blur(2px)", background: "rgba(0,0,0,0.55)" },
       }}
     >

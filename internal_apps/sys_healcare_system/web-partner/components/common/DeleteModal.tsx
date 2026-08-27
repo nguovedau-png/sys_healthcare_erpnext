@@ -32,7 +32,6 @@ export default function DeleteModal({
       styles={{
         header: { display: "none" },
         body: { padding: 0 },
-        content: { borderRadius: 4, overflow: "hidden", padding: 0 },
         mask: { backdropFilter: "blur(2px)", background: "rgba(0,0,0,0.55)" },
       }}
     >

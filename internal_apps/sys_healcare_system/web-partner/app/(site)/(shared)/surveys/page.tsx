@@ -17,8 +17,29 @@ import EhrFilterBar from "@/components/portal/EhrFilterBar";
 import CrudModal, { CrudField } from "@/components/common/CrudModal";
 import DeleteModal from "@/components/common/DeleteModal";
 
-// --- MOCK DATA ---
-const SURVEYS_INIT = [
+// --- DOMAIN TYPES & INITIAL DATA ---
+type SurveyQuestion = {
+  id: number;
+  type: string;
+  text: string;
+  options: string[];
+};
+
+type SurveyStats = Record<number, Record<string, number> | string[]>;
+
+type Survey = {
+  id: number;
+  title: string;
+  category: string;
+  responses: number;
+  target: number;
+  status: string;
+  createdAt: string;
+  questions: SurveyQuestion[];
+  stats: SurveyStats;
+};
+
+const SURVEYS_INIT: Survey[] = [
   {
     id: 1,
     title: "Khảo sát hài lòng bệnh nhân Q1/2024",
@@ -30,8 +51,8 @@ const SURVEYS_INIT = [
     questions: [
       { id: 101, type: "single", text: "Bạn đánh giá thái độ phục vụ của bác sĩ như thế nào?", options: ["Rất hài lòng", "Hài lòng", "Bình thường", "Không hài lòng"] },
       { id: 102, type: "multiple", text: "Bạn đã sử dụng các dịch vụ nào tại phòng khám?", options: ["Khám bệnh", "Xét nghiệm máu", "Chụp X-Quang", "Mua thuốc"] },
-      { id: 103, type: "yesno", text: "Bạn có sẵn sàng giới thiệu phòng khám cho người thân không?" },
-      { id: 104, type: "text", text: "Bạn có góp ý gì để chúng tôi cải thiện dịch vụ không?" }
+      { id: 103, type: "yesno", text: "Bạn có sẵn sàng giới thiệu phòng khám cho người thân không?", options: [] },
+      { id: 104, type: "text", text: "Bạn có góp ý gì để chúng tôi cải thiện dịch vụ không?", options: [] }
     ],
     stats: {
       101: { "Rất hài lòng": 250, "Hài lòng": 120, "Bình thường": 30, "Không hài lòng": 12 },
@@ -73,7 +94,7 @@ const SURVEY_FIELDS: CrudField[] = [
 ];
 
 export default function SurveysPage() {
-  const [data, setData] = useState(SURVEYS_INIT);
+  const [data, setData] = useState<Survey[]>(SURVEYS_INIT);
   const [addOpen, setAddOpen] = useState(false);
   const [editRecord, setEditRecord] = useState<any | null>(null);
   const [deleteRecord, setDeleteRecord] = useState<any | null>(null);
@@ -136,6 +157,8 @@ export default function SurveysPage() {
   };
 
   const renderDetailView = () => {
+    if (!selectedSurvey) return null;
+
     return (
       <>
         <EhrPageHeader

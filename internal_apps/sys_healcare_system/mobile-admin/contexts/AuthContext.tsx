@@ -6,6 +6,7 @@ import {
   logout as authLogout,
   getStoredAuthData,
   validateToken,
+  updateProfile as authUpdateProfile,
   type User,
 } from '../lib/auth'
 
@@ -17,6 +18,7 @@ interface AuthContextType {
   login: (identifier: string, password: string) => Promise<void>
   register: (email: string, password: string, name: string) => Promise<void>
   logout: () => Promise<void>
+  updateProfile: (data: { name: string; email: string }) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -87,6 +89,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  const updateProfile = async (data: { name: string; email: string }) => {
+    const updatedUser = await authUpdateProfile(data)
+    setUser(updatedUser)
+  }
+
   const logout = async () => {
     try {
       await authLogout()
@@ -108,6 +115,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     login,
     register,
     logout,
+    updateProfile,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

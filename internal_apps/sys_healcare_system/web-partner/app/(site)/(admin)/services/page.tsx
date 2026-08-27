@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { Tag, Button, Input, Select, Table, message, Tooltip, Progress, Card, Space } from "antd";
+import { Tag, Button, Input, Select, Table, message, Tooltip, Progress, Card, Space, Typography } from "antd";
+const { Text } = Typography;
 import { MedicineBoxOutlined, SearchOutlined, FilterOutlined, PlusOutlined, InteractionOutlined, EditOutlined, DeleteOutlined, MedicineBoxFilled, DollarCircleFilled, ThunderboltFilled, SafetyCertificateFilled, AppstoreFilled, FireFilled } from "@ant-design/icons";
 import CrudModal, { CrudField } from "@/components/common/CrudModal";
 import DeleteModal from "@/components/common/DeleteModal";

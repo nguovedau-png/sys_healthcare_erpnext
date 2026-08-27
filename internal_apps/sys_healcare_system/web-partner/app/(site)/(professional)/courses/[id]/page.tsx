@@ -95,7 +95,7 @@ export default function CourseDetailPage() {
                                     </div>
                                     <Text style={{ fontSize: 15, fontWeight: 500 }}>{item}</Text>
                                 </Space>
-                                {isRegistered && <Tag color="blue" ghost>Học ngay</Tag>}
+                                {isRegistered && <Tag color="blue">Học ngay</Tag>}
                             </div>
                         ))}
                     </div>

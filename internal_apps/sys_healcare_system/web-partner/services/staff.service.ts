@@ -9,6 +9,8 @@ export interface Staff {
     department?: string;
     position?: string;
     isActive: boolean;
+    status?: string;
+    avatar?: string;
     role?: {
         name: string;
     };

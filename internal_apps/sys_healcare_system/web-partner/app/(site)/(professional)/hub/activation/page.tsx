@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card, Input, Button, Typography, Space, Modal, Checkbox, Form, message, Result, Steps } from 'antd';
-import { SafetyCertificateOutlined, QrCodeOutlined, LockOutlined, CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { SafetyCertificateOutlined, QrcodeOutlined, LockOutlined, CheckCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
 const { Title, Text, Paragraph } = Typography;
@@ -102,7 +102,7 @@ export default function HubActivationPage() {
                         </Button>
                         <Divider plain>Hoặc</Divider>
                         <Button 
-                            icon={<QrCodeOutlined />} 
+                            icon={<QrcodeOutlined />}
                             size="large" 
                             block 
                             style={{ borderRadius: 8, height: 48 }}
@@ -182,7 +182,7 @@ export default function HubActivationPage() {
     );
 }
 
-function Divider({ children, plain }: { children: React.ReactNode, plain?: boolean }) {
+function Divider({ children, plain }: { children?: React.ReactNode, plain?: boolean }) {
     return (
         <div style={{ display: 'flex', alignItems: 'center', margin: '16px 0' }}>
             <div style={{ flex: 1, height: '1px', background: '#f0f0f0' }}></div>

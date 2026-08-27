@@ -2,11 +2,13 @@
 
 import React from 'react';
 import { Row, Col, Typography, Space, Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 const { Title, Text } = Typography;
 
 interface EhrPageHeaderProps {
     title: string;
     subtitle?: string;
+    onBack?: () => void;
     extra?: React.ReactNode;
     primaryAction?: {
         label: string;
@@ -15,11 +17,14 @@ interface EhrPageHeaderProps {
     };
 }
 
-export default function EhrPageHeader({ title, subtitle, extra, primaryAction }: EhrPageHeaderProps) {
+export default function EhrPageHeader({ title, subtitle, onBack, extra, primaryAction }: EhrPageHeaderProps) {
     return (
         <Row justify="space-between" align="middle" gutter={[16, 16]} style={{ marginBottom: 24 }}>
             <Col xs={24} lg={16}>
-                <Title level={3} style={{ fontWeight: 700, margin: 0, color: '#001529' }}>{title}</Title>
+                <Space align="center" size="middle">
+                    {onBack && <Button type="text" icon={<ArrowLeftOutlined />} onClick={onBack} aria-label="Quay lại" />}
+                    <Title level={3} style={{ fontWeight: 700, margin: 0, color: '#001529' }}>{title}</Title>
+                </Space>
                 {subtitle && <Text type="secondary" style={{ fontSize: 13, display: 'block', marginTop: 4 }}>{subtitle}</Text>}
             </Col>
             <Col xs={24} lg={8} style={{ textAlign: 'right' }}>

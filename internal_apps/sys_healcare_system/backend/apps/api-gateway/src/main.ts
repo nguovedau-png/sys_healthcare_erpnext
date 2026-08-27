@@ -20,8 +20,8 @@ async function bootstrap() {
     process.env.FRONTEND_ORIGINS || process.env.EXPECTED_ORIGIN,
     ['http://localhost:3000'],
   );
-  if (process.env.NODE_ENV === 'production' && !process.env.FRONTEND_ORIGINS) {
-    bootstrapLogger.warn('FRONTEND_ORIGINS is not configured; using the development origin fallback');
+  if (process.env.NODE_ENV === 'production' && !process.env.FRONTEND_ORIGINS?.trim()) {
+    throw new Error('FRONTEND_ORIGINS must be configured in production');
   }
   app.enableCors({
     origin: frontendOrigins,

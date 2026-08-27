@@ -56,7 +56,7 @@ export default function PortalLayout({
                             },
                             Tabs: {
                                 cardBg: '#f0f2f5',
-                                horizontalMargin: 0,
+                                horizontalMargin: '0px',
                                 titleFontSize: 13,
                             }
                         }

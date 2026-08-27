@@ -119,7 +119,7 @@ export default function InsurancePage() {
             <Space direction="vertical" style={{ width: "100%" }} size={8}>
               {lookupHistory.map((h, i) => (
                 <Card key={i} size="small" bodyStyle={{ padding: 12 }} style={{ cursor: "pointer" }} onClick={() => { setSearchId(h.id); setResult(INSURANCE_DATA[h.id] || null); }}>
-                  <Space justify="space-between" style={{ width: "100%" }}>
+                  <Space style={{ width: "100%", justifyContent: "space-between" }}>
                     <div>
                       <Text strong style={{ fontSize: 12 }}>{h.name}</Text>
                       <div style={{ fontFamily: "monospace", fontSize: 10, color: "#8c8c8c" }}>{h.id}</div>

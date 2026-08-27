@@ -21,17 +21,12 @@ export default function LoginPage() {
         }
     };
 
-    const quickLogin = (testEmail: string, testPassword: string) => {
-        setEmail(testEmail);
-        setPassword(testPassword);
-    };
-
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center', width: '100%' }}>
 
             {/* Mobile Logo */}
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <Link href="/" style={{ display: 'inline-block', marginBottom: '2rem', '@media (min-width: 1024px)': { display: 'none' } }} className="lg:hidden">
+                <Link href="/" style={{ display: 'inline-block', marginBottom: '2rem' }} className="lg:hidden">
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                         <div style={{ width: '2.5rem', height: '2.5rem', backgroundColor: '#0f766e', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <span style={{ color: 'white', fontWeight: 900, fontSize: '1.25rem' }}>M</span>
@@ -132,29 +127,6 @@ export default function LoginPage() {
                     </button>
                 </div>
             </form>
-
-            {/* ─── Quick Login (Dev only) ──────────────────────────────── */}
-            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid #f3f4f6' }}>
-                <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center', marginBottom: '0.75rem' }}>Thử nghiệm nhanh</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
-                    <button onClick={() => quickLogin('doctor@hospital.com', 'securePassword123')} type="button"
-                        style={{ padding: '0.625rem 0.75rem', backgroundColor: '#f0fdfa', color: '#0f766e', borderRadius: '0.5rem', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', border: 'none', transition: 'background-color 0.2s' }}>
-                        👨‍⚕️ Bác sĩ
-                    </button>
-                    <button onClick={() => quickLogin('hospital@test.com', 'password123')} type="button"
-                        style={{ padding: '0.625rem 0.75rem', backgroundColor: '#eff6ff', color: '#1d4ed8', borderRadius: '0.5rem', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', border: 'none', transition: 'background-color 0.2s' }}>
-                        🏥 Bệnh viện
-                    </button>
-                    <button onClick={() => quickLogin('clinic@test.com', 'password123')} type="button"
-                        style={{ padding: '0.625rem 0.75rem', backgroundColor: '#fff7ed', color: '#c2410c', borderRadius: '0.5rem', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', border: 'none', transition: 'background-color 0.2s' }}>
-                        🏪 Phòng khám
-                    </button>
-                    <button onClick={() => quickLogin('super_admin@test.com', 'password123')} type="button"
-                        style={{ padding: '0.625rem 0.75rem', backgroundColor: '#fff1f2', color: '#e11d48', borderRadius: '0.5rem', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', border: 'none', transition: 'background-color 0.2s' }}>
-                        ⚡ Admin
-                    </button>
-                </div>
-            </div>
 
             <p style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem', color: '#6b7280', fontWeight: 500 }}>
                 Cơ sở chưa đăng ký?{' '}

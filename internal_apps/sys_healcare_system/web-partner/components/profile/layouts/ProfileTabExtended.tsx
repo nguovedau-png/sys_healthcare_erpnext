@@ -12,10 +12,10 @@ const ProfileTabExtended: React.FC<ProfileTabExtendedProps> = ({ data, onRefresh
     const { userType } = data;
 
     const commonTabs = [
-        { key: 'intro', label: 'Giới thiệu', children: <IntroTab data={data} onRefresh={onRefresh} /> },
-        { key: 'service', label: userType === 'pharmacy' ? 'Sản phẩm' : 'Dịch vụ', children: <ServiceTab data={data} onRefresh={onRefresh} /> },
+        { key: 'intro', label: 'Giới thiệu', children: <IntroTab data={data} /> },
+        { key: 'service', label: userType === 'pharmacy' ? 'Sản phẩm' : 'Dịch vụ', children: <ServiceTab data={data} /> },
         { key: 'rating', label: 'Đánh giá', children: <RatingTab data={data} /> },
-        { key: 'worktime', label: userType === 'pharmacist' ? 'Nơi làm việc' : 'Giờ làm việc', children: <WorktimeTab data={data} onRefresh={onRefresh} /> },
+        { key: 'worktime', label: userType === 'pharmacist' ? 'Nơi làm việc' : 'Giờ làm việc', children: <WorktimeTab data={data} /> },
         { key: 'gallery', label: 'Hình ảnh', children: <GalleryTab data={data} /> },
         { key: 'qa', label: 'Câu hỏi', children: <QaTab data={data} /> },
         { key: 'articles', label: 'Bài viết', children: <ArticleTab data={data} /> },
