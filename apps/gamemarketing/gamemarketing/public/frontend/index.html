@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gamemarketing System</title>
+  <script type="module" crossorigin src="/assets/gamemarketing/frontend/assets/index-BWg5seOx.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/gamemarketing/frontend/assets/index-Deu7kyw1.css">
+<script id="vite-plugin-pwa:register-sw" src="/assets/gamemarketing/frontend/registerSW.js"></script></head>
+<body>
+    <div id="app"></div>
+
+          <script>
+              {% for key in boot %}
+              window["{{ key }}"] = {{ boot[key] | tojson }};
+              {% endfor %}
+          </script>
+          </body>
+          
+</html>

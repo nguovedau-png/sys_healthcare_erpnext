@@ -1,0 +1,10 @@
+# To launch the Pharmacy on iPhone 16
+npm run passenger
+# To launch the Delivery Partner on iPhone 15
+npm run delivery
+=>Chu y dung chay song, chay tung cai truoc vi mode.js se duoc truyen vao khi chay
+
+
+# To start the socket server on port 8000
+npm run socket
+

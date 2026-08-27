@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-marketing-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Campaign {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String   // Email, SMS, Push
+  status    String   @default("draft") // draft, active, completed
+  sent      Int      @default(0)
+  opened    Int      @default(0)
+  clicked   Int      @default(0)
+  budget    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EmailCampaign {
+  id         Int      @id @default(autoincrement())
+  subject    String
+  recipients Int
+  sentDate   String
+  openRate   String
+  clickRate  String
+  status     String   @default("draft") // draft, published
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Promotion {
+  id                Int      @id @default(autoincrement())
+  code              String   @unique
+  name              String
+  createDate        String
+  endDate           String?
+  systemSource      String
+  link              String
+  type              String   // discount, voucher, gift, cashback
+  key               String?
+  isSystem          Boolean  @default(false)
+  updateDate        String?
+  description       String?
+  imageLink         String?
+  videoLink         String?
+  status            String   @default("01") // 01: active, 02: inactive, 03: ended
+  userIdCreate      String?
+  userNameCreate    String?
+  userIdUpdate      String?
+  userNameUpdate    String?
+  dynamicLink       String?
+  bannerLandingPage String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model PushNotification {
+  id         Int      @id @default(autoincrement())
+  title      String
+  message    String
+  recipients Int
+  sentTime   String
+  delivered  Int
+  clicked    Int
+  status     String   @default("draft") // draft, published
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Voucher {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique
+  name      String
+  discount  String
+  minOrder  String
+  used      Int      @default(0)
+  maxUses   Int
+  expiry    String
+  status    String   @default("active") // active, inactive
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CharityCampaign {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String
+  raised      BigInt   @default(0)
+  goal        BigInt
+  donators    Int      @default(0)
+  percent     Int      @default(0)
+  urgent      Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  endDate     DateTime?
+  hospital    String?  // verifying hospital name
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model InsurancePartner {
+  id          Int      @id @default(autoincrement())
+  name        String
+  logo        String   // path or URL to logo image
+  type        String   // "Bảo hiểm nhà nước", "Bảo hiểm tư nhân"
+  highlight   String   // main selling point text
+  coverageMax String?  // e.g. "500 triệu đồng"
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

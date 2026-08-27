@@ -1,0 +1,7 @@
+# Ignore all config files (they will be generated)
+*
+!.gitignore
+redis_cache.acl
+redis_cache.conf
+redis_queue.acl
+redis_queue.conf

@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-analytic-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SearchKeyword {
+  id          Int      @id @default(autoincrement())
+  keyword     String   @unique
+  keywordVN   String
+  times       Int      @default(0)
+  status      Boolean  @default(true)
+  createdDate DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SearchHashtag {
+  id          Int      @id @default(autoincrement())
+  hashtag     String   @unique
+  hashtagVN   String
+  times       Int      @default(0)
+  status      Boolean  @default(true)
+  createdDate DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

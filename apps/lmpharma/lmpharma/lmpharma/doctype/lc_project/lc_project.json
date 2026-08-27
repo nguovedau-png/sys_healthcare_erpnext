@@ -1,0 +1,215 @@
+{
+ "name": "LC Project",
+ "doctype": "DocType",
+ "module": "Lmpharma",
+ "custom": 0,
+ "is_submittable": 0,
+ "track_changes": 1,
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "status",
+  "col_break_1",
+  "tab_details",
+  "sec_details",
+  "project_name",
+  "email_host",
+  "email_creator",
+  "time_zone",
+  "passcode",
+  "waiting_room",
+  "description",
+  "zoom_meeting_id",
+  "is_active",
+  "invite_links",
+  "livestream_status",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags",
+  "end_date",
+  "close_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "OPEN\nPAUSE\nCLOSE",
+   "default": "OPEN",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "project_name",
+   "label": "Project Name",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email_host",
+   "label": "Email Host",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email_creator",
+   "label": "Email Creator",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "time_zone",
+   "label": "Time Zone",
+   "fieldtype": "Data",
+   "default": "UTC",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "passcode",
+   "label": "Passcode",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "waiting_room",
+   "label": "Waiting Room",
+   "fieldtype": "Check",
+   "default": "0",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "description",
+   "label": "Description",
+   "fieldtype": "Text Editor",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "zoom_meeting_id",
+   "label": "Zoom Meeting ID",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "is_active",
+   "label": "Is Active",
+   "fieldtype": "Check",
+   "default": "1",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "invite_links",
+   "label": "Invite Links (JSON)",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "livestream_status",
+   "label": "Livestream Status",
+   "fieldtype": "Select",
+   "options": "NOTSTARTED\nSTARTED\nENDED\nSTARTFAILED",
+   "default": "NOTSTARTED",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "end_date",
+   "label": "End Date",
+   "fieldtype": "Date",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "close_at",
+   "label": "Close At",
+   "fieldtype": "Datetime",
+   "in_list_view": 0
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ],
+ "naming_rule": "By fieldname",
+ "autoname": "field:project_name",
+ "states": [
+  {
+   "title": "OPEN",
+   "color": "Gray"
+  },
+  {
+   "title": "PAUSE",
+   "color": "Gray"
+  },
+  {
+   "title": "CLOSE",
+   "color": "Gray"
+  }
+ ],
+ "track_views": 1,
+ "allow_import": 1,
+ "quick_entry": 1,
+ "modified": "2026-04-10 00:00:00.000000",
+ "show_name_in_global_search": 1,
+ "title_field": "project_name"
+}

@@ -1,0 +1,242 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "autoincrement",
+ "creation": "2026-04-09 12:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "title",
+  "col_break_1",
+  "status",
+  "tab_details",
+  "sec_details",
+  "slug",
+  "summary",
+  "image",
+  "thumbnail",
+  "showin",
+  "categoryids",
+  "authorid",
+  "content",
+  "ispin",
+  "tab_marketing",
+  "sec_seo",
+  "meta_title",
+  "meta_description",
+  "meta_image",
+  "keywords",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags",
+  "publishedat",
+  "pintime"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "bold": 1,
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Status",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "slug",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Slug"
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Summary"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "in_list_view": 1,
+   "label": "Hc Image"
+  },
+  {
+   "fieldname": "thumbnail",
+   "fieldtype": "Attach Image",
+   "label": "Hc Thumbnail"
+  },
+  {
+   "fieldname": "showin",
+   "fieldtype": "Check",
+   "label": "Hc Show In"
+  },
+  {
+   "fieldname": "categoryids",
+   "fieldtype": "Data",
+   "label": "Hc Category Ids"
+  },
+  {
+   "fieldname": "authorid",
+   "fieldtype": "Data",
+   "label": "Hc Author Id"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Hc Content"
+  },
+  {
+   "fieldname": "ispin",
+   "fieldtype": "Check",
+   "label": "Hc Is Pin"
+  },
+  {
+   "fieldname": "tab_marketing",
+   "fieldtype": "Tab Break",
+   "label": "Marketing & SEO"
+  },
+  {
+   "fieldname": "sec_seo",
+   "fieldtype": "Section Break",
+   "label": "SEO Configuration"
+  },
+  {
+   "fieldname": "meta_title",
+   "fieldtype": "Data",
+   "label": "Meta Title (SEO)"
+  },
+  {
+   "fieldname": "meta_description",
+   "fieldtype": "Small Text",
+   "label": "Meta Description"
+  },
+  {
+   "fieldname": "meta_image",
+   "fieldtype": "Attach Image",
+   "label": "Meta Social Image"
+  },
+  {
+   "fieldname": "keywords",
+   "fieldtype": "Data",
+   "label": "SEO Keywords"
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch"
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags"
+  },
+  {
+   "fieldname": "publishedat",
+   "fieldtype": "Datetime",
+   "label": "Hc Published At"
+  },
+  {
+   "fieldname": "pintime",
+   "fieldtype": "Datetime",
+   "label": "Hc Pin Time"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-11 11:06:14.696898",
+ "modified_by": "Administrator",
+ "module": "booking",
+ "name": "Hc News",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "title,slug,summary",
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1,
+ "track_views": 1
+}

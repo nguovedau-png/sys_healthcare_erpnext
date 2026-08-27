@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-report-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SystemOverview {
+  id             Int      @id @default(autoincrement())
+  totalRevenue   Float
+  revenueTrend   String
+  totalOrders    Int
+  ordersTrend    String
+  totalUsers     Int
+  usersTrend     String
+  totalPartners  Int
+  partnersTrend  String
+  updatedAt      DateTime @updatedAt
+}
+
+model EducationKPI {
+  id                Int      @id @default(autoincrement())
+  totalEnrolled     Int
+  expectedEnrolled  Int
+  enrollmentRate    Float
+  started           Int
+  completed         Int
+  startedRate       Float
+  completedRate     Float
+  totalNotifications Int
+  usageFrequency    Float
+  avgCourseDuration String
+  updatedAt         DateTime @updatedAt
+}
+
+model LearningProgress {
+  id               Int      @id @default(autoincrement())
+  watched70Lesson  Int
+  watched70All     Int
+  totalLearners    Int
+  preTestTotal     Int
+  preTestPassed    Int
+  postTestTotal    Int
+  postTestPassed   Int
+  updatedAt        DateTime @updatedAt
+}
+
+model RevenueReport {
+  id            Int      @id @default(autoincrement())
+  month         String
+  revenue       Float
+  orders        Int
+  avgOrderValue Float
+  growth        Float
+  createdAt     DateTime @default(now())
+}
+
+model UserAnalytics {
+  id                  Int      @id @default(autoincrement())
+  totalUsers          Int
+  activeUsers         Int
+  activityRate        Float
+  multipleSessionUsers Int
+  updatedAt           DateTime @updatedAt
+}
+
+model ExportTicket {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  count       Int
+  icon        String
+  color       String
+  status      String   @default("pending") // pending, completed, failed
+  fileUrl     String?
+  createdAt   DateTime @default(now())
+}

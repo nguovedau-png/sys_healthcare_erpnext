@@ -1,0 +1,10 @@
+{
+    "common": {
+        "welcome": "Xin chào",
+        "dashboard": "Bảng điều khiển",
+        "users": "Người dùng",
+        "settings": "Cài đặt",
+        "logout": "Đăng xuất",
+        "profile": "Hồ sơ"
+    }
+}

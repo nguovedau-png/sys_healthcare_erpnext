@@ -1,0 +1,14 @@
+{
+    "name": "hd-template-root",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "setup:backend": "cd backend && npm install && npx prisma migrate dev && npm run seed",
+        "setup:web": "cd web-admin && npm install",
+        "setup:mobile": "cd mobile-app && npm install",
+        "setup:all": "npm run setup:backend && npm run setup:web && npm run setup:mobile",
+        "start:backend": "cd backend && npm run dev",
+        "start:web": "cd web-admin && npm run dev",
+        "start:mobile": "cd mobile-app && npx expo start"
+    }
+}

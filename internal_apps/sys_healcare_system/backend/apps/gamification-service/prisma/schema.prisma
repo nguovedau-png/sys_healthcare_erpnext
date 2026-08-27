@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-gamification-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Badge {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  icon        String
+  awarded     Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PointRule {
+  id        Int      @id @default(autoincrement())
+  action    String   @unique
+  points    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserPoint {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  userName  String
+  points    Int      @default(0)
+  badges    Int      @default(0)
+  level     String   @default("Bronze")
+  avatar    String?
+  updatedAt DateTime @updatedAt
+}
+
+model Challenge {
+  id            Int             @id @default(autoincrement())
+  title         String
+  description   String
+  type          String          // "running", "nutrition", "mental"
+  targetValue   Int             // e.g. 100000 (steps), 7 (days)
+  targetUnit    String          // "Bước", "Ngày Liên Tiếp", "Tháng"
+  rewardText    String          // "Voucher Khám Tim Mạch 500k"
+  rewardType    String          @default("voucher") // voucher, badge, coins
+  durationDays  Int             @default(30)
+  timeRemaining String?         // e.g. "14 ngày còn lại"
+  image         String?
+  color         String          @default("orange") // orange, yellow, purple, green
+  totalJoined   Int             @default(0)
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  userChallenges UserChallenge[]
+}
+
+model UserChallenge {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  userName    String
+  challengeId Int
+  challenge   Challenge @relation(fields: [challengeId], references: [id])
+  progress    Int       @default(0)
+  joined      Boolean   @default(true)
+  completed   Boolean   @default(false)
+  joinedAt    DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, challengeId])
+}

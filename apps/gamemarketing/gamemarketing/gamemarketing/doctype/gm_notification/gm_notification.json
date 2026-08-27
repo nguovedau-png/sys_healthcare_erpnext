@@ -1,0 +1,306 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "autoincrement",
+ "creation": "2026-04-10 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "title",
+  "type",
+  "col_break_1",
+  "status",
+  "category",
+  "tab_details",
+  "sec_details",
+  "priority",
+  "imageurl",
+  "soundname",
+  "badge",
+  "channelid",
+  "totaltargets",
+  "sentcount",
+  "failedcount",
+  "body",
+  "devicetokens",
+  "userids",
+  "data",
+  "deliveryresults",
+  "createdby",
+  "errormessage",
+  "isdeleted",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags",
+  "scheduledat",
+  "sentat"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "title",
+   "label": "Title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "bold": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "type",
+   "label": "Type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "options": "single\nmultiple\nbroadcast",
+   "bold": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "options": "pending\nsending\nsent\nfailed\npartial",
+   "bold": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "category",
+   "label": "Category",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "priority",
+   "label": "Priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "options": "low\nnormal\nhigh\nurgent"
+  },
+  {
+   "fieldname": "imageurl",
+   "label": "Image Url",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "soundname",
+   "label": "Sound Name",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "badge",
+   "label": "Badge",
+   "fieldtype": "Int",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "channelid",
+   "label": "Channel Id",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "totaltargets",
+   "label": "Total Targets",
+   "fieldtype": "Int",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "sentcount",
+   "label": "Sent Count",
+   "fieldtype": "Int",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "failedcount",
+   "label": "Failed Count",
+   "fieldtype": "Int",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "body",
+   "label": "Body",
+   "fieldtype": "Text Editor",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "devicetokens",
+   "label": "Device Tokens",
+   "fieldtype": "Text",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "userids",
+   "label": "User Ids",
+   "fieldtype": "Text",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "data",
+   "label": "Data",
+   "fieldtype": "Code",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "deliveryresults",
+   "label": "Delivery Results",
+   "fieldtype": "Code",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "createdby",
+   "label": "Created By",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "errormessage",
+   "label": "Error Message",
+   "fieldtype": "Small Text",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "isdeleted",
+   "label": "Is Deleted",
+   "fieldtype": "Check",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "scheduledat",
+   "label": "Scheduled At",
+   "fieldtype": "Datetime",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "sentat",
+   "label": "Sent At",
+   "fieldtype": "Datetime",
+   "in_list_view": 0
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Gamemarketing",
+ "name": "Gm Notification",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "title": "pending",
+   "color": "Orange"
+  },
+  {
+   "title": "sending",
+   "color": "Gray"
+  },
+  {
+   "title": "sent",
+   "color": "Green"
+  },
+  {
+   "title": "failed",
+   "color": "Gray"
+  },
+  {
+   "title": "partial",
+   "color": "Gray"
+  }
+ ],
+ "istable": 0,
+ "custom": 0,
+ "track_views": 1,
+ "title_field": "title",
+ "search_fields": "title,type",
+ "track_changes": 1,
+ "allow_import": 1,
+ "show_name_in_global_search": 1,
+ "quick_entry": 1
+}

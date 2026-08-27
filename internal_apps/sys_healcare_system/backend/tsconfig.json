@@ -1,0 +1,113 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@app/common": [
+        "libs/common/src"
+      ],
+      "@app/common/*": [
+        "libs/common/src/*"
+      ],
+      "@prisma/client-ai-service": [
+        "node_modules/.prisma/client-ai-service"
+      ],
+      "@prisma/client-analytic-service": [
+        "node_modules/.prisma/client-analytic-service"
+      ],
+      "@prisma/client-api-gateway": [
+        "node_modules/.prisma/client-api-gateway"
+      ],
+      "@prisma/client-erp-service": [
+        "node_modules/.prisma/client-erp-service"
+      ],
+      "@prisma/client-audit-log": [
+        "node_modules/.prisma/client-audit-log"
+      ],
+      "@prisma/client-auth-service": [
+        "node_modules/.prisma/client-auth-service"
+      ],
+      "@prisma/client-backgroundjob-service": [
+        "node_modules/.prisma/client-backgroundjob-service"
+      ],
+      "@prisma/client-booking-service": [
+        "node_modules/@prisma/client-booking-service"
+      ],
+      "@prisma/client-community-service": [
+        "node_modules/.prisma/client-community-service"
+      ],
+      "@prisma/client-content-service": [
+        "node_modules/@prisma/client-content-service"
+      ],
+      "@prisma/client-education-service": [
+        "node_modules/.prisma/client-education-service"
+      ],
+      "@prisma/client-engagement-service": [
+        "node_modules/.prisma/client-engagement-service"
+      ],
+      "@prisma/client-file-service": [
+        "node_modules/.prisma/client-file-service"
+      ],
+      "@prisma/client-finance-service": [
+        "node_modules/.prisma/client-finance-service"
+      ],
+      "@prisma/client-gamification-service": [
+        "node_modules/.prisma/client-gamification-service"
+      ],
+      "@prisma/client-jobs-service": [
+        "node_modules/.prisma/client-jobs-service"
+      ],
+      "@prisma/client-live-service": [
+        "node_modules/.prisma/client-live-service"
+      ],
+      "@prisma/client-marketing-service": [
+        "node_modules/.prisma/client-marketing-service"
+      ],
+      "@prisma/client-notification-service": [
+        "node_modules/.prisma/client-notification-service"
+      ],
+      "@prisma/client-partner-service": [
+        "node_modules/@prisma/client-partner-service"
+      ],
+      "@prisma/client-payment-service": [
+        "node_modules/.prisma/client-payment-service"
+      ],
+      "@prisma/client-report-service": [
+        "node_modules/.prisma/client-report-service"
+      ],
+      "@prisma/client-search-service": [
+        "node_modules/@prisma/client-search-service"
+      ],
+      "@prisma/client-seminar-service": [
+        "node_modules/.prisma/client-seminar-service"
+      ],
+      "@prisma/client-setting-service": [
+        "node_modules/.prisma/client-setting-service"
+      ],
+      "@prisma/client-support-service": [
+        "node_modules/.prisma/client-support-service"
+      ],
+      "@prisma/client-survey-service": [
+        "node_modules/.prisma/client-survey-service"
+      ],
+      "@prisma/client-user-service": [
+        "node_modules/.prisma/client-user-service"
+      ]
+    }
+  }
+}

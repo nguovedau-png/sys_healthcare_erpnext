@@ -1,0 +1,367 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoleType {
+  ADMIN
+  USER
+  EMPLOYEE
+}
+
+enum JobType {
+  EMAIL
+  FILE_PROCESSING
+  PUSH_NOTIFICATION
+  CRON
+  HEAVY_TASK
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String?
+  fullName        String?
+  avatar          String?
+  phoneNumber     String?
+  is2FAEnabled    Boolean   @default(false)
+  twoFactorSecret String?
+  isActive        Boolean   @default(true)
+  lastLoginAt     DateTime?
+  pushToken       String?       // Expo Push Token
+  refreshToken    String?   @db.Text
+  tempToken       String?   @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  roleId          String?
+  role            Role?     @relation(fields: [roleId], references: [id])
+  employee        Employee?
+  
+  auditLogs       AuditLog[]
+  messages        Message[]
+  createdChannels Channel[] @relation("CreatedChannels")
+  channelMembers  ChannelMember[]
+  readMessages    MessageRead[]
+  media           Media[]
+  socialAccounts  SocialAccount[]
+  oidcApps        OidcClientApp[] // OIDC Provider Apps created by user
+
+  @@map("users")
+}
+
+model SocialAccount {
+  id          String   @id @default(uuid())
+  userId      String
+  provider    String   // 'google', 'facebook', 'tiktok', etc.
+  providerId  String
+  email       String?
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@map("social_accounts")
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  isSystem    Boolean      @default(false) // Admin role cannot be deleted
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  users       User[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  resource    String   // e.g., 'user', 'role', 'job'
+  action      String   // e.g., 'create', 'read', 'update', 'delete', 'manage'
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  roles       RolePermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  assignedAt   DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  action    String
+  resource  String
+  ipAddress String?
+  userAgent String?
+  method    String?  // HTTP method
+  path      String?  // Request path
+  before    Json?    // Data before change
+  after     Json?    // Data after change
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model Language {
+  id        String   @id @default(uuid())
+  code      String   @unique // e.g., 'vi', 'en'
+  name      String
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("languages")
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  type      String   // 'string', 'number', 'boolean', 'json'
+  description String?
+  isPublic  Boolean  @default(false) // Can be accessed without auth
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model Job {
+  id          String    @id @default(uuid())
+  name        String
+  type        JobType
+  data        Json?
+  status      JobStatus @default(PENDING)
+  result      Json?
+  error       String?
+  processedAt DateTime?
+  finishedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("jobs")
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  employees   Employee[]
+
+  @@map("departments")
+}
+
+model Employee {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  departmentId String?
+  position     String?
+  hireDate     DateTime?
+  salary       Decimal?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  @@map("employees")
+}
+
+// Chat System
+
+model Channel {
+  id        String   @id @default(uuid())
+  name      String?  // Nullable for 1-1 chats
+  isGroup   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  creatorId String?
+  creator   User?    @relation("CreatedChannels", fields: [creatorId], references: [id])
+
+  members   ChannelMember[]
+  messages  Message[]
+
+  @@map("channels")
+}
+
+model ChannelMember {
+  channelId String
+  userId    String
+  joinedAt  DateTime @default(now())
+  isAdmin   Boolean  @default(false)
+
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  // User relation is implicit or we can define it if needed for back-relation from User, 
+  // currently we didn't add the back-relation in User model for members. 
+  // Let's keep it simple for now, but User usually has many ChannelMembers.
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([channelId, userId])
+  @@map("channel_members")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  channelId String
+  senderId  String
+  content   String
+  type      String   @default("text") // text, image, file
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  sender    User    @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  
+  readBy    MessageRead[]
+
+  @@map("messages")
+}
+
+model MessageRead {
+  messageId String
+  userId    String
+  readAt    DateTime @default(now())
+
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId])
+  @@map("message_reads")
+}
+
+model Media {
+  id         String   @id @default(uuid())
+  filename   String
+  url        String   // Relative path or full URL
+  type       String   // image, video, file
+  mimeType   String
+  size       Int
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  uploader   User?    @relation(fields: [uploadedBy], references: [id])
+
+  @@map("media")
+}
+
+model Webhook {
+  id        String   @id @default(uuid())
+  url       String
+  secret    String
+  events    String[] // Array of event names, e.g. ['user.created', 'job.failed']
+  isActive  Boolean  @default(true)
+  headers   Json?    // Optional custom headers
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  logs      WebhookLog[]
+
+  @@map("webhooks")
+}
+
+// OIDC Provider
+model OidcClientApp {
+  id                    String   @id @default(uuid())
+  clientId              String   @unique
+  clientSecret          String
+  clientName            String
+  clientUri             String?
+  logoUri               String?
+  redirectUris          String[] // PostgreSQL array
+  postLogoutRedirectUris String[]
+  responseTypes         String[]
+  grantTypes            String[]
+  scope                 String   @default("openid profile email")
+  
+  user                  User?    @relation(fields: [userId], references: [id])
+  userId                String?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model OidcStorage {
+  id         String    @id
+  type       String    // Session, AccessToken, RefreshToken, etc.
+  payload    Json
+  grantId    String?
+  userCode   String?
+  uid        String?   @unique
+  expiresAt  DateTime?
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([type])
+  @@index([grantId])
+  @@index([userCode])
+}
+
+model WebhookLog {
+  id           String   @id @default(uuid())
+  webhookId    String
+  event        String
+  payload      Json
+  responseStatus Int?
+  responseBody String?
+  success      Boolean
+  createdAt    DateTime @default(now())
+
+  webhook      Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_logs")
+}
+
+model Demo {
+  id           String   @id @default(uuid())
+  webhookId    String
+  event        String
+  payload      Json
+  responseStatus Int?
+  responseBody String?
+  success      Boolean
+  createdAt    DateTime @default(now())
+
+}

@@ -1,0 +1,38 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-04-08 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "question_option"
+ ],
+ "fields": [
+  {
+   "fieldname": "question_option",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Question Option",
+   "options": "Survey Question Option",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "Survey Answer Option",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 0,
+ "allow_import": 0,
+ "quick_entry": 0,
+ "show_name_in_global_search": 0,
+ "title_field": "question_option"
+}

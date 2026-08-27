@@ -1,0 +1,38 @@
+name: CI - Test & Lint
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        working-directory: ./backend
+        run: npm ci
+      - name: Run Tests
+        working-directory: ./backend
+        run: npm test
+
+  test-web-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        working-directory: ./web-admin
+        run: npm ci
+      - name: Build Check
+        working-directory: ./web-admin
+        run: npm run build

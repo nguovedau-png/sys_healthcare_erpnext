@@ -1,0 +1,23 @@
+[project]
+name = "doppio"
+authors = [
+    { name = "Hussain Nagaria", email = "hussainbhaitech@gmail.com" }
+]
+description = "A dream."
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    # "frappe~=15.0.0" # Installed and managed by bench.
+    "Click~=8.2.0",
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.dev-dependencies]
+# package_name = "~=1.1.0"
+
+[tool.bench.frappe-dependencies]
+# frappe = ">=15.0.0-dev,<18.0.0"

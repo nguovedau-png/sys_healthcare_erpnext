@@ -1,0 +1,13 @@
+frappe
+payments
+booking
+lms
+hrms
+erpnext
+webshop
+doppio
+lives
+lmpharma
+scope_app
+expense_tracker
+gamemarketing

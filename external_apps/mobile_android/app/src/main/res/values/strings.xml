@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">mobile_android</string>
+    
+    <!-- Login Screen -->
+    <string name="welcome_back">Welcome Back</string>
+    <string name="sign_in_subtitle">Sign in to your account</string>
+    <string name="email_label">Email Address</string>
+    <string name="email_icon_desc">Email Icon</string>
+    <string name="password_label">Password</string>
+    <string name="lock_icon_desc">Lock Icon</string>
+    <string name="sign_in_button">Sign In</string>
+    <string name="forgot_password">Forgot Password?</string>
+    
+    <!-- Chat Screen -->
+    <string name="type_message_placeholder">Type a message</string>
+    <string name="send_button_desc">Send</string>
+</resources>

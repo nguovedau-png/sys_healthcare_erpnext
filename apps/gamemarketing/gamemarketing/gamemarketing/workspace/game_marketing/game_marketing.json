@@ -1,0 +1,504 @@
+{
+ "charts": [],
+ "content": "[{\"type\": \"header\", \"data\": {\"text\": \"Game Marketing\", \"level\": 1}}, {\"type\": \"shortcut\", \"data\": {\"shortcuts\": [{\"shortcut_name\": \"Gm Game\", \"label\": \"Gm Game\"}, {\"shortcut_name\": \"Gm Asset\", \"label\": \"Gm Asset\"}, {\"shortcut_name\": \"Gm Booking\", \"label\": \"Gm Booking\"}, {\"shortcut_name\": \"Gm Business\", \"label\": \"Gm Business\"}, {\"shortcut_name\": \"Gm Campaign\", \"label\": \"Gm Campaign\"}, {\"shortcut_name\": \"Gm Category\", \"label\": \"Gm Category\"}, {\"shortcut_name\": \"Gm Code\", \"label\": \"Gm Code\"}, {\"shortcut_name\": \"Gm Config\", \"label\": \"Gm Config\"}, {\"shortcut_name\": \"Gm Currency\", \"label\": \"Gm Currency\"}, {\"shortcut_name\": \"Gm Custom Message\", \"label\": \"Gm Custom Message\"}, {\"shortcut_name\": \"Gm Design\", \"label\": \"Gm Design\"}, {\"shortcut_name\": \"Gm Device\", \"label\": \"Gm Device\"}, {\"shortcut_name\": \"Gm Environment Configuration\", \"label\": \"Gm Environment Configuration\"}, {\"shortcut_name\": \"Gm Language\", \"label\": \"Gm Language\"}, {\"shortcut_name\": \"Gm Library\", \"label\": \"Gm Library\"}, {\"shortcut_name\": \"Gm Message Template\", \"label\": \"Gm Message Template\"}, {\"shortcut_name\": \"Gm Notification\", \"label\": \"Gm Notification\"}, {\"shortcut_name\": \"Gm Package\", \"label\": \"Gm Package\"}, {\"shortcut_name\": \"Gm Page Content\", \"label\": \"Gm Page Content\"}, {\"shortcut_name\": \"Gm Permission\", \"label\": \"Gm Permission\"}, {\"shortcut_name\": \"Gm Product\", \"label\": \"Gm Product\"}, {\"shortcut_name\": \"Gm Report\", \"label\": \"Gm Report\"}, {\"shortcut_name\": \"Gm Reward\", \"label\": \"Gm Reward\"}, {\"shortcut_name\": \"Gm Role\", \"label\": \"Gm Role\"}, {\"shortcut_name\": \"Gm Setting\", \"label\": \"Gm Setting\"}, {\"shortcut_name\": \"Gm Sms Fee\", \"label\": \"Gm Sms Fee\"}, {\"shortcut_name\": \"Gm Theme Template\", \"label\": \"Gm Theme Template\"}, {\"shortcut_name\": \"Gm Tutorial\", \"label\": \"Gm Tutorial\"}, {\"shortcut_name\": \"Gm Winner\", \"label\": \"Gm Winner\"}]}}, {\"type\": \"header\", \"data\": {\"text\": \"All Modules\", \"level\": 4}}, {\"type\": \"card\", \"data\": {\"card_name\": \"All Marketing Modules\"}}]",
+ "creation": "2026-04-10 00:00:00",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "unhide",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Game Marketing",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "All Marketing Modules",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Game",
+   "link_count": 0,
+   "link_to": "Gm Game",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Asset",
+   "link_count": 0,
+   "link_to": "Gm Asset",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Booking",
+   "link_count": 0,
+   "link_to": "Gm Booking",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Business",
+   "link_count": 0,
+   "link_to": "Gm Business",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Campaign",
+   "link_count": 0,
+   "link_to": "Gm Campaign",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Category",
+   "link_count": 0,
+   "link_to": "Gm Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Code",
+   "link_count": 0,
+   "link_to": "Gm Code",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Config",
+   "link_count": 0,
+   "link_to": "Gm Config",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Currency",
+   "link_count": 0,
+   "link_to": "Gm Currency",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Custom Message",
+   "link_count": 0,
+   "link_to": "Gm Custom Message",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Design",
+   "link_count": 0,
+   "link_to": "Gm Design",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Device",
+   "link_count": 0,
+   "link_to": "Gm Device",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Environment Configuration",
+   "link_count": 0,
+   "link_to": "Gm Environment Configuration",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Language",
+   "link_count": 0,
+   "link_to": "Gm Language",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Library",
+   "link_count": 0,
+   "link_to": "Gm Library",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Message Template",
+   "link_count": 0,
+   "link_to": "Gm Message Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Notification",
+   "link_count": 0,
+   "link_to": "Gm Notification",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Package",
+   "link_count": 0,
+   "link_to": "Gm Package",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Page Content",
+   "link_count": 0,
+   "link_to": "Gm Page Content",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Permission",
+   "link_count": 0,
+   "link_to": "Gm Permission",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Product",
+   "link_count": 0,
+   "link_to": "Gm Product",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Report",
+   "link_count": 0,
+   "link_to": "Gm Report",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Reward",
+   "link_count": 0,
+   "link_to": "Gm Reward",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Role",
+   "link_count": 0,
+   "link_to": "Gm Role",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Setting",
+   "link_count": 0,
+   "link_to": "Gm Setting",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Sms Fee",
+   "link_count": 0,
+   "link_to": "Gm Sms Fee",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Theme Template",
+   "link_count": 0,
+   "link_to": "Gm Theme Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Tutorial",
+   "link_count": 0,
+   "link_to": "Gm Tutorial",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Gm Winner",
+   "link_count": 0,
+   "link_to": "Gm Winner",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-11 12:13:21.863056",
+ "modified_by": "Administrator",
+ "module": "Gamemarketing",
+ "name": "Game Marketing",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 3.0,
+ "shortcuts": [
+  {
+   "doc_view": "",
+   "label": "Gm Game",
+   "link_to": "Gm Game",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Asset",
+   "link_to": "Gm Asset",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Booking",
+   "link_to": "Gm Booking",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Business",
+   "link_to": "Gm Business",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Campaign",
+   "link_to": "Gm Campaign",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Category",
+   "link_to": "Gm Category",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Code",
+   "link_to": "Gm Code",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Config",
+   "link_to": "Gm Config",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Currency",
+   "link_to": "Gm Currency",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Custom Message",
+   "link_to": "Gm Custom Message",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Design",
+   "link_to": "Gm Design",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Device",
+   "link_to": "Gm Device",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Environment Configuration",
+   "link_to": "Gm Environment Configuration",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Language",
+   "link_to": "Gm Language",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Library",
+   "link_to": "Gm Library",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Message Template",
+   "link_to": "Gm Message Template",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Notification",
+   "link_to": "Gm Notification",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Package",
+   "link_to": "Gm Package",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Page Content",
+   "link_to": "Gm Page Content",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Permission",
+   "link_to": "Gm Permission",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Product",
+   "link_to": "Gm Product",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Report",
+   "link_to": "Gm Report",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Reward",
+   "link_to": "Gm Reward",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Role",
+   "link_to": "Gm Role",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Setting",
+   "link_to": "Gm Setting",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Sms Fee",
+   "link_to": "Gm Sms Fee",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Theme Template",
+   "link_to": "Gm Theme Template",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Tutorial",
+   "link_to": "Gm Tutorial",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Gm Winner",
+   "link_to": "Gm Winner",
+   "type": "DocType"
+  }
+ ],
+ "title": "Game Marketing"
+}

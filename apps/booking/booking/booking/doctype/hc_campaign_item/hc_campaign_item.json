@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "autoname": "autoincrement",
+ "creation": "2026-04-09 12:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "_id",
+  "discountgroupname",
+  "image",
+  "discounttype",
+  "discountpercent",
+  "discountvalue",
+  "serviceids"
+ ],
+ "fields": [
+  {
+   "fieldname": "_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc _Id"
+  },
+  {
+   "fieldname": "discountgroupname",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Hc Discount Group Name"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "in_list_view": 1,
+   "label": "Hc Image"
+  },
+  {
+   "fieldname": "discounttype",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Hc Discount Type"
+  },
+  {
+   "fieldname": "discountpercent",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Hc Discount Percent"
+  },
+  {
+   "fieldname": "discountvalue",
+   "fieldtype": "Currency",
+   "label": "Hc Discount Value"
+  },
+  {
+   "fieldname": "serviceids",
+   "fieldtype": "Data",
+   "label": "Hc Service Ids"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-11 11:06:19.397042",
+ "modified_by": "Administrator",
+ "module": "booking",
+ "name": "Hc Campaign Item",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "_id,image,serviceids",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "_id",
+ "track_changes": 1
+}

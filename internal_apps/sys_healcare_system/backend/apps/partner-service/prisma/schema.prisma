@@ -1,0 +1,604 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-partner-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Doctor {
+  id                Int      @id @default(autoincrement())
+  name              String
+  specialty         String
+  hospital          String?
+  phone             String
+  email             String?
+  description       String?
+  rating            Float?
+  ratingCount       Int      @default(0)
+  isVerified        Boolean  @default(false)
+  status            String   @default("pending")
+  rejectionReason   String?
+  thumbnail         String?
+  degree            String?
+  expYears          Int      @default(0)
+  associationAward  String?
+  services          Json?
+  worktime          Json?
+  gallery           String[]
+  intro             String?
+  ratingData        Json?
+  qaData            Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  address           String?
+  articlesData      Json?
+
+  // Enhanced fields
+  dob               DateTime?
+  gender            String?
+  nationalId        String?
+  licenseNumber     String?
+  licenseImage      String?
+  certificateImage  String?
+  price             Float?
+  consultationFee   Float?
+  isOnlineConsultation Boolean @default(false)
+  languages         String[]
+  education         Json?
+  experience        Json?
+  socialLinks       Json?
+  bankInfo          Json?
+  insuranceAccepted String[]
+  tags              String[]
+  hospitalId        Int?
+  clinicId          Int?
+  hospitalRel       Hospital?   @relation("DoctorHospital", fields: [hospitalId], references: [id])
+  clinicRel         Clinic?     @relation("DoctorClinic", fields: [clinicId], references: [id])
+
+  @@index([name])
+  @@index([status])
+  @@index([specialty])
+  @@index([licenseNumber])
+  @@index([nationalId])
+}
+
+model Clinic {
+  id                Int      @id @default(autoincrement())
+  name              String
+  address           String
+  phone             String
+  email             String?
+  description       String?
+  specialties       String[]
+  rating            Float?
+  ratingCount       Int      @default(0)
+  isVerified        Boolean  @default(false)
+  status            String   @default("pending")
+  rejectionReason   String?
+  thumbnail         String?
+  degree            String?
+  associationAward  String?
+  services          Json?
+  worktime          Json?
+  gallery           String[]
+  intro             String?
+  ratingData        Json?
+  qaData            Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  articlesData      Json?
+
+  // Enhanced fields
+  licenseNumber     String?
+  licenseImage      String?
+  taxCode           String?
+  emergencyContact  String?
+  facilities        Json?
+  insuranceAccepted String[]
+  acceptedPaymentMethods String[]
+  socialLinks       Json?
+  bankInfo          Json?
+  logo              String?
+  coverImage        String?
+  is24h             Boolean  @default(false)
+  provinceCode      String?
+  districtCode      String?
+  wardCode          String?
+  streetName        String?
+  latitude          Float?
+  longitude         Float?
+
+  doctors           Doctor[] @relation("DoctorClinic")
+
+  @@index([name])
+  @@index([status])
+  @@index([licenseNumber])
+}
+
+model Hospital {
+  id                Int      @id @default(autoincrement())
+  name              String
+  address           String
+  phone             String
+  website           String?
+  description       String?
+  departments       String[]
+  beds              Int?
+  rating            Float?
+  ratingCount       Int      @default(0)
+  isVerified        Boolean  @default(false)
+  status            String   @default("pending")
+  rejectionReason   String?
+  thumbnail         String?
+  degree            String?
+  associationAward  String?
+  services          Json?
+  worktime          Json?
+  gallery           String[]
+  indoorMap         String[]
+  intro             String?
+  ratingData        Json?
+  qaData            Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  articlesData      Json?
+
+  // Enhanced fields
+  hospitalCode      String?
+  hospitalLevel     String?  // Trung uong, tinh, huyen, xa
+  hospitalType      String?  // Cong lap, tu nhan, chuyen khoa
+  licenseNumber     String?
+  taxCode           String?
+  emergencyPhone    String?
+  totalDoctors      Int      @default(0)
+  totalNurses       Int      @default(0)
+  totalStaff        Int      @default(0)
+  acceptedInsurance String[]
+  equipment         Json?
+  awards            Json?
+  accreditation     Json?
+  socialLinks       Json?
+  bankInfo          Json?
+  logo              String?
+  coverImage        String?
+  yearEstablished   Int?
+  provinceCode      String?
+  districtCode      String?
+  wardCode          String?
+  streetName        String?
+  latitude          Float?
+  longitude         Float?
+
+  doctors           Doctor[] @relation("DoctorHospital")
+
+  @@index([name])
+  @@index([status])
+  @@index([hospitalCode])
+  @@index([hospitalLevel])
+}
+
+model Pharmacy {
+  id                Int      @id @default(autoincrement())
+  name              String
+  address           String
+  phone             String
+  email             String?
+  website           String?
+  description       String?
+  rating            Float?   @default(0)
+  reviewCount       Int      @default(0)
+  isVerified        Boolean  @default(false)
+  status            String   @default("pending")
+  rejectionReason   String?
+  thumbnail         String?
+  outletOwner       String?
+  gppNumber         String?
+  gppImage          String?
+  pointsCMEOnline   Int      @default(0)
+  memberRank        String   @default("bronze")
+  provinceCode      String?
+  districtCode      String?
+  wardCode          String?
+  streetName        String?
+  os                String?
+  token             String?
+  scName            String?
+  dynamicLink       String?
+  bannerLandingPage String?
+  degree            String?
+  services          Json?
+  worktime          Json?
+  gallery           String[]
+  indoorMap         String[]
+  intro             String?
+  ratingData        Json?
+  qaData            Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  articlesData      Json?
+
+  // Enhanced fields
+  licenseNumber     String?
+  licenseImage      String?
+  taxCode           String?
+  pharmacyType      String?  // Nha thuoc, Quay thuoc
+  is24h             Boolean  @default(false)
+  deliveryAvailable Boolean  @default(false)
+  deliveryRadius    Float?
+  insuranceAccepted String[]
+  acceptedPaymentMethods String[]
+  socialLinks       Json?
+  bankInfo          Json?
+  logo              String?
+  coverImage        String?
+  businessHours     Json?
+  hasPharmacistOnDuty Boolean @default(false)
+  isChainStore      Boolean  @default(false)
+  chainName         String?
+  latitude          Float?
+  longitude         Float?
+  pharmacists       Pharmacist[] @relation("PharmacyPharmacist")
+
+  @@index([name])
+  @@index([status])
+  @@index([licenseNumber])
+  @@index([pharmacyType])
+}
+
+model Patient {
+  id                Int      @id @default(autoincrement())
+  patientId         String   @unique @default(uuid())
+  name              String
+  age               Int?
+  gender            String?
+  phone             String
+  email             String?
+  diagnosis         String?
+  visits            Int      @default(0)
+  lastVisit         String?
+  status            String   @default("active")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Enhanced fields
+  fullName          String?
+  dob               DateTime?
+  nationalId        String?
+  address           String?
+  provinceCode      String?
+  districtCode      String?
+  wardCode          String?
+  streetName        String?
+  bloodType         String?
+  allergies         String[]
+  medicalHistory    Json?
+  emergencyContact  Json?
+  insuranceInfo     Json?
+  avatar            String?
+  occupation        String?
+  height            Float?
+  weight            Float?
+  lastMenstruation  DateTime?
+  isPregnant        Boolean  @default(false)
+  chronicDiseases   String[]
+  currentMedications String[]
+  smoking           Boolean?
+  alcohol           Boolean?
+  exerciseFrequency String?
+  familyHistory     Json?
+  surgicalHistory   Json?
+  vaccinationHistory Json?
+  preferredLanguage String?
+
+  @@index([name])
+  @@index([status])
+  @@index([phone])
+  @@index([nationalId])
+}
+
+model Pharmacist {
+  id                Int      @id @default(autoincrement())
+  fullName          String
+  phoneNumber       String
+  address           String
+  specialistly      String?
+  career            String?
+  provinceCode      String?
+  districtCode      String?
+  wardCode          String?
+  streetName        String?
+  os                String?
+  token             String?
+  scName            String?
+  pointsCMEOnline   Int      @default(0)
+  memberRank        String   @default("bronze")
+  dynamicLink       String?
+  bannerLandingPage String?
+  isVerified        Boolean  @default(false)
+  status            String   @default("pending")
+  rejectionReason   String?
+  rating            Float?   @default(0)
+  reviewCount       Int      @default(0)
+  degree            String?
+  services          Json?
+  workplace         Json?
+  gallery           String[]
+  intro             String?
+  ratingData        Json?
+  qaData            Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  articlesData      Json?
+
+  // Enhanced fields
+  dob               DateTime?
+  gender            String?
+  nationalId        String?
+  licenseNumber     String?
+  licenseImage      String?
+  pharmacyId        Int?
+  workplaceName     String?
+  education         Json?
+  experience        Json?
+  languages         String[]
+  consultationFee   Float?
+  isOnlineConsultation Boolean @default(false)
+  socialLinks       Json?
+  bankInfo          Json?
+  certifications    Json?
+  pharmacyRel       Pharmacy? @relation("PharmacyPharmacist", fields: [pharmacyId], references: [id])
+
+  @@index([fullName])
+  @@index([status])
+  @@index([licenseNumber])
+  @@index([nationalId])
+}
+
+model Disease {
+  id           Int      @id @default(autoincrement())
+  name         String
+  otherName    String?
+  description  String?
+  symptoms     String?
+  causes       String?
+  treatment    String?
+  prevention   String?
+  severity     String?
+  category     String?
+  affectedAge  String?
+  isContagious Boolean  @default(false)
+  duration     String?
+  thumbnail    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name])
+  @@index([category])
+}
+
+model Medicine {
+  id                Int      @id @default(autoincrement())
+  name              String
+  otherName         String?
+  genericName       String?
+  manufacturer      String?
+  composition       String?
+  dosage            String?
+  indications       String[]
+  contraindications String?
+  sideEffects       String?
+  interactions      String?
+  price             Float?
+  image             String?
+  category          String?
+  form              String?
+  unit              String?
+  isPrescription    Boolean  @default(false)
+  activeIngredients String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([name])
+  @@index([category])
+}
+
+model Staff {
+  id         Int      @id @default(autoincrement())
+  staffId    String   @unique @default(uuid())
+  name       String
+  role       String
+  department String
+  status     String   @default("active")
+  phone      String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Department {
+  id         Int      @id @default(autoincrement())
+  name       String
+  head       String
+  staffCount Int      @default(0)
+  bedCount   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([name])
+}
+
+model ServiceItem {
+  id        Int      @id @default(autoincrement())
+  serviceId String   @unique @default(uuid())
+  name      String
+  category  String
+  price     Float
+  insurance Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Province {
+  code       String   @id
+  name       String
+  nameEn     String?
+  fullName   String?
+  fullNameEn String?
+  latitude   Float?
+  longitude  Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  wards      Ward[]
+
+  @@index([code])
+  @@index([name])
+}
+
+model Ward {
+  code         String   @id
+  name         String
+  nameEn       String?
+  fullName     String?
+  fullNameEn   String?
+  latitude     Float?
+  longitude    Float?
+  provinceCode String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  province     Province @relation(fields: [provinceCode], references: [code])
+
+  @@index([code])
+  @@index([provinceCode])
+}
+
+model Specialty {
+  id          Int      @id @default(autoincrement())
+  name        String
+  code        String   @unique
+  description String?
+  type        String?  @default("general")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@index([code])
+}
+
+model AcademicDegree {
+  id           Int      @id @default(autoincrement())
+  name         String
+  abbreviation String?
+  type         String   @default("degree")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name])
+}
+
+// NEW MODELS
+
+model PharmaceuticalCompany {
+  id                Int      @id @default(autoincrement())
+  name              String
+  companyCode       String   @unique
+  taxCode           String?
+  address           String
+  phone             String
+  email             String?
+  website           String?
+  companyType       String?  // San xuat, Phan phoi, Nhap khau, Xuat khau
+  licenseNumber     String?
+  licenseImage      String?
+  representativeName   String?
+  representativePhone  String?
+  representativeEmail  String?
+  isVerified        Boolean  @default(false)
+  status            String   @default("pending")
+  rejectionReason   String?
+  rating            Float?   @default(0)
+  reviewCount       Int      @default(0)
+  logo              String?
+  coverImage        String?
+  description       String?
+  products          String[]
+  certifications    Json?
+  bankInfo          Json?
+  socialLinks       Json?
+  yearEstablished   Int?
+  country           String   @default("Vietnam")
+  provinceCode      String?
+  districtCode      String?
+  wardCode          String?
+  streetName        String?
+  latitude          Float?
+  longitude         Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([name])
+  @@index([status])
+  @@index([companyCode])
+  @@index([companyType])
+  @@index([country])
+}
+
+model InternationalPharmaGroup {
+  id                Int      @id @default(autoincrement())
+  name              String
+  groupCode         String   @unique
+  headquarters      String   // Tru so chinh
+  country           String
+  region            String?  // Khu vuc: chau A, chau Au, chau My,...
+  representativeOffice String? // Van phong dai dien tai Vietnam
+  localPartner      String?  // Doi tac trong nuoc
+  licenseNumber     String?
+  licenseImage      String?
+  isVerified        Boolean  @default(false)
+  status            String   @default("pending")
+  rejectionReason   String?
+  rating            Float?   @default(0)
+  reviewCount       Int      @default(0)
+  logo              String?
+  coverImage        String?
+  description       String?
+  productCategories String[]
+  certifications    Json?
+  bankInfo          Json?
+  socialLinks       Json?
+  yearEstablished   Int?
+  vatNumber         String?
+  importLicenseNumber String?
+  website           String?
+  email             String?
+  phone             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([name])
+  @@index([status])
+  @@index([groupCode])
+  @@index([country])
+  @@index([region])
+}
+
+model Region {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  name        String
+  nameEn      String?
+  type        String?  // Mien Bac, Mien Trung, Mien Nam, Quoc te
+  description String?
+  provinces   String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+  @@index([code])
+  @@index([type])
+}

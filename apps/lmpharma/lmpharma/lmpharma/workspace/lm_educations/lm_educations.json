@@ -1,0 +1,119 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"96ff74b816\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\">Educations</span>\", \"col\": 12}}, {\"id\": \"5b01eb7b42\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Course\", \"type\": \"DocType\", \"link_to\": \"Course\", \"col\": 3}}, {\"id\": \"ac20637a84\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Lecturer\", \"type\": \"DocType\", \"link_to\": \"Lecturer\", \"col\": 3}}, {\"id\": \"e9fe4fca60\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Lesson\", \"type\": \"DocType\", \"link_to\": \"Lesson\", \"col\": 3}}, {\"id\": \"a3ab3cb3ba\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Quiz\", \"type\": \"DocType\", \"link_to\": \"Quiz\", \"col\": 3}}, {\"id\": \"aa39507568\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Question\", \"type\": \"DocType\", \"link_to\": \"Question\", \"col\": 3}}, {\"id\": \"aff2187ab5\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"CPE Master Data\", \"type\": \"DocType\", \"link_to\": \"CPE Master Data\", \"col\": 3}}, {\"id\": \"662d63777b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"CPE Dashboard Day\", \"type\": \"DocType\", \"link_to\": \"CPE Dashboard Day\", \"col\": 3}}, {\"id\": \"b519f96f57\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"CPE Dashboard Week\", \"type\": \"DocType\", \"link_to\": \"CPE Dashboard Week\", \"col\": 3}}, {\"id\": \"484a974f7d\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"CPE Dashboard Month\", \"type\": \"DocType\", \"link_to\": \"CPE Dashboard Month\", \"col\": 3}}]",
+ "creation": "2026-04-09 23:03:27.096118",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "education",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "LM Educations",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Course",
+   "link_count": 0,
+   "link_to": "Edu Course",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Lecturer",
+   "link_count": 0,
+   "link_to": "Edu Lecturer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Lesson",
+   "link_count": 0,
+   "link_to": "Edu Lesson",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quiz",
+   "link_count": 0,
+   "link_to": "Edu Quiz",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Question",
+   "link_count": 0,
+   "link_to": "Edu Question",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CPE Master Data",
+   "link_count": 0,
+   "link_to": "Edu CPE Master Data",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CPE Dashboard Day",
+   "link_count": 0,
+   "link_to": "Edu CPE Dashboard Day",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CPE Dashboard Week",
+   "link_count": 0,
+   "link_to": "Edu CPE Dashboard Week",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "CPE Dashboard Month",
+   "link_count": 0,
+   "link_to": "Edu CPE Dashboard Month",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-09 23:03:27.110652",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "LM Educations",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 6.0,
+ "shortcuts": [],
+ "title": "Educations"
+}

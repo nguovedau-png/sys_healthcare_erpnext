@@ -1,0 +1,30 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install PM2 globally
+RUN npm install -g pm2
+
+# Copy package files
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install dependencies including devDeps for building
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Generate Prisma Client
+RUN npx prisma generate
+
+# Build TypeScript
+RUN npm run build
+
+# Re-install only production dependencies (optional, but good for size)
+# RUN npm prune --production # Commented out to ensure devDeps typically needed for some runtime tasks if any remain available, but standard is prune.
+
+EXPOSE 3000 3001 3002
+
+# Start PM2
+CMD ["pm2-runtime", "start", "ecosystem.config.cjs"]

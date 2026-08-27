@@ -1,0 +1,89 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"1f8052dbe9\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\">Forums</span>\", \"col\": 12}}, {\"id\": \"329ded3f73\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Forum Topic\", \"type\": \"DocType\", \"link_to\": \"Forum Topic\", \"col\": 3}}, {\"id\": \"a218325ed7\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Forum Reply\", \"type\": \"DocType\", \"link_to\": \"Forum Reply\", \"col\": 3}}, {\"id\": \"3e6f3b0b5b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Support Group\", \"type\": \"DocType\", \"link_to\": \"Support Group\", \"col\": 3}}, {\"id\": \"b4eb0c541d\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"QA Question\", \"type\": \"DocType\", \"link_to\": \"QA Question\", \"col\": 3}}, {\"id\": \"920395ab24\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"QA Answer\", \"type\": \"DocType\", \"link_to\": \"QA Answer\", \"col\": 3}}, {\"id\": \"22dc1fac05\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Moderation Report\", \"type\": \"DocType\", \"link_to\": \"Moderation Report\", \"col\": 3}}]",
+ "creation": "2026-04-09 23:03:27.111044",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "message",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "LM Forums",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Forum Topic",
+   "link_count": 0,
+   "link_to": "Forum Topic",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Forum Reply",
+   "link_count": 0,
+   "link_to": "Forum Reply",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Support Group",
+   "link_count": 0,
+   "link_to": "Support Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "QA Question",
+   "link_count": 0,
+   "link_to": "QA Question",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "QA Answer",
+   "link_count": 0,
+   "link_to": "QA Answer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Moderation Report",
+   "link_count": 0,
+   "link_to": "Moderation Report",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-09 23:03:27.111057",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "LM Forums",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 6.0,
+ "shortcuts": [],
+ "title": "Forums"
+}

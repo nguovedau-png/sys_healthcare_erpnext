@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #1677ff;
+  --color-primary-light: #69b1ff;
+  --color-primary-dark: #0958d9;
+  --color-secondary: #52c41a;
+  --color-secondary-light: #95de64;
+  --color-secondary-dark: #389e0d;
+  --color-accent: #ff4d4f;
+  
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #f0f0f0;
+  --color-gray-300: #d9d9d9;
+  --color-gray-400: #8c8c8c;
+  --color-gray-500: #595959;
+  --color-gray-600: #434343;
+  --color-gray-700: #262626;
+  --color-gray-800: #1f1f1f;
+  --color-gray-900: #141414;
+  
+  --font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-heading: var(--font-geist-mono), Georgia, 'Times New Roman', serif;
+  
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  
+  /* EHR Specific */
+  --ehr-header-bg: #e6f7ff;
+  --ehr-header-border: #91d5ff;
+  --ehr-header-text: #003a8c;
+  --ehr-sidebar-bg: #001529;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    font-family: var(--font-family);
+    background: #f0f2f5;
+    color: #1f1f1f;
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family);
+    color: #1f1f1f;
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  .ant-layout {
+    background: #f0f2f5;
+  }
+  
+  .ehr-card {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+  }
+
+  .ehr-patient-header {
+    background: var(--ehr-header-bg);
+    border-bottom: 1px solid var(--ehr-header-border);
+    padding: 8px 16px;
+    color: var(--ehr-header-text);
+  }
+
+  .ehr-patient-header .title {
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  .ehr-table-compact .ant-table-thead > tr > th {
+    background: #fafafa;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .ehr-table-compact .ant-table-tbody > tr > td {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .ehr-tabs-square .ant-tabs-nav {
+    margin-bottom: 0 !important;
+  }
+
+  .ehr-tabs-square .ant-tabs-tab {
+    border-radius: 0 !important;
+    margin: 0 !important;
+    border: 1px solid #d9d9d9 !important;
+    border-bottom: none !important;
+    background: #fafafa;
+    padding: 8px 24px !important;
+  }
+
+  .ehr-tabs-square .ant-tabs-tab-active {
+    background: #fff !important;
+  }
+  
+  .btn-primary {
+    background: #0050b3;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .text-primary {
+    color: #0050b3;
+  }
+  
+  .bg-primary {
+    background: #0050b3;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

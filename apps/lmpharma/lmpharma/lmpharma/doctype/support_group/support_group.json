@@ -1,0 +1,185 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SG-{#####}",
+ "creation": "2026-04-08 12:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "status",
+  "col_break_1",
+  "tab_details",
+  "sec_details",
+  "description",
+  "moderator_id",
+  "moderator_name",
+  "group_name",
+  "banner_image",
+  "require_approval",
+  "auto_flag_keywords",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "default": "active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "active\ninactive\narchived"
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "moderator_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Moderator ID",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "moderator_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Moderator Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "group_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Group Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "banner_image",
+   "fieldtype": "Attach Image",
+   "label": "Banner Image",
+   "in_list_view": 0
+  },
+  {
+   "default": "1",
+   "fieldname": "require_approval",
+   "fieldtype": "Check",
+   "label": "Require Approval for Posts",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "auto_flag_keywords",
+   "fieldtype": "Small Text",
+   "label": "Auto-Flag Keywords (Comma Separated)",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  }
+ ],
+ "image_field": "banner_image",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "Support Group",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "title": "active",
+   "color": "Green"
+  },
+  {
+   "title": "inactive",
+   "color": "Gray"
+  },
+  {
+   "title": "archived",
+   "color": "Red"
+  }
+ ],
+ "title_field": "group_name",
+ "track_changes": 1,
+ "track_views": 1,
+ "allow_import": 1,
+ "quick_entry": 1,
+ "show_name_in_global_search": 1
+}

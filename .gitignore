@@ -1,0 +1,267 @@
+# ==========================================
+# Root .gitignore for ERPNext Project
+# ==========================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+env/
+ENV/
+env.bak/
+venv/
+venv.bak/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frappe/ERPNext
+sites/*.sqlite
+sites/*.db
+sites/backups/
+sites/*/backups/
+sites/*/private/backups/
+sites/*/public/files/
+sites/*/private/files/
+
+# Logs
+logs/
+*.log
+log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Log files
+bench_dev.log
+bench_log.txt
+bench_log_fix.txt
+*.log.*
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+.AppleDouble
+.LSOverride
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+*.cache
+
+# Build and Dist
+dist/
+build/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Docker
+docker-compose.override.yml
+*.dockerignore
+
+# Bench
+*.pid
+bench-init.log
+config/supervisor.conf
+config/nginx.conf
+
+# Generated Files
+*.mo
+*.pot
+
+# Sessions
+sessions/
+
+# Uploads (if not using cloud storage)
+sites/*/public/files/*
+!sites/*/public/files/.gitkeep
+sites/*/private/files/*
+!sites/*/private/files/.gitkeep
+
+# Backups
+sites/backups/
+sites/*/backups/
+*.sql.gz
+*.sql
+
+# Certificates and Secrets
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
+
+# Compiled Python
+*.pyc
+*.pyo
+
+# Frappe specific
+*.js.gz
+*.css.gz
+assets/*
+!assets/.gitkeep
+sites/assets/
+
+# Node dependencies in apps
+apps/*/node_modules/
+apps/*/package-lock.json
+
+# Internal apps build artifacts
+internal_apps/*/dist/
+internal_apps/*/build/
+internal_apps/*/.next/
+
+# External apps (if they have their own repos)
+# external_apps/
+
+# Archived
+archived/
+
+# Scripts output
+scripts/output/
+scripts/temp/
+
+# Benchmark and profiling
+*.prof
+*.bench
+
+# Misc
+*.orig
+*.bak
+*.backup
+*.old
+*.rej
+*.patch
+
+# Development databases
+dev-db/
+test-db/
+
+# Kubernetes
+*.kubeconfig
+
+# Terraform
+.terraform/
+*.tfstate*
+*.tfstate.backup
+
+# Compressed files (shouldn't be in repo)
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Package manager locks (keep only root package-lock.json)
+# apps/*/yarn.lock
+# apps/*/pnpm-lock.yaml
+
+# Documentation generated
+docs/_build/
+docs/api/
+typedoc/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Python bytecode
+**/__pycache__/
+**/*.pyc
+
+# Erlang crash dumps
+erl_crash.dump
+
+# Rclone config
+.rclone.conf
+
+# WSL
+.wslconfig
+
+# Local configuration overrides
+config/*.local
+sites/common_site_config.local.json
+
+# Frappe app exports
+*.tar
+*.gz
+
+# Redis dumps
+dump.rdb
+
+# Elasticsearch data
+elasticsearch_data/
+
+# RabbitMQ data
+rabbitmq_data/
+
+# PostgreSQL data
+postgres_data/
+
+# Docker volumes
+*_data/

@@ -1,0 +1,292 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:id",
+ "creation": "2026-04-09 12:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "id",
+  "code",
+  "col_break_1",
+  "type",
+  "status",
+  "tab_details",
+  "sec_details",
+  "provider",
+  "credits",
+  "price",
+  "description",
+  "thumbnail",
+  "lecturer",
+  "enrollments",
+  "quizzes",
+  "lessons",
+  "course_name",
+  "workflow_state",
+  "tab_marketing",
+  "sec_seo",
+  "meta_title",
+  "meta_description",
+  "meta_image",
+  "keywords",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "ID",
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Course Type",
+   "options": "Core\nSpecialized\nElective",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nUnder Review\nPublished\nArchived",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "provider",
+   "fieldtype": "Data",
+   "label": "Provider",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "credits",
+   "fieldtype": "Int",
+   "label": "Credits",
+   "in_list_view": 0
+  },
+  {
+   "default": "0",
+   "fieldname": "price",
+   "fieldtype": "Currency",
+   "label": "Price",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "thumbnail",
+   "fieldtype": "Attach Image",
+   "label": "Thumbnail",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "lecturer",
+   "fieldtype": "Link",
+   "in_list_view": 0,
+   "label": "Lecturer",
+   "options": "Edu Lecturer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "enrollments",
+   "fieldtype": "Table",
+   "label": "Student Enrollments",
+   "options": "Edu Enrollment",
+   "read_only": 1,
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "quizzes",
+   "fieldtype": "Table",
+   "label": "Quizzes",
+   "options": "Edu Quiz",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "lessons",
+   "fieldtype": "Table",
+   "label": "Lessons",
+   "options": "Edu Lesson",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "course_name",
+   "fieldtype": "Data",
+   "in_list_view": 0,
+   "label": "Course Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "workflow_state",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Workflow State",
+   "options": "Workflow State",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tab_marketing",
+   "fieldtype": "Tab Break",
+   "label": "Marketing & SEO"
+  },
+  {
+   "fieldname": "sec_seo",
+   "fieldtype": "Section Break",
+   "label": "SEO Configuration"
+  },
+  {
+   "fieldname": "meta_title",
+   "fieldtype": "Data",
+   "label": "Meta Title (SEO)",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "meta_description",
+   "fieldtype": "Small Text",
+   "label": "Meta Description",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "meta_image",
+   "fieldtype": "Attach Image",
+   "label": "Meta Social Image",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "keywords",
+   "fieldtype": "Data",
+   "label": "SEO Keywords",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  }
+ ],
+ "image_field": "thumbnail",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "Edu Course",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "title": "Draft",
+   "color": "Blue"
+  },
+  {
+   "title": "Under Review",
+   "color": "Gray"
+  },
+  {
+   "title": "Published",
+   "color": "Green"
+  },
+  {
+   "title": "Archived",
+   "color": "Red"
+  }
+ ],
+ "title_field": "course_name",
+ "track_changes": 1,
+ "track_views": 1,
+ "allow_import": 1,
+ "quick_entry": 1,
+ "show_name_in_global_search": 1
+}

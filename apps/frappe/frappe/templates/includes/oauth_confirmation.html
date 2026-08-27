@@ -1,0 +1,402 @@
+{% if not error %}
+<style>
+  /* Reset and break out of Frappe's default containers */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  /* Hide standard Frappe UI elements that might interfere */
+  .navbar, .web-footer, .page-header-wrapper {
+    display: none !important;
+  }
+  
+  .page-container, .page-content, .web-page-content, .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Full screen enterprise layout */
+  .enterprise-auth-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    background-color: #ffffff;
+    z-index: 99999;
+    overflow-y: auto;
+  }
+
+  /* Left Side: Brand Identity (Hidden on Mobile) */
+  .auth-sidebar {
+    display: none;
+    flex: 1;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    position: relative;
+    overflow: hidden;
+    color: #ffffff;
+    padding: 60px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  @media (min-width: 1024px) {
+    .auth-sidebar {
+      display: flex;
+    }
+  }
+
+  .auth-sidebar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, rgba(15,23,42,0) 50%);
+    pointer-events: none;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+  }
+
+  .brand-logo svg {
+    width: 36px;
+    height: 36px;
+    color: #38bdf8;
+  }
+
+  .sidebar-content {
+    max-width: 480px;
+  }
+
+  .sidebar-title {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    background: linear-gradient(to right, #ffffff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .sidebar-desc {
+    font-size: 18px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* Right Side: Auth Card */
+  .auth-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: #f8fafc;
+  }
+
+  .auth-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 440px;
+    padding: 48px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .app-icon {
+    width: 72px;
+    height: 72px;
+    background: #f0f9ff;
+    border: 1px solid #e0f2fe;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 16px rgba(14, 165, 233, 0.1);
+  }
+
+  .app-icon svg {
+    width: 36px;
+    height: 36px;
+    color: #0284c7;
+  }
+
+  .app-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+
+  .app-subtitle {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .permissions-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .permissions-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+
+  .permissions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .permissions-list li {
+    font-size: 15px;
+    color: #334155;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    font-weight: 500;
+  }
+
+  .permissions-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .permissions-list li svg {
+    width: 20px;
+    height: 20px;
+    color: #10b981;
+    margin-right: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .btn-primary:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+  }
+
+  .btn-secondary:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #cbd5e1;
+  }
+
+  .secure-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 24px;
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  
+  .secure-badge svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .auth-card {
+      padding: 32px 24px;
+      box-shadow: none;
+      background: transparent;
+    }
+    .auth-main {
+      background: #ffffff;
+      padding: 0;
+    }
+  }
+</style>
+
+<div class="enterprise-auth-wrapper">
+  <!-- Left Sidebar (Desktop Only) -->
+  <div class="auth-sidebar">
+    <div class="brand-logo">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+      Healthcare Cloud
+    </div>
+    
+    <div class="sidebar-content">
+      <h1 class="sidebar-title">Secure Unified Authentication</h1>
+      <p class="sidebar-desc">Manage access to your ecosystem seamlessly. Review permissions carefully to ensure your data is shared only with trusted applications.</p>
+    </div>
+    
+    <div style="font-size: 13px; color: #475569;">
+      &copy; 2026 Healthcare Systems Inc.
+    </div>
+  </div>
+
+  <!-- Right Main Area -->
+  <div class="auth-main">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="app-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        </div>
+        <h2 class="app-title">{{ _(client_id) }}</h2>
+        <p class="app-subtitle">{{ _("đang yêu cầu quyền truy cập vào tài khoản của bạn") }}</p>
+      </div>
+      
+      <div class="permissions-box">
+        <div class="permissions-header">Thông tin được truy cập</div>
+        <ul class="permissions-list">
+          {% for dtl in details %}
+            <li>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+              {{ _(dtl.title()) }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      
+      <div class="actions">
+        <button id="allow" class="btn btn-primary">
+          {{ _("Ủy quyền truy cập") }}
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+        <button id="deny" class="btn btn-secondary">{{ _("Hủy bỏ") }}</button>
+      </div>
+
+      <div class="secure-badge">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        Được bảo mật bởi OAuth 2.0
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  frappe.ready(function() {
+    $('#allow').on('click', function(event) {
+      // Add loading state
+      const btn = $(this);
+      const originalText = btn.html();
+      btn.css('pointer-events', 'none').html('<svg class="animate-spin" style="animation: spin 1s linear infinite; width: 20px; height: 20px; margin-right: 8px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang xử lý...');
+      
+      window.location.replace("{{ success_url | string }}");
+    });
+    $('#deny').on('click', function(event) {
+      window.location.replace("{{ failure_url | string }}");
+    });
+  });
+  
+  // Custom animation definition for the loader
+  const style = document.createElement('style');
+  style.innerHTML = `@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
+  document.head.appendChild(style);
+</script>
+
+{% else %}
+<!-- Error State with Enterprise Styling -->
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .navbar, .web-footer, .page-header-wrapper { display: none !important; }
+  .page-container, .page-content, .web-page-content, .container {
+    max-width: 100% !important; padding: 0 !important; margin: 0 !important; background: transparent !important; box-shadow: none !important; border: none !important;
+  }
+  .enterprise-auth-wrapper {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #f8fafc; z-index: 99999;
+  }
+  .error-card {
+    background: #ffffff; width: 100%; max-width: 440px; padding: 48px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02); text-align: center; margin: 24px;
+  }
+  .error-icon {
+    width: 72px; height: 72px; background: #fef2f2; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;
+  }
+  .error-icon svg { width: 36px; height: 36px; color: #ef4444; }
+  .error-title { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+  .error-desc { font-size: 15px; color: #64748b; line-height: 1.6; margin-bottom: 24px; }
+  .error-box { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 16px; color: #475569; font-family: monospace; font-size: 13px; margin-bottom: 32px; word-break: break-all; }
+  .btn { width: 100%; padding: 14px 24px; border-radius: 12px; font-size: 16px; font-weight: 600; border: none; cursor: pointer; background: #0f172a; color: #ffffff; }
+  .btn:hover { background: #1e293b; }
+</style>
+
+<div class="enterprise-auth-wrapper">
+  <div class="error-card">
+    <div class="error-icon">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+    </div>
+    <div class="error-title">Authentication Failed</div>
+    <div class="error-desc">{{ _("Không thể cấp quyền truy cập cho ứng dụng này. Vui lòng kiểm tra lại cấu hình hoặc thử lại sau.") }}</div>
+    <div class="error-box">
+      {{ error }}
+    </div>
+    <button class="btn" onclick="window.history.back()">Quay lại trang trước</button>
+  </div>
+</div>
+{% endif %}

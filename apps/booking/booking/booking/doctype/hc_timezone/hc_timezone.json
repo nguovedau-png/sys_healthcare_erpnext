@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:name_custom",
+ "creation": "2026-04-09 12:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "name_custom",
+  "label",
+  "offset"
+ ],
+ "fields": [
+  {
+   "fieldname": "name_custom",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Label"
+  },
+  {
+   "fieldname": "offset",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Offset"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-11 11:06:05.896100",
+ "modified_by": "Administrator",
+ "module": "booking",
+ "name": "Hc Timezone",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "name_custom,label,offset",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "name_custom",
+ "track_changes": 1
+}

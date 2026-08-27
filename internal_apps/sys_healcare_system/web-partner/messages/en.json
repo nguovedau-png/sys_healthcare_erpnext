@@ -1,0 +1,41 @@
+{
+    "Common": {
+        "title": "General Healthcare System",
+        "home": "Home",
+        "search": "Search",
+        "booking": "Booking",
+        "contact": "Contact",
+        "login": "Login",
+        "register": "Register"
+    },
+    "Booking": {
+        "title": "Book an Appointment",
+        "subtitle": "Choose the best specialist and time for you in just a few minutes.",
+        "steps": {
+            "service": "Service",
+            "specialist": "Specialist",
+            "time": "Time",
+            "info": "Information",
+            "confirm": "Confirm"
+        }
+    },
+    "Search": {
+        "title": "Search",
+        "placeholder": "Find doctors, hospitals, diseases...",
+        "filters": "Filters",
+        "results": "Search Results",
+        "noResults": "No results found",
+        "doctors": "Doctors",
+        "hospitals": "Hospitals",
+        "clinics": "Clinics"
+    },
+    "Home": {
+        "heroTitle": "Comprehensive Healthcare for You",
+        "heroSubtitle": "Connect with thousands of skilled doctors and reputable medical facilities nationwide.",
+        "quickActions": {
+            "book": "Book Appointment",
+            "findDoc": "Find Doctor",
+            "ai": "AI Assistant"
+        }
+    }
+}

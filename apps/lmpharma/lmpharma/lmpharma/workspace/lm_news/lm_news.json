@@ -1,0 +1,99 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"922e09f35b\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\">News</span>\", \"col\": 12}}, {\"id\": \"46f48d1f16\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Post\", \"type\": \"DocType\", \"link_to\": \"Post\", \"col\": 3}}, {\"id\": \"158ed843cf\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Category\", \"type\": \"DocType\", \"link_to\": \"Category\", \"col\": 3}}, {\"id\": \"5c78e2e262\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Banner\", \"type\": \"DocType\", \"link_to\": \"Banner\", \"col\": 3}}, {\"id\": \"bdad42f09b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Video\", \"type\": \"DocType\", \"link_to\": \"Video\", \"col\": 3}}, {\"id\": \"189c1daab6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Static Page\", \"type\": \"DocType\", \"link_to\": \"Static Page\", \"col\": 3}}, {\"id\": \"dc80bef42d\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Topic\", \"type\": \"DocType\", \"link_to\": \"Topic\", \"col\": 3}}, {\"id\": \"7ec0fac55f\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Top Search\", \"type\": \"DocType\", \"link_to\": \"Top Search\", \"col\": 3}}]",
+ "creation": "2026-04-09 23:03:27.111426",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "paper",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "LM News",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Post",
+   "link_count": 0,
+   "link_to": "News Post",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Category",
+   "link_count": 0,
+   "link_to": "News Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Banner",
+   "link_count": 0,
+   "link_to": "News Banner",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Video",
+   "link_count": 0,
+   "link_to": "News Video",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Static Page",
+   "link_count": 0,
+   "link_to": "News Static Page",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Topic",
+   "link_count": 0,
+   "link_to": "News Topic",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Top Search",
+   "link_count": 0,
+   "link_to": "News Top Search",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-09 23:03:27.111445",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "LM News",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 6.0,
+ "shortcuts": [],
+ "title": "News"
+}

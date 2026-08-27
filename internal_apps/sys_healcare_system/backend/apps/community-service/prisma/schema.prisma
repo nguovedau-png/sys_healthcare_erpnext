@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-community-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ForumTopic {
+  id           Int          @id @default(autoincrement())
+  title        String
+  content      String
+  authorId     String
+  authorName   String
+  category     String
+  views        Int          @default(0)
+  status       String       @default("pending") // pending, approved, rejected
+  replies      ForumReply[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model ForumReply {
+  id         Int        @id @default(autoincrement())
+  content    String
+  authorId   String
+  authorName String
+  topicId    Int
+  topic      ForumTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model QAQuestion {
+  id         Int        @id @default(autoincrement())
+  question   String
+  content    String?
+  askedById  String
+  askedByName String
+  category   String
+  views      Int        @default(0)
+  status     String     @default("pending") // pending, approved, rejected
+  answers    QAAnswer[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model QAAnswer {
+  id           Int        @id @default(autoincrement())
+  content      String
+  answeredById String
+  answeredByName String
+  questionId   Int
+  question     QAQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model SupportGroup {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  membersCount Int     @default(0)
+  postsCount   Int     @default(0)
+  moderatorId  String
+  moderatorName String
+  status      String   @default("active") // active, inactive
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ModerationReport {
+  id            Int      @id @default(autoincrement())
+  contentId     String   // ID of the reported content (post, comment, etc.)
+  contentType   String   // Post, Comment, Question, Answer
+  contentPreview String?
+  authorId      String
+  authorName    String
+  reportedById  String
+  reportedByName String
+  reason        String
+  status        String   @default("pending") // pending, resolved, dismissed
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

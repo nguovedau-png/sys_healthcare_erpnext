@@ -1,0 +1,72 @@
+{
+ "actions": [],
+ "autoname": "autoincrement",
+ "creation": "2026-04-09 12:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "country",
+  "city",
+  "state",
+  "postal",
+  "address1",
+  "address2"
+ ],
+ "fields": [
+  {
+   "fieldname": "country",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Hc Country"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc State"
+  },
+  {
+   "fieldname": "postal",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Postal"
+  },
+  {
+   "fieldname": "address1",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Hc Address1"
+  },
+  {
+   "fieldname": "address2",
+   "fieldtype": "Small Text",
+   "label": "Hc Address2"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-11 11:06:16.099521",
+ "modified_by": "Administrator",
+ "module": "booking",
+ "name": "Hc User Address",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "city,state,postal",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "city",
+ "track_changes": 1
+}

@@ -1,0 +1,194 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:MR-{#####}",
+ "creation": "2026-04-08 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "status",
+  "col_break_1",
+  "tab_details",
+  "sec_details",
+  "content_id",
+  "content_type",
+  "content_preview",
+  "author_id",
+  "author_name",
+  "reported_by_id",
+  "reported_by_name",
+  "reason",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "default": "pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "pending\nresolved\ndismissed",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "content_id",
+   "fieldtype": "Data",
+   "label": "Content ID",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "content_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Content Type",
+   "options": "Post\nComment\nQuestion\nAnswer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "content_preview",
+   "fieldtype": "Text",
+   "label": "Content Preview",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "author_id",
+   "fieldtype": "Data",
+   "label": "Author ID",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "author_name",
+   "fieldtype": "Data",
+   "in_list_view": 0,
+   "label": "Author Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reported_by_id",
+   "fieldtype": "Data",
+   "label": "Reported By ID",
+   "reqd": 1,
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "reported_by_name",
+   "fieldtype": "Data",
+   "in_list_view": 0,
+   "label": "Reported By Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "in_list_view": 0,
+   "label": "Reason",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "Moderation Report",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "title": "pending",
+   "color": "Orange"
+  },
+  {
+   "title": "resolved",
+   "color": "Gray"
+  },
+  {
+   "title": "dismissed",
+   "color": "Gray"
+  }
+ ],
+ "track_changes": 1,
+ "track_views": 1,
+ "allow_import": 1,
+ "quick_entry": 1,
+ "show_name_in_global_search": 1,
+ "title_field": "content_id"
+}

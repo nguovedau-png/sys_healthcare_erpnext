@@ -1,0 +1,204 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../../../node_modules/@prisma/client-content-service"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String?
+  thumbnail   String?
+  desc        String?
+  author      String
+  date        String
+  view        Int       @default(0)
+  isActive    Boolean   @default(true)
+  category    String?
+  categoryId  Int?
+  Category    Category? @relation(fields: [categoryId], references: [id])
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([title])
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  posts       Post[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  content    String
+  authorName String
+  date       String
+  targetId   String
+  targetType String   // "post", "video", "question"
+  isActive  Boolean  @default(true)
+  parentId   Int?
+  postId     Int?
+  Post       Post?    @relation(fields: [postId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Question {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  authorName String
+  date       String
+  category   String
+  isResolved Boolean  @default(false)
+  answers    Answer[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  content    String
+  authorName String
+  date       String
+  questionId Int
+  Question   Question @relation(fields: [questionId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Topic {
+  id           Int      @id @default(autoincrement())
+  title        String
+  authorName   String
+  date         String
+  category     String
+  viewCount    Int      @default(0)
+  commentCount Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Banner {
+  id        Int      @id @default(autoincrement())
+  title     String
+  image     String
+  link      String?
+  position  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Video {
+  id        Int      @id @default(autoincrement())
+  title     String
+  url       String
+  thumbnail String?
+  author    String
+  duration  String
+  isActive  Boolean  @default(true)
+  date      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StaticPage {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  content   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TopSearch {
+  id        Int      @id @default(autoincrement())
+  keyword   String   @unique
+  count     Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Disease {
+  id          Int      @id @default(autoincrement())
+  name        String
+  letter      String   // A-Z letter index
+  description String
+  category    String   // e.g. "Tim mạch", "Hô hấp"
+  specialist  String   // e.g. "Bác sĩ tim mạch"
+  severity    String   @default("medium") // low, medium, high
+  icd10       String?  // ICD-10 code
+  symptoms    String?  // comma-separated list
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([letter])
+  @@index([name])
+}
+
+model ElderService {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  icon        String   // flaticon class name
+  image       String?  // image URL
+  features    String   // JSON string array of feature bullets
+  price       String?  // e.g. "Từ 500.000đ/tháng"
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  month       String
+  day         String
+  time        String
+  location    String
+  type        String   // "Hội thảo", "Online Webinar", "Cộng đồng"
+  speakers    String   // JSON string array of speaker names
+  seats       Int      @default(100)
+  booked      Int      @default(0)
+  isActive    Boolean  @default(true)
+  eventDate   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Package {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String?
+  image         String
+  category      String   // e.g. "Tiêu chuẩn", "Nâng cao", "VIP"
+  price         Float
+  originalPrice Float
+  discount      Int      @default(0)
+  details       String   // JSON string array of features
+  hospitalName  String
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([category])
+}

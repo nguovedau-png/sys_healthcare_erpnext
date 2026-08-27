@@ -1,0 +1,41 @@
+{
+    "Common": {
+        "title": "Hệ thống Y tế Đa khoa",
+        "home": "Trang chủ",
+        "search": "Tìm kiếm",
+        "booking": "Đặt lịch",
+        "contact": "Liên hệ",
+        "login": "Đăng nhập",
+        "register": "Đăng ký"
+    },
+    "Booking": {
+        "title": "Đặt lịch khám bệnh",
+        "subtitle": "Lựa chọn chuyên gia và thời gian khám phù hợp nhất với bạn chỉ trong vài phút.",
+        "steps": {
+            "service": "Dịch vụ",
+            "specialist": "Chuyên gia",
+            "time": "Thời gian",
+            "info": "Thông tin",
+            "confirm": "Xác nhận"
+        }
+    },
+    "Search": {
+        "title": "Tìm kiếm",
+        "placeholder": "Tìm bác sĩ, bệnh viện, bệnh lý...",
+        "filters": "Bộ lọc",
+        "results": "Kết quả tìm kiếm",
+        "noResults": "Không tìm thấy kết quả phù hợp",
+        "doctors": "Bác sĩ",
+        "hospitals": "Bệnh viện",
+        "clinics": "Phòng khám"
+    },
+    "Home": {
+        "heroTitle": "Chăm sóc sức khỏe toàn diện cho bạn",
+        "heroSubtitle": "Kết nối với hàng ngàn bác sĩ giỏi và cơ sở y tế uy tín trên toàn quốc.",
+        "quickActions": {
+            "book": "Đặt lịch khám",
+            "findDoc": "Tìm bác sĩ",
+            "ai": "Trợ lý AI"
+        }
+    }
+}

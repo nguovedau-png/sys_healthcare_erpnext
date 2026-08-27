@@ -1,0 +1,520 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"jEMf3Q-e8W\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Pharma System</span>\",\"col\":12}},{\"id\":\"yvnEsbCZJc\",\"type\":\"card\",\"data\":{\"card_name\":\"Recruitment & HR\",\"col\":4}},{\"id\":\"UkpOfX8rl_\",\"type\":\"card\",\"data\":{\"card_name\":\"Content & Media\",\"col\":4}},{\"id\":\"FK-V0jgfrX\",\"type\":\"card\",\"data\":{\"card_name\":\"Learning Management\",\"col\":4}},{\"id\":\"GSFTkoA4Hh\",\"type\":\"card\",\"data\":{\"card_name\":\"Community & Forums\",\"col\":4}},{\"id\":\"5tleWpEUEY\",\"type\":\"card\",\"data\":{\"card_name\":\"Feedback & Surveys\",\"col\":4}},{\"id\":\"_Ge5Yafddd\",\"type\":\"card\",\"data\":{\"card_name\":\"Live Conferences\",\"col\":4}}]",
+ "creation": "2026-04-11 12:30:32.795476",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "stock",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "LM Pharma",
+ "links": [
+  {
+   "hidden": 0,
+   "icon": "folder-o",
+   "is_query_report": 0,
+   "label": "Recruitment & HR",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Job Posting",
+   "link_count": 0,
+   "link_to": "Job Posting",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Job Application",
+   "link_count": 0,
+   "link_to": "Job Application",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Job Requirement",
+   "link_count": 0,
+   "link_to": "Job Requirement",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Job Company",
+   "link_count": 0,
+   "link_to": "Job Company",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "icon": "folder-o",
+   "is_query_report": 0,
+   "label": "Content & Media",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Post",
+   "link_count": 0,
+   "link_to": "News Post",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Topic",
+   "link_count": 0,
+   "link_to": "News Topic",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Video",
+   "link_count": 0,
+   "link_to": "News Video",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Banner",
+   "link_count": 0,
+   "link_to": "News Banner",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Category",
+   "link_count": 0,
+   "link_to": "News Category",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Author",
+   "link_count": 0,
+   "link_to": "News Author",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Comment",
+   "link_count": 0,
+   "link_to": "News Comment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Answer",
+   "link_count": 0,
+   "link_to": "News Answer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Top Search",
+   "link_count": 0,
+   "link_to": "News Top Search",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "News Static Page",
+   "link_count": 0,
+   "link_to": "News Static Page",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "icon": "folder-o",
+   "is_query_report": 0,
+   "label": "Learning Management",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu Course",
+   "link_count": 0,
+   "link_to": "Edu Course",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu Lesson",
+   "link_count": 0,
+   "link_to": "Edu Lesson",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu Enrollment",
+   "link_count": 0,
+   "link_to": "Edu Enrollment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu Certificate",
+   "link_count": 0,
+   "link_to": "Edu Certificate",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu Lecturer",
+   "link_count": 0,
+   "link_to": "Edu Lecturer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu Question",
+   "link_count": 0,
+   "link_to": "Edu Question",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu Quiz",
+   "link_count": 0,
+   "link_to": "Edu Quiz",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu CPE Master Data",
+   "link_count": 0,
+   "link_to": "Edu CPE Master Data",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu CPE Dashboard Day",
+   "link_count": 0,
+   "link_to": "Edu CPE Dashboard Day",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu CPE Dashboard Week",
+   "link_count": 0,
+   "link_to": "Edu CPE Dashboard Week",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Edu CPE Dashboard Month",
+   "link_count": 0,
+   "link_to": "Edu CPE Dashboard Month",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "icon": "folder-o",
+   "is_query_report": 0,
+   "label": "Community & Forums",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Forum Topic",
+   "link_count": 0,
+   "link_to": "Forum Topic",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Forum Reply",
+   "link_count": 0,
+   "link_to": "Forum Reply",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "QA Question",
+   "link_count": 0,
+   "link_to": "QA Question",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "QA Answer",
+   "link_count": 0,
+   "link_to": "QA Answer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Support Group",
+   "link_count": 0,
+   "link_to": "Support Group",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Moderation Report",
+   "link_count": 0,
+   "link_to": "Moderation Report",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "icon": "folder-o",
+   "is_query_report": 0,
+   "label": "Feedback & Surveys",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Survey Survey",
+   "link_count": 0,
+   "link_to": "Survey Survey",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Survey Response",
+   "link_count": 0,
+   "link_to": "Survey Response",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Survey Answer Option",
+   "link_count": 0,
+   "link_to": "Survey Answer Option",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Survey Question Option",
+   "link_count": 0,
+   "link_to": "Survey Question Option",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "icon": "folder-o",
+   "is_query_report": 0,
+   "label": "Live Conferences",
+   "link_count": 0,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Project",
+   "link_count": 0,
+   "link_to": "LC Project",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Session",
+   "link_count": 0,
+   "link_to": "LC Session",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Document",
+   "link_count": 0,
+   "link_to": "LC Document",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Poll",
+   "link_count": 0,
+   "link_to": "LC Poll",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Whiteboard",
+   "link_count": 0,
+   "link_to": "LC Whiteboard",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Attendee",
+   "link_count": 0,
+   "link_to": "LC Attendee",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Livestream",
+   "link_count": 0,
+   "link_to": "LC Livestream",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LC Interpreter",
+   "link_count": 0,
+   "link_to": "LC Interpreter",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-11 12:54:54.542900",
+ "modified_by": "Administrator",
+ "module": "lmpharma",
+ "name": "LM Pharma",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 0.0,
+ "shortcuts": [],
+ "title": "LM Pharma"
+}

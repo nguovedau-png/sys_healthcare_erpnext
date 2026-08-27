@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-seminar-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Seminar {
+  id            Int               @id @default(autoincrement())
+  title         String
+  date          String
+  location      String
+  capacity      Int
+  registrations Int               @default(0)
+  status        String            @default("draft")
+  banners       SeminarBanner[]
+  attendees     SeminarAttendee[]
+  invitations   SeminarInvitation[]
+  sessions      SeminarSession[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model SeminarBanner {
+  id        Int      @id @default(autoincrement())
+  seminarId Int
+  image     String
+  priority  Int      @default(1)
+  seminar   Seminar  @relation(fields: [seminarId], references: [id])
+}
+
+model SeminarAttendee {
+  id          Int      @id @default(autoincrement())
+  seminarId   Int
+  name        String
+  email       String
+  phone       String
+  checkedIn   Boolean  @default(false)
+  checkinTime String?
+  seminar     Seminar  @relation(fields: [seminarId], references: [id])
+}
+
+model SeminarInvitation {
+  id         Int      @id @default(autoincrement())
+  seminarId  Int
+  sent       Int      @default(0)
+  opened     Int      @default(0)
+  registered Int      @default(0)
+  date       String
+  seminar    Seminar  @relation(fields: [seminarId], references: [id])
+}
+
+model SeminarSession {
+  id        Int      @id @default(autoincrement())
+  seminarId Int
+  time      String
+  topic     String
+  speaker   String
+  seminar   Seminar  @relation(fields: [seminarId], references: [id])
+}
+
+model SeminarSpeaker {
+  id       Int      @id @default(autoincrement())
+  name     String
+  title    String
+  photo    String
+  bio      String?
+  seminars Int      @default(0)
+}

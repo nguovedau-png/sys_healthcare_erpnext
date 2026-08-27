@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #0f766e;
+    /* Deep Teal */
+    --color-primary-light: #14b8a6;
+    --color-primary-dark: #0d9488;
+    
+    --color-secondary: #0ea5e9;
+    /* Sky Blue */
+    --color-secondary-light: #38bdf8;
+    --color-secondary-dark: #0284c7;
+    
+    --color-accent: #f43f5e;
+    /* Rose */
+    
+    --color-surface: #ffffff;
+    --color-background: #f8fafc;
+    --color-muted: #64748b;
+    --color-border: #e2e8f0;
+
+    --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-outfit), ui-sans-serif, system-ui;
+
+    --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-card: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+@layer base {
+    a {
+        @apply no-underline hover:text-primary transition-colors duration-200;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-heading text-gray-900;
+    }
+}
+
+@layer components {
+    .container {
+        @apply mx-auto px-4 max-w-7xl;
+    }
+
+    .btn-main {
+        @apply bg-primary text-white font-medium py-2 px-6 rounded-lg shadow-md hover:bg-primary-dark transition-all duration-300 transform hover:-translate-y-0.5 border-none;
+    }
+
+    .card {
+        @apply bg-white rounded-xl shadow-card hover:shadow-soft transition-all duration-300 border border-gray-100 overflow-hidden;
+    }
+
+    .card-title {
+        @apply text-lg font-bold text-gray-900 mb-1;
+    }
+}

@@ -1,0 +1,294 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "autoincrement",
+ "creation": "2026-04-09 12:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "status",
+  "col_break_1",
+  "tab_details",
+  "sec_details",
+  "email",
+  "password",
+  "firstname",
+  "lastname",
+  "role",
+  "phone",
+  "gender",
+  "address",
+  "qrcodelink",
+  "source",
+  "externalid",
+  "workasstaff",
+  "associateduserid",
+  "supervisorid",
+  "avatarurl",
+  "enabletwofa",
+  "secrettwofa",
+  "twofamethod",
+  "avg_rating",
+  "total_review",
+  "branchids",
+  "skillids",
+  "reason",
+  "otherreason",
+  "isdeleted",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags",
+  "birthday"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "bold": 1,
+   "fieldname": "status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Status",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "bold": 1,
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Password"
+  },
+  {
+   "fieldname": "firstname",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc First Name"
+  },
+  {
+   "fieldname": "lastname",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Last Name"
+  },
+  {
+   "fieldname": "role",
+   "fieldtype": "Data",
+   "label": "Hc Role"
+  },
+  {
+   "bold": 1,
+   "fieldname": "phone",
+   "fieldtype": "Link",
+   "label": "Hc Phone",
+   "options": "Hc User Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Data",
+   "label": "Hc Gender"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Hc Address",
+   "options": "Hc User Address"
+  },
+  {
+   "fieldname": "qrcodelink",
+   "fieldtype": "Data",
+   "label": "Hc Qr Code Link"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Data",
+   "label": "Hc Source"
+  },
+  {
+   "fieldname": "externalid",
+   "fieldtype": "Data",
+   "label": "Hc External Id"
+  },
+  {
+   "fieldname": "workasstaff",
+   "fieldtype": "Check",
+   "label": "Hc Work As Staff"
+  },
+  {
+   "fieldname": "associateduserid",
+   "fieldtype": "Data",
+   "label": "Hc Associated User Id"
+  },
+  {
+   "fieldname": "supervisorid",
+   "fieldtype": "Data",
+   "label": "Hc Supervisor Id"
+  },
+  {
+   "fieldname": "avatarurl",
+   "fieldtype": "Data",
+   "label": "Hc Avatar Url"
+  },
+  {
+   "fieldname": "enabletwofa",
+   "fieldtype": "Check",
+   "label": "Hc Enable Two Fa"
+  },
+  {
+   "fieldname": "secrettwofa",
+   "fieldtype": "Data",
+   "label": "Hc Secret Two Fa"
+  },
+  {
+   "fieldname": "twofamethod",
+   "fieldtype": "Data",
+   "label": "Hc Two Fa Method"
+  },
+  {
+   "fieldname": "avg_rating",
+   "fieldtype": "Float",
+   "label": "Hc Avg_Rating"
+  },
+  {
+   "fieldname": "total_review",
+   "fieldtype": "Int",
+   "label": "Hc Total_Review"
+  },
+  {
+   "fieldname": "branchids",
+   "fieldtype": "Text",
+   "label": "Hc Branch Ids"
+  },
+  {
+   "fieldname": "skillids",
+   "fieldtype": "Text",
+   "label": "Hc Skill Ids"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Small Text",
+   "label": "Hc Reason"
+  },
+  {
+   "fieldname": "otherreason",
+   "fieldtype": "Small Text",
+   "label": "Hc Other Reason"
+  },
+  {
+   "fieldname": "isdeleted",
+   "fieldtype": "Check",
+   "label": "Hc Is Deleted"
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch"
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant"
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags"
+  },
+  {
+   "fieldname": "birthday",
+   "fieldtype": "Datetime",
+   "label": "Hc Birthday"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-11 11:06:10.670011",
+ "modified_by": "Administrator",
+ "module": "booking",
+ "name": "Hc User",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "email,password,firstname",
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "email",
+ "track_changes": 1,
+ "track_views": 1
+}

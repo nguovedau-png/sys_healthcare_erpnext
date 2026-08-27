@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-erp-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ErpKey {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  name      String
+  userId    String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([userId])
+}
+
+model InventoryItem {
+  id           Int      @id @default(autoincrement())
+  name         String
+  sku          String   @unique
+  category     String?
+  manufacturer String?
+  price        Float
+  stock        Int      @default(0)
+  minStock     Int      @default(0)
+  expiry       String?
+  status       String   @default("In Stock")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([sku])
+  @@index([category])
+}
+
+model DrugReference {
+  id                Int      @id @default(autoincrement())
+  name              String
+  activeIngredient  String
+  indications       String?
+  contraindications String?
+  dosage            String?
+  sideEffects       String?
+  interactions      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

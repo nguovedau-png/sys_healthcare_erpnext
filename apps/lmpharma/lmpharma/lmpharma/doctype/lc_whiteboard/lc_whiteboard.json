@@ -1,0 +1,147 @@
+{
+ "name": "LC Whiteboard",
+ "doctype": "DocType",
+ "module": "Lmpharma",
+ "custom": 0,
+ "is_submittable": 0,
+ "track_changes": 1,
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "status",
+  "col_break_1",
+  "tab_details",
+  "sec_details",
+  "session",
+  "project",
+  "uuid",
+  "metadata",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "OPEN\nCLOSED",
+   "default": "OPEN",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "session",
+   "label": "Session",
+   "fieldtype": "Link",
+   "options": "LC Session",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "Link",
+   "options": "LC Project",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "uuid",
+   "label": "UUID",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "metadata",
+   "label": "Metadata (JSON)",
+   "fieldtype": "Code",
+   "options": "JSON",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ],
+ "naming_rule": "Random",
+ "autoname": null,
+ "states": [
+  {
+   "title": "OPEN",
+   "color": "Gray"
+  },
+  {
+   "title": "CLOSED",
+   "color": "Gray"
+  }
+ ],
+ "track_views": 1,
+ "allow_import": 1,
+ "quick_entry": 1,
+ "modified": "2026-04-10 00:00:00.000000",
+ "show_name_in_global_search": 1,
+ "title_field": "session"
+}

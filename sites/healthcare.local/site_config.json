@@ -1,0 +1,11 @@
+{
+ "allow_cors": "*",
+ "background_workers": 1,
+ "db_name": "_67a0dd92a8b4a13c",
+ "db_password": "Lw6y4ERGJjKm9VFC",
+ "db_type": "mariadb",
+ "developer_mode": 1,
+ "user_type_doctype_limit": {
+  "employee_self_service": 40
+ }
+}

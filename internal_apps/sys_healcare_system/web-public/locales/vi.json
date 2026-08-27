@@ -1,0 +1,17 @@
+{
+    "header": {
+        "home": "Trang chủ",
+        "disease_az": "Bệnh A-Z",
+        "medicine_az": "Thuốc A-Z",
+        "hospital": "Bệnh viện",
+        "clinic": "Phòng khám",
+        "doctor": "Bác sĩ",
+        "forum": "Diễn đàn",
+        "shop": "Cửa hàng"
+    },
+    "common": {
+        "language": "Tiếng Việt",
+        "login": "Đăng nhập",
+        "register": "Đăng ký"
+    }
+}

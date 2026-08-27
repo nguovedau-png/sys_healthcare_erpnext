@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-engagement-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  SPAM
+  DELETED
+}
+
+model Comment {
+  id        Int           @id @default(autoincrement())
+  userName  String
+  userId    Int?
+  content   String
+  postTitle String
+  postId    Int?
+  status    CommentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model EngagementActivity {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  type      String   // LIKED, FOLLOWING, VIDEO_WATCHED
+  targetId  String
+  createdAt DateTime @default(now())
+}

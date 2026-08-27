@@ -1,0 +1,230 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "autoincrement",
+ "creation": "2026-04-10 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "status",
+  "col_break_1",
+  "tab_details",
+  "sec_details",
+  "pushtoken",
+  "userid",
+  "platform",
+  "deviceid",
+  "devicename",
+  "appversion",
+  "osversion",
+  "preferences",
+  "notificationcount",
+  "notificationsenabled",
+  "isdeleted",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags",
+  "lastseenat"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "options": "active\ninactive\ninvalid",
+   "bold": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "pushtoken",
+   "label": "Push Token",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "userid",
+   "label": "User Id",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "platform",
+   "label": "Platform",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "options": "ios\nandroid\nweb"
+  },
+  {
+   "fieldname": "deviceid",
+   "label": "Device Id",
+   "fieldtype": "Data",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "devicename",
+   "label": "Device Name",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "appversion",
+   "label": "App Version",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "osversion",
+   "label": "Os Version",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "preferences",
+   "label": "Preferences",
+   "fieldtype": "Data",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "notificationcount",
+   "label": "Notification Count",
+   "fieldtype": "Int",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "notificationsenabled",
+   "label": "Notifications Enabled",
+   "fieldtype": "Check",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "isdeleted",
+   "label": "Is Deleted",
+   "fieldtype": "Check",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "lastseenat",
+   "label": "Last Seen At",
+   "fieldtype": "Datetime",
+   "in_list_view": 0
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Gamemarketing",
+ "name": "Gm Device",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "title": "active",
+   "color": "Green"
+  },
+  {
+   "title": "inactive",
+   "color": "Gray"
+  },
+  {
+   "title": "invalid",
+   "color": "Gray"
+  }
+ ],
+ "istable": 0,
+ "custom": 0,
+ "track_views": 1,
+ "title_field": "pushtoken",
+ "search_fields": "pushtoken,userid",
+ "track_changes": 1,
+ "allow_import": 1,
+ "show_name_in_global_search": 1,
+ "quick_entry": 1
+}

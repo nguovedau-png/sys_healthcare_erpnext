@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-backgroundjob-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobType {
+  FILE_PROCESSING
+  EMAIL
+  SMS
+  NOTIFICATION
+  SCHEDULED
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  RETRYING
+}
+
+model BackgroundJob {
+  id          Int        @id @default(autoincrement())
+  jobType     JobType
+  jobId       String     @unique
+  name        String
+  data        Json
+  status      JobStatus  @default(PENDING)
+  progress    Int        @default(0)
+  attempts    Int        @default(0)
+  maxAttempts Int        @default(3)
+  error       String?
+  result      Json?
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([jobType])
+  @@index([status])
+  @@index([createdAt])
+}

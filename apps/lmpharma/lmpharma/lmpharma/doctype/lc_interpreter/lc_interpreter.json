@@ -1,0 +1,119 @@
+{
+ "name": "LC Interpreter",
+ "doctype": "DocType",
+ "module": "Lmpharma",
+ "custom": 0,
+ "is_submittable": 0,
+ "track_changes": 1,
+ "field_order": [
+  "tab_basic",
+  "sec_main",
+  "col_break_1",
+  "tab_details",
+  "sec_details",
+  "user",
+  "project",
+  "language",
+  "tab_status",
+  "sec_audit",
+  "branch",
+  "tenant",
+  "tags"
+ ],
+ "fields": [
+  {
+   "fieldname": "tab_basic",
+   "fieldtype": "Tab Break",
+   "label": "Basic Information"
+  },
+  {
+   "fieldname": "sec_main",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Details & Content"
+  },
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detailed Information"
+  },
+  {
+   "fieldname": "user",
+   "label": "User",
+   "fieldtype": "Link",
+   "options": "Hc User",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "Link",
+   "options": "LC Project",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "language",
+   "label": "Language",
+   "fieldtype": "Data",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tab_status",
+   "fieldtype": "Tab Break",
+   "label": "Status & Audit"
+  },
+  {
+   "fieldname": "sec_audit",
+   "fieldtype": "Section Break",
+   "label": "Tracking"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Link",
+   "label": "Branch",
+   "options": "Hc Branch",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tenant",
+   "fieldtype": "Link",
+   "label": "Tenant",
+   "options": "Hc Tenant",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tags",
+   "fieldtype": "Data",
+   "label": "Tags",
+   "in_list_view": 0
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ],
+ "naming_rule": "Random",
+ "autoname": null,
+ "track_views": 1,
+ "allow_import": 1,
+ "quick_entry": 1,
+ "modified": "2026-04-10 00:00:00.000000",
+ "show_name_in_global_search": 1,
+ "title_field": "user"
+}

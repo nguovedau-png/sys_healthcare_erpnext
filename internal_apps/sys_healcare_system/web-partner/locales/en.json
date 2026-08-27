@@ -1,0 +1,17 @@
+{
+    "header": {
+        "home": "Home",
+        "disease_az": "Disease A-Z",
+        "medicine_az": "Medicine A-Z",
+        "hospital": "Hospital",
+        "clinic": "Clinic",
+        "doctor": "Doctor",
+        "forum": "Forum",
+        "shop": "Shop"
+    },
+    "common": {
+        "language": "English",
+        "login": "Login",
+        "register": "Register"
+    }
+}

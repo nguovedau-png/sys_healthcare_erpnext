@@ -1,0 +1,455 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - saas-network
+
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: saas_microservices
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      - saas-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - saas-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - saas-network
+
+  api-gateway: # API Gateway
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    # volumes:
+    #   - ./dist/apps/api-gateway:/app/dist
+    depends_on:
+      - rabbitmq
+      - db
+      - auth-service
+      - user-service
+      - erp-service
+      - audit-log
+      - payment-service
+      - file-service
+      - notification-service
+      - setting-service
+      - content-service
+      - booking-service
+      - backgroundjob-service
+      - partner-service
+      - jobs-service
+      - marketing-service
+      - shop-service
+    networks:
+      - saas-network
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/auth-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/auth_db?schema=public
+      - RP_ID=localhost
+      - EXPECTED_ORIGIN=http://localhost:3000
+      - JWT_SECRET=supersecret
+      - ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  user-service:
+    build:
+      context: .
+      dockerfile: apps/user-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/user_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  erp-service:
+    build:
+      context: .
+      dockerfile: apps/erp-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/erp_db?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  audit-log:
+    build:
+      context: .
+      dockerfile: apps/audit-log/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/audit_log_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: apps/payment-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/payment_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  file-service:
+    build:
+      context: .
+      dockerfile: apps/file-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/file_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: apps/notification-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/notification_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  setting-service:
+    build:
+      context: .
+      dockerfile: apps/setting-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/setting_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  backgroundjob-service:
+    build:
+      context: .
+      dockerfile: apps/backgroundjob-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/backgroundjob_db?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - db
+      - redis
+    networks:
+      - saas-network
+
+  ai-service:
+    build:
+      context: .
+      dockerfile: apps/ai-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/ai_db?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  analytic-service:
+    build:
+      context: .
+      dockerfile: apps/analytic-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/analytic_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: apps/booking-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/booking_db?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  community-service:
+    build:
+      context: .
+      dockerfile: apps/community-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/community_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  content-service:
+    build:
+      context: .
+      dockerfile: apps/content-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/content_db?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - db
+      - redis
+    networks:
+      - saas-network
+
+  education-service:
+    build:
+      context: .
+      dockerfile: apps/education-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/education_db?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  engagement-service:
+    build:
+      context: .
+      dockerfile: apps/engagement-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/engagement_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  finance-service:
+    build:
+      context: .
+      dockerfile: apps/finance-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/finance_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  gamification-service:
+    build:
+      context: .
+      dockerfile: apps/gamification-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/gamification_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  live-service:
+    build:
+      context: .
+      dockerfile: apps/live-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/live_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  marketing-service:
+    build:
+      context: .
+      dockerfile: apps/marketing-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/marketing_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  partner-service:
+    build:
+      context: .
+      dockerfile: apps/partner-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/partner_db?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - rabbitmq
+      - db
+      - redis
+    networks:
+      - saas-network
+
+  report-service:
+    build:
+      context: .
+      dockerfile: apps/report-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/report_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  seminar-service:
+    build:
+      context: .
+      dockerfile: apps/seminar-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/seminar_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  shop-service:
+    build:
+      context: .
+      dockerfile: apps/shop-service/Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/shop_db?schema=public
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - db
+      - redis
+    networks:
+      - saas-network
+
+  survey-service:
+    build:
+      context: .
+      dockerfile: apps/survey-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/survey_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+  jobs-service:
+    build:
+      context: .
+      dockerfile: apps/jobs-service/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/jobs_db?schema=public
+    depends_on:
+      - rabbitmq
+      - db
+    networks:
+      - saas-network
+
+networks:
+  saas-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  elasticsearch_data:
+  redis_data:
+  shop_db_data:

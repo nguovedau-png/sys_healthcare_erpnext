@@ -1,0 +1,89 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"fa98d9aed8\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\">Surveys</span>\", \"col\": 12}}, {\"id\": \"4388f881f6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Survey\", \"type\": \"DocType\", \"link_to\": \"Survey\", \"col\": 3}}, {\"id\": \"273731eb63\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Question\", \"type\": \"DocType\", \"link_to\": \"Question\", \"col\": 3}}, {\"id\": \"a380dca9ac\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Response\", \"type\": \"DocType\", \"link_to\": \"Response\", \"col\": 3}}, {\"id\": \"3ee8c53b08\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Answer\", \"type\": \"DocType\", \"link_to\": \"Answer\", \"col\": 3}}, {\"id\": \"53e8595b7f\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Question Option\", \"type\": \"DocType\", \"link_to\": \"Question Option\", \"col\": 3}}, {\"id\": \"74bc30a831\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Answer Option\", \"type\": \"DocType\", \"link_to\": \"Answer Option\", \"col\": 3}}]",
+ "creation": "2026-04-09 23:03:27.111722",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 0,
+ "icon": "clipboard",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "LM Surveys",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Survey",
+   "link_count": 0,
+   "link_to": "Survey Survey",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Question",
+   "link_count": 0,
+   "link_to": "Survey Question",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Response",
+   "link_count": 0,
+   "link_to": "Survey Response",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Answer",
+   "link_count": 0,
+   "link_to": "Survey Answer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Question Option",
+   "link_count": 0,
+   "link_to": "Survey Question Option",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Answer Option",
+   "link_count": 0,
+   "link_to": "Survey Answer Option",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-09 23:03:27.111734",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "LM Surveys",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 6.0,
+ "shortcuts": [],
+ "title": "Surveys"
+}

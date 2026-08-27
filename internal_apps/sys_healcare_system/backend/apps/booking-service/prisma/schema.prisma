@@ -1,0 +1,126 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../../../node_modules/@prisma/client-booking-service"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-1.1.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Appointment {
+  id                    Int      @id @default(autoincrement())
+  patientId             String?
+  patientName           String
+  patientPhone          String
+  email                 String?
+  address               String?
+  dob                   String?
+  sex                   String?
+  doctorId              String?
+  doctorName            String?
+  appointmentDate       DateTime?
+  date                  String?   // Format: DD/MM/YYYY
+  time                  String?   // Format: HH:mm
+  service               String?
+  serviceId             Int?
+  type                  String?   @default("offline")
+  treatmentPlaceBooking String?
+  noExpected            Int?      @default(1)
+  note                  String?
+  treatmentInfo         String?
+  status                String    @default("pending") // pending, confirmed, completed, cancelled
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([status])
+  @@index([date])
+}
+
+model LabTest {
+  id           Int      @id @default(autoincrement())
+  orderCode    String   @unique
+  patientId    String
+  patientName  String
+  patientPhone String
+  testType     String
+  hospital     String
+  fee          Float
+  testDate     String
+  status       String   @default("pending") // pending, processing, completed, cancelled
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([orderCode])
+}
+
+model PharmacyOrder {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  customerId    String
+  customerName  String
+  customerPhone String
+  pharmacy      String
+  type          String   @default("Thuốc") // Thuốc, Xét nghiệm, Thiết bị
+  itemsCount    Int
+  totalAmount   Float
+  date          String
+  status        String   @default("pending") // pending, processing, shipping, completed, cancelled
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([code])
+}
+
+model RefundRequest {
+  id            Int      @id @default(autoincrement())
+  orderCode     String   @unique
+  customerId    String
+  customerName  String
+  originalOrder String
+  amount        Float
+  reason        String
+  requestDate   String
+  status        String   @default("pending") // pending, approved, rejected
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Prescription {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  patientName     String
+  patientPhone    String
+  diagnosis       String
+  doctorName      String
+  hospitalName    String
+  status          String   @default("new") // new, dispensed, cancelled
+  dispensedDate   DateTime?
+  pharmacistName  String?
+  medicines       Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([code])
+}
+
+model Consultation {
+  id              Int      @id @default(autoincrement())
+  patientId       String
+  patientName     String
+  patientGender   String?
+  patientAge      Int?
+  type            String?   // Thu phí, BHYT
+  line            String?   // Đúng tuyến, Trái tuyến
+  reason          String?
+  history         String?
+  vitalSigns      Json?     // { pulse, bp, temp, spo2 }
+  clinicalNotes   String?
+  diagnosisCodes  String[]  // ICD-10
+  status          String    @default("waiting") // waiting, examining, completed, absent
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}

@@ -1,0 +1,43 @@
+# General
+node_modules/
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.expo/
+web-build/
+
+# Coverage
+coverage/
+
+# Backend Uploads
+backend/uploads/
+
+# Mobile App
+mobile-app/.expo/
+mobile-app/web-build/
+
+# Docker
+docker-data/
+postgres_data/
+redis_data/

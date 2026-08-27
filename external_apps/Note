@@ -1,0 +1,14 @@
+1. Chay lenh generate_erpnext_keys.py de tao ra API TOKEN va SECRET KEY
+2. DEV thi chay docker-compose.yml cho backend
+3. Co 3 thong tin sau:
+    "gencode": "ts-node scripts/generate-crud.ts" => tao code
+    "seed": "ts-node prisma/seed.ts" => seed data
+    "sync-erpnext": "ts-node scripts/sync-to-erpnext.ts" => sync data sang erpnext chi cho test
+    "worker": "ts-node src/worker.ts" => chay worker email, notification, heavy job, webhook, erpnext sync
+
+4. Cai dat nhieu app cung luc
+    ./install_custom.sh
+    docker compose -f pwd-custom.yml up -d
+docker compose -f pwd-custom.yml logs -f create-site
+
+5. Chay bench clear-cache neu ko thay app xuat hien

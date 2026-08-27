@@ -1,0 +1,25 @@
+./start-dev.sh
+
+# Complete setup + start (RECOMMENDED)
+npm run dev:full
+
+# Setup without starting
+npm run dev:setup
+
+# Setup + start services
+npm run dev:start
+
+# Just start services (if already setup)
+npm run start:dev
+
+# Docker management
+npm run docker:dev           # Start infrastructure
+npm run docker:dev:down      # Stop infrastructure
+npm run docker:dev:logs      # View logs
+
+# Database
+npm run migrate:all          # Run all migrations
+npm run seed                 # Seed database
+
+2. Build tung service: docker-compose up -d --build auth-service
+3. Account: admin@gmail.com, password: 123456

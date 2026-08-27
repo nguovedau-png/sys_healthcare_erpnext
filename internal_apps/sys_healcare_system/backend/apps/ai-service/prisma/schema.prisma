@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-ai-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RecommendationType {
+  DOCTOR
+  DIAGNOSIS
+  MEDICATION
+}
+
+enum RecommendationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Recommendation {
+  id              Int                  @id @default(autoincrement())
+  patientName     String
+  symptoms        String
+  recommendedItem String
+  confidence      Float
+  reason          String
+  type            RecommendationType
+  status          RecommendationStatus @default(PENDING)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
+model AIStats {
+  id               Int      @id @default(autoincrement())
+  accuracy         Float
+  dailySuggestions Int
+  acceptanceRate   Float
+  modelVersion     String
+  updatedAt        DateTime @updatedAt
+}
+
+model ModelPerformance {
+  id        Int      @id @default(autoincrement())
+  precision Float
+  recall    Float
+  f1Score   Float
+  updatedAt DateTime @updatedAt
+}

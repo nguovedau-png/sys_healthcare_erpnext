@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking System</title>
+  <script type="module" crossorigin src="/assets/booking/frontend/assets/index-BWg5seOx.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/booking/frontend/assets/index-Deu7kyw1.css">
+<script id="vite-plugin-pwa:register-sw" src="/assets/booking/frontend/registerSW.js"></script></head>
+<body>
+    <div id="app"></div>
+
+          <script>
+              {% for key in boot %}
+              window["{{ key }}"] = {{ boot[key] | tojson }};
+              {% endfor %}
+          </script>
+          </body>
+          
+</html>

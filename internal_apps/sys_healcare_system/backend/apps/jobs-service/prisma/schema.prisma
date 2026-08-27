@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-jobs-service"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model JobPosting {
+  id               String           @id @default(uuid())
+  pharmacyId       String
+  pharmacyName     String
+  position         String
+  description      String
+  requirements     String[]
+  salary           String
+  location         String
+  type             String           // full-time, part-time, contract
+  status           String           @default("open") // open, closed
+  postedDate       DateTime         @default(now())
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  applications     JobApplication[]
+
+  @@index([pharmacyId])
+  @@index([status])
+}
+
+model JobApplication {
+  id               String      @id @default(uuid())
+  jobPostingId     String
+  jobPosting       JobPosting  @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  pharmacistId     String
+  pharmacistName   String
+  pharmacistAvatar String?
+  pharmacyId       String
+  pharmacyName     String
+  position         String
+  cvUrl            String
+  coverLetter      String?
+  status           String      @default("pending") // pending, reviewed, interviewed, accepted, rejected
+  appliedDate      DateTime    @default(now())
+  reviewedDate     DateTime?
+  notes            String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([jobPostingId])
+  @@index([pharmacistId])
+  @@index([pharmacyId])
+  @@index([status])
+}

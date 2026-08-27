@@ -1,0 +1,121 @@
+{
+    "frappe": {
+        "resolution": {
+            "commit_hash": null,
+            "branch": null
+        },
+        "required": [],
+        "idx": 1,
+        "version": "15.103.3"
+    },
+    "erpnext": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "2597eaad5195ea4a3c89e0c2fae29e62451b742c",
+            "branch": "version-15"
+        },
+        "required": [],
+        "idx": 2,
+        "version": "15.103.1"
+    },
+    "hrms": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "405205a7b415004560bec614ba25213729c746aa",
+            "branch": "version-15"
+        },
+        "required": [],
+        "idx": 3,
+        "version": "15.58.5"
+    },
+    "lms": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "0c346eba7d209b87e8b01569fed21d8d3e956c02",
+            "branch": "main"
+        },
+        "required": [],
+        "idx": 4,
+        "version": "2.51.0"
+    },
+    "webshop": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "6c8fd0013dfe297edb6ebcc10e27ba495902dd19",
+            "branch": "version-15"
+        },
+        "required": [],
+        "idx": 5,
+        "version": "0.0.1"
+    },
+    "payments": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "8e86c0b755d1845befb7d1ead308f7e1f15c1d8b",
+            "branch": "version-15"
+        },
+        "required": [],
+        "idx": 6,
+        "version": "0.0.1"
+    },
+    "lives": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "626864c116fd9956e5941999b2da29c6aca80986",
+            "branch": "develop"
+        },
+        "required": [],
+        "idx": 8,
+        "version": "0.0.1"
+    },
+    "booking": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "330485b58544033e996629eed314ccee9e27a1c8",
+            "branch": "develop"
+        },
+        "required": [],
+        "idx": 9,
+        "version": "0.0.1"
+    },
+    "doppio": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "426dc49d5ceb451237848386208ec9da194e5d8f",
+            "branch": "master"
+        },
+        "required": [],
+        "idx": 10,
+        "version": "0.0.1"
+    },
+    "lmpharma": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "0359455b0797018ce38684c4eefb2728254f60c1",
+            "branch": "develop"
+        },
+        "required": [],
+        "idx": 11,
+        "version": "0.0.1"
+    },
+    "scope_app": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "dcdd9db52dc69be6c3cd3085a5fe4628d7f1b052",
+            "branch": "main"
+        },
+        "required": [],
+        "idx": 12,
+        "version": "0.0.1"
+    },
+    "expense_tracker": {
+        "is_repo": true,
+        "resolution": {
+            "commit_hash": "ee0b885ab39b4d1948a5853c2c9470b5f57e71a9",
+            "branch": "main"
+        },
+        "required": [],
+        "idx": 13,
+        "version": "0.0.1"
+    }
+}

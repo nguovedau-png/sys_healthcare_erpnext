@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "autoname": "autoincrement",
+ "creation": "2026-04-09 12:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "day",
+  "shifttimes"
+ ],
+ "fields": [
+  {
+   "fieldname": "day",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Hc Day"
+  },
+  {
+   "fieldname": "shifttimes",
+   "fieldtype": "Table",
+   "in_list_view": 1,
+   "label": "Hc Shift Times",
+   "options": "Hc Shift Time"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-11 11:06:15.878150",
+ "modified_by": "Administrator",
+ "module": "booking",
+ "name": "Hc Shift",
+ "naming_rule": "Autoincrement",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "search_fields": "day",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "day",
+ "track_changes": 1
+}

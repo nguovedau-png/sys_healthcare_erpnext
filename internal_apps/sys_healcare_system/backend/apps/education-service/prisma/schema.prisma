@@ -1,0 +1,153 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client-education-service"
+}
+
+model Lecturer {
+  id        String   @id @default(uuid())
+  name      String
+  title     String?
+  specialty String?
+  avatar    String?
+  bio       String?
+  courses   Course[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id          String       @id @default(uuid())
+  code        String       @unique
+  name        String
+  type        String       // CME, CPE, etc.
+  provider    String
+  credits     Int
+  price       Float        @default(0)
+  status      String       @default("active") // active, upcoming, completed
+  description String?
+  thumbnail   String?
+  lecturerId  String
+  lecturer    Lecturer     @relation(fields: [lecturerId], references: [id])
+  enrollments Enrollment[]
+  quizzes     Quiz[]
+  lessons     Lesson[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([name])
+  @@index([code])
+  @@index([status])
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  content   String?
+  videoUrl  String?
+  order     Int      @default(0)
+  views     Int      @default(0)
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Enrollment {
+  id          String   @id @default(uuid())
+  userId      String
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  status      String   @default("enrolled") // enrolled, inprogress, completed, dropped
+  progress    Float    @default(0)
+  enrolledAt  DateTime @default(now())
+  completedAt DateTime?
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, courseId])
+}
+
+model Quiz {
+  id        String     @id @default(uuid())
+  courseId  String
+  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  questions Question[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Question {
+  id            String   @id @default(uuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  content       String
+  options       Json     // Array of options
+  correctOption Int      // Index of the correct option
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model CpeDashboardDay {
+  id               Int       @id @default(autoincrement())
+  totalCourses     Int?      @default(0)
+  totalLessons     Int?      @default(0)
+  totalActiveUsers Int?      @default(0)
+  totalUserLearn   Int?      @default(0)
+  totalClicks      Int?      @default(0)
+  createDate       DateTime? @default(now())
+  updateDate       DateTime? @updatedAt
+  
+  @@map("CPEDashboardDay")
+}
+
+model CpeDashboardWeek {
+  id               Int       @id @default(autoincrement())
+  totalCourses     Int?      @default(0)
+  totalLessons     Int?      @default(0)
+  totalActiveUsers Int?      @default(0)
+  totalUserLearn   Int?      @default(0)
+  totalClicks      Int?      @default(0)
+  week             Int?
+  year             Int?
+  createDate       DateTime? @default(now())
+  updateDate       DateTime? @updatedAt
+
+  @@map("CPEDashboardWeek")
+}
+
+model CpeDashboardMonth {
+  id               Int       @id @default(autoincrement())
+  totalCourses     Int?      @default(0)
+  totalLessons     Int?      @default(0)
+  totalActiveUsers Int?      @default(0)
+  totalUserLearn   Int?      @default(0)
+  totalClicks      Int?      @default(0)
+  month            Int?
+  year             Int?
+  createDate       DateTime? @default(now())
+  updateDate       DateTime? @updatedAt
+
+  @@map("CPEDashboardMonth")
+}
+
+model CpeMasterData {
+  id         Int      @id @default(autoincrement())
+  categoryId String   // uniqueidentifier in SQL, usually String/UUID here
+  divisionId Int      // bigint in SQL
+  dmName     String?
+  dmPhone    String?
+  dmCode     String?
+  repName    String?
+  repPhone   String?
+  repCode    String?
+  status     Boolean? // bit in SQL
+  userTotal  Int?
+
+  @@map("CPEMasterData")
+}

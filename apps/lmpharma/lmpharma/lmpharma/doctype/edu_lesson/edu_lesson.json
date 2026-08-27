@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-04-09 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "content",
+  "video_url",
+  "order",
+  "views",
+  "likes",
+  "course"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Content",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "video_url",
+   "fieldtype": "Data",
+   "label": "Video URL",
+   "in_list_view": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "order",
+   "fieldtype": "Int",
+   "label": "Order",
+   "in_list_view": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "views",
+   "fieldtype": "Int",
+   "label": "Views",
+   "in_list_view": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "likes",
+   "fieldtype": "Int",
+   "label": "Likes",
+   "in_list_view": 0
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "in_list_view": 0,
+   "label": "Course",
+   "options": "Edu Course",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-10 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Lmpharma",
+ "name": "Edu Lesson",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "track_views": 0,
+ "allow_import": 0,
+ "quick_entry": 0,
+ "show_name_in_global_search": 0,
+ "title_field": "title"
+}
