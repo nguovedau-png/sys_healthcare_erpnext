@@ -1,15 +1,32 @@
 import { NestFactory, HttpAdapterHost } from '@nestjs/core';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { Transport } from '@nestjs/microservices';
 import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { loggerConfig, AllExceptionsFilter } from '@app/common';
 
+const bootstrapLogger = new Logger('ApiGatewayBootstrap');
+
+function parseList(value: string | undefined, fallback: string[]): string[] {
+  const values = value?.split(',').map((item) => item.trim()).filter(Boolean);
+  return values?.length ? values : fallback;
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(loggerConfig),
   });
-  app.enableCors();
+  const frontendOrigins = parseList(
+    process.env.FRONTEND_ORIGINS || process.env.EXPECTED_ORIGIN,
+    ['http://localhost:3000'],
+  );
+  if (process.env.NODE_ENV === 'production' && !process.env.FRONTEND_ORIGINS) {
+    bootstrapLogger.warn('FRONTEND_ORIGINS is not configured; using the development origin fallback');
+  }
+  app.enableCors({
+    origin: frontendOrigins,
+    credentials: true,
+  });
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true,
@@ -26,8 +43,17 @@ async function bootstrap() {
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        "img-src": ["'self'", "data:", "https://images.unsplash.com", "https://picsum.photos", "http://localhost:3000"],
-        "connect-src": ["'self'", "http://localhost:3000", "http://localhost:5050"],
+        'img-src': parseList(process.env.CSP_IMAGE_SOURCES, [
+          "'self'",
+          'data:',
+          'https://images.unsplash.com',
+          'https://picsum.photos',
+        ]),
+        'connect-src': parseList(process.env.CSP_CONNECT_SOURCES, [
+          "'self'",
+          ...frontendOrigins,
+          'http://localhost:5050',
+        ]),
       },
     },
   }));
@@ -66,6 +92,6 @@ async function bootstrap() {
   await app.startAllMicroservices();
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
+  bootstrapLogger.log(`Application is running on port ${port}`);
 }
 bootstrap();

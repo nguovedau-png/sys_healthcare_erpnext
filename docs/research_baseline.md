@@ -47,3 +47,14 @@ The next implementation priority is therefore not another dashboard. It is to ma
 
 [5]: https://flexclinic.vn/en/ — FLEX|Clinic clinic management platform overview.
 [6]: https://production.vietnammedicalpractice.com/ — Medics hospital/clinic management platform overview.
+
+## Operational/compliance follow-up — August 2026
+
+The follow-up review confirms two separate product layers in the Vietnamese market: a clinical HIS/EMR layer and a broader operational-management layer. Common expectations include appointments and queues, patient history, electronic prescriptions, laboratory/imaging connectivity, billing, and longitudinal medical-record access; operational products additionally emphasize approval workflows, staff recruitment, asset maintenance, document management and internal communications. This supports keeping ERPNext as the owner of CRM, ERP, HR and Accounting while the healthcare layer focuses on patient-care workflows and safe interoperability.
+
+EMR-oriented products also emphasize record lifecycle controls, access tracking, version preservation, digital signing, terminology catalogs, backup/restore and standards boundaries such as HL7 CDA/FHIR, DICOM and ICD-10. The current repository is not claiming legal EMR certification; however, production hardening should prevent accidental broad browser access and avoid hardcoded development origins in security headers. Accordingly, the API gateway now reads CORS and CSP allowlists from environment variables, retains a development fallback for local setup, and emits a production warning when `FRONTEND_ORIGINS` is missing.
+
+[7]: https://amis.misa.vn/119673/phan-mem-quan-ly-y-te/ — MISA AMIS, “Phần mềm quản lý y tế: Vì sao chỉ HIS là chưa đủ?”.
+[8]: https://fpt-is.com/en/emr/ — FPT IS, FPT.EMR product overview and capabilities.
+[9]: https://cloudgo.vn/phan-mem-quan-ly-benh-vien — CloudGO, HIS comparison and selection criteria.
+[10]: https://youmed.vn/tin-tuc/benh-an-dien-tu/ — YouMed, electronic medical record requirements and implementation guidance.
