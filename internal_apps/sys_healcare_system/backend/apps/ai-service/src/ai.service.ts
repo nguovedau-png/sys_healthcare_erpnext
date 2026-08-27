@@ -101,15 +101,28 @@ export class AIService implements OnModuleInit {
     }
 
     async analyzeSymptoms(text: string) {
-        console.log('Analyzing symptoms:', text);
-        // Placeholder for AI symptom analysis
-        // In production, this would call an AI/ML model
+        const symptoms = typeof text === 'string' ? text.trim().slice(0, 2000) : '';
+        if (!symptoms) throw new Error('Symptoms are required');
+
+        const redFlagRules: Array<{ code: string; pattern: RegExp }> = [
+            { code: 'BREATHING_DIFFICULTY', pattern: /khó thở|thở rít|tím tái|difficulty breathing|blue lips/i },
+            { code: 'CHEST_PAIN', pattern: /đau ngực dữ dội|đau ngực trái|chest pain/i },
+            { code: 'NEUROLOGICAL_CHANGE', pattern: /yếu liệt|méo miệng|nói khó|co giật|bất tỉnh|lơ mơ|seizure|unconscious/i },
+            { code: 'SEVERE_BLEEDING', pattern: /chảy máu nhiều|không cầm máu|severe bleeding/i },
+            { code: 'ANAPHYLAXIS', pattern: /phản vệ|sưng phù mặt|sưng môi kèm khó thở|anaphylaxis/i },
+        ];
+        const redFlags = redFlagRules.filter(({ pattern }) => pattern.test(symptoms)).map(({ code }) => code);
+        const triageLevel = redFlags.length > 0 ? 'EMERGENCY' : 'ROUTINE_REVIEW';
+
         return {
-            symptoms: text,
-            possibleConditions: [],
-            recommendations: [],
-            confidence: 0,
-            message: 'Symptom analysis feature coming soon',
+            symptoms,
+            triageLevel,
+            redFlags,
+            requiresClinicianReview: true,
+            nextStep: redFlags.length > 0
+                ? 'Gọi cấp cứu địa phương hoặc đến cơ sở y tế gần nhất ngay lập tức.'
+                : 'Đặt lịch hoặc chuyển thông tin cho nhân viên y tế để đánh giá trực tiếp.',
+            disclaimer: 'Kết quả này chỉ hỗ trợ tiếp nhận và phân luồng, không phải chẩn đoán hoặc chỉ định điều trị.',
         };
     }
 }

@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Param, Inject, ParseIntPipe, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { AnalyzeSymptomsDto } from './dto/analyze-symptoms.dto';
 import { firstValueFrom } from 'rxjs';
 
 @Controller('ai')
@@ -19,8 +20,8 @@ export class AIController {
     }
 
     @Post('analyze-symptoms')
-    analyzeSymptoms(@Body('symptoms') symptoms: string) {
-        return firstValueFrom(this.aiClient.send({ cmd: 'analyze_symptoms' }, { symptoms }));
+    analyzeSymptoms(@Body() body: AnalyzeSymptomsDto) {
+        return firstValueFrom(this.aiClient.send({ cmd: 'analyze_symptoms' }, body.symptoms));
     }
 
     @Get('stats')

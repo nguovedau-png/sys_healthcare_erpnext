@@ -38,3 +38,10 @@ Duplicate patient registration, appointment overlap, cancelled appointment payme
 ## Architecture decision
 
 Keep the existing NestJS service topology, but introduce a narrow modular integration boundary instead of coupling clinical controllers to ERPNext HTTP details. The first implementation milestone provides a typed ERPNext REST client, safe retry policy, idempotency metadata, and a health/status endpoint. Healthcare domain services can consume this boundary from booking/ERP modules without duplicating CRM/HR/accounting logic.
+
+
+## Safety-first symptom intake
+
+The symptom intake endpoint is an operational triage aid, not a diagnostic or treatment engine. It normalizes a bounded text input, detects a small set of explicit emergency red flags, returns an urgency level and next operational step, and always sets `requiresClinicianReview=true`. It intentionally does not return diagnoses, medication instructions or confidence scores. Any future clinical decision-support integration must pass separate clinical validation, governance and deployment review.
+
+The gateway contract is `POST /ai/analyze-symptoms` with `{ "symptoms": string }`, validated as non-empty and at most 2,000 characters. The gateway forwards the string to the AI service; it does not pass arbitrary objects to the microservice.
