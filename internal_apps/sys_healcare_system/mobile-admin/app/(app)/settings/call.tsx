@@ -10,7 +10,7 @@ const AgoraCallScreen = () => {
   const userId = params.uid as string || '1';
 
   return (
-    <YStack flex={1} justifyContent="center" alignItems="center" bg="$background">
+    <YStack flex={1} justify="center" items="center" bg="$background">
       <Text style={styles.title}>Agora Video Call</Text>
       <Text style={styles.message}>Channel: {channelName}</Text>
       <Text style={styles.message}>User ID: {userId}</Text>

@@ -166,7 +166,7 @@ export default function SupportGroupDetail() {
                 <Col xs={24} lg={16}>
                     <Card
                         title={<Space><InfoCircleOutlined />Giới thiệu nhóm</Space>}
-                        variant="borderless"
+                        variant="outlined"
                         className="shadow-sm"
                         style={{ marginBottom: '24px' }}
                     >
@@ -177,7 +177,7 @@ export default function SupportGroupDetail() {
 
                     <Card
                         title={<Space><SafetyCertificateOutlined />Quy tắc hoạt động</Space>}
-                        variant="borderless"
+                        variant="outlined"
                         className="shadow-sm"
                     >
                         <List
@@ -196,7 +196,7 @@ export default function SupportGroupDetail() {
 
                 <Col xs={24} lg={8}>
                     <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
-                        <Card title="Chỉ số hoạt động" variant="borderless" className="shadow-sm">
+                        <Card title="Chỉ số hoạt động" variant="outlined" className="shadow-sm">
                             <Row gutter={[16, 16]}>
                                 <Col span={12}>
                                     <Statistic
@@ -217,7 +217,7 @@ export default function SupportGroupDetail() {
                             </Row>
                         </Card>
 
-                        <Card title="Cấu hình quản trị" variant="borderless" className="shadow-sm">
+                        <Card title="Cấu hình quản trị" variant="outlined" className="shadow-sm">
                             <Descriptions column={1} size="small">
                                 <Descriptions.Item label="ID Nhóm">
                                     <Text code>#{group.id}</Text>
@@ -231,7 +231,7 @@ export default function SupportGroupDetail() {
                             </Descriptions>
                         </Card>
 
-                        <Card title="Thao tác nâng cao" variant="borderless" className="shadow-sm">
+                        <Card title="Thao tác nâng cao" variant="outlined" className="shadow-sm">
                             <Space orientation="vertical" style={{ width: '100% ' }}>
                                 <Button block ghost type="primary">Gửi thông báo toàn nhóm</Button>
                                 <Button block>Quản lý thành viên</Button>

@@ -78,7 +78,7 @@ export default function CreateLabTest() {
                 </div>
             </Space>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <FormBuilder
                     fields={fields}
                     onSubmit={handleSubmit}

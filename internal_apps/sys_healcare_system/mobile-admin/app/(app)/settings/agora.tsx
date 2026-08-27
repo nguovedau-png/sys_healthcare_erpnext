@@ -24,10 +24,10 @@ const AgoraVideoCall = () => {
   return (
     <YStack flex={1} p="$3" bg="$background" gap="$3">
       <Card p="$4">
-        <Paragraph fontSize={24} fontWeight="bold" textAlign="center" mb="$2">
+        <Paragraph fontSize={24} fontWeight="bold" mb="$2">
           Agora Video Call
         </Paragraph>
-        <Paragraph fontSize={16} textAlign="center" mb="$4" color="$color11">
+        <Paragraph fontSize={16} mb="$4" color="$color11">
           Join a video call using Agora SDK
         </Paragraph>
         
@@ -54,7 +54,7 @@ const AgoraVideoCall = () => {
           </YStack>
           
           <Button
-            backgroundColor="$green10"
+            bg="$green10"
             color="white"
             size="$4"
             onPress={joinChannel}

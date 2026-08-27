@@ -21,15 +21,15 @@ export default function PharmaciesManagementPage() {
         try {
             setLoading(true);
             const data = await partnerService.getPharmacies();
-            setPharmacies(data);
+            setPharmacies(data.data);
 
             // Calculate stats
             setStats({
-                total: data.length,
-                active: data.filter(p => p.status === 'active').length,
-                pending: data.filter(p => p.status === 'pending').length,
-                gpp: data.filter(p => !!p.gppNumber).length,
-                platinumPlus: data.filter(p => ['platinum', 'diamond'].includes(p.memberRank || '')).length
+                total: data.data.length,
+                active: data.data.filter(p => p.status === 'active').length,
+                pending: data.data.filter(p => p.status === 'pending').length,
+                gpp: data.data.filter(p => !!p.gppNumber).length,
+                platinumPlus: data.data.filter(p => ['platinum', 'diamond'].includes(p.memberRank || '')).length
             });
         } catch (error) {
             console.error('Failed to fetch pharmacies', error);

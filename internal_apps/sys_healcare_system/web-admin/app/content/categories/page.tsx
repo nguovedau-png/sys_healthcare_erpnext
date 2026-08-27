@@ -147,7 +147,7 @@ export default function NewsCategoriesAdmin() {
 
             <Row gutter={16}>
                 <Col span={8}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic
                             title="Số lượng Danh mục"
                             value={categories.length}
@@ -156,7 +156,7 @@ export default function NewsCategoriesAdmin() {
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic
                             title="Phân loại chính"
                             value={categories.length > 5 ? 5 : categories.length}
@@ -165,7 +165,7 @@ export default function NewsCategoriesAdmin() {
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic
                             title="Đang sử dụng"
                             value={100}
@@ -178,7 +178,7 @@ export default function NewsCategoriesAdmin() {
 
             <Row gutter={24}>
                 <Col xs={24} lg={8}>
-                    <Card title={<Space><PlusOutlined />Thêm danh mục mới</Space>} variant="borderless">
+                    <Card title={<Space><PlusOutlined />Thêm danh mục mới</Space>} variant="outlined">
                         <Form
                             form={form}
                             layout="vertical"
@@ -207,7 +207,7 @@ export default function NewsCategoriesAdmin() {
                 </Col>
 
                 <Col xs={24} lg={16}>
-                    <Card variant="borderless" bodyStyle={{ padding: 0 }}>
+                    <Card variant="outlined" bodyStyle={{ padding: 0 }}>
                         <Table
                             columns={columns}
                             dataSource={categories}

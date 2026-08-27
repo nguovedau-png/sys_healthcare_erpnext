@@ -6,7 +6,6 @@ import {
   Button,
   ScrollView,
   Card,
-  Badge,
   Separator,
   useTheme,
 } from 'tamagui';
@@ -24,6 +23,7 @@ import { StoredNotification } from '../../../lib/notificationService';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Alert, Share } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
+import { StatusPill } from '../../../components/StatusPill';
 
 export default function NotificationDetailScreen() {
   const theme = useTheme();
@@ -107,9 +107,9 @@ export default function NotificationDetailScreen() {
 
   if (!notification) {
     return (
-      <YStack flex={1} alignItems="center" justifyContent="center">
+      <YStack flex={1} items="center" justify="center">
         <Text>Notification not found</Text>
-        <Button onPress={() => router.back()} marginTop="$4">
+        <Button onPress={() => router.back()} mt="$4">
           Go Back
         </Button>
       </YStack>
@@ -117,24 +117,24 @@ export default function NotificationDetailScreen() {
   }
 
   return (
-    <YStack flex={1} backgroundColor="$background">
+    <YStack flex={1} bg="$background">
       {/* Header */}
       <XStack
-        padding="$4"
-        paddingTop="$6"
-        backgroundColor="$blue2"
-        alignItems="center"
-        justifyContent="space-between"
+        p="$4"
+        pt="$6"
+        bg="$blue2"
+        items="center"
+        justify="space-between"
         shadowColor="$shadowColor"
         shadowOffset={{ width: 0, height: 2 }}
         shadowOpacity={0.1}
         shadowRadius={4}
         elevation={3}
       >
-        <XStack alignItems="center" space="$3">
+        <XStack items="center" space="$3">
           <Button
             size="$3"
-            variant="ghost"
+            variant="outlined"
             icon={ArrowLeft}
             onPress={() => router.back()}
           />
@@ -168,27 +168,27 @@ export default function NotificationDetailScreen() {
       </XStack>
 
       <ScrollView flex={1} showsVerticalScrollIndicator={false}>
-        <YStack padding="$4" space="$4">
+        <YStack p="$4" space="$4">
           {/* Main Content */}
-          <Card padding="$4" backgroundColor="$blue2">
+          <Card p="$4" bg="$blue2">
             <YStack space="$3">
-              <XStack alignItems="center" space="$3">
-                <Bell size={24} color={theme.blue10.val} />
-                <Badge
+              <XStack items="center" space="$3">
+                <Bell size={24} color="$blue10" />
+                <StatusPill
                   size="$2"
-                  backgroundColor={notification.read ? '$green9' : '$blue9'}
+                  bg={notification.read ? '$green9' : '$blue9'}
                   color="white"
                 >
                   {notification.read ? 'Read' : 'Unread'}
-                </Badge>
-                {notification.clicked && (
-                  <Badge
+                </StatusPill>
+                {notification.data?.clicked && (
+                  <StatusPill
                     size="$2"
-                    backgroundColor="$green9"
+                    bg="$green9"
                     color="white"
                   >
                     Opened
-                  </Badge>
+                  </StatusPill>
                 )}
               </XStack>
               
@@ -203,16 +203,16 @@ export default function NotificationDetailScreen() {
           </Card>
 
           {/* Metadata */}
-          <Card padding="$4">
+          <Card p="$4">
             <YStack space="$3">
               <Text fontSize="$5" fontWeight="bold">
                 Information
               </Text>
               
               <YStack space="$2">
-                <XStack alignItems="center" space="$3">
-                  <Calendar size={16} color={theme.gray10.val} />
-                  <Text fontSize="$3" color="$gray11">
+                <XStack items="center" space="$3">
+                  <Calendar size={16} color="$color10" />
+                  <Text fontSize="$3" color="$color11">
                     Received
                   </Text>
                   <Text fontSize="$3" fontWeight="500">
@@ -220,9 +220,9 @@ export default function NotificationDetailScreen() {
                   </Text>
                 </XStack>
                 
-                <XStack alignItems="center" space="$3">
-                  <MessageSquare size={16} color={theme.gray10.val} />
-                  <Text fontSize="$3" color="$gray11">
+                <XStack items="center" space="$3">
+                  <MessageSquare size={16} color="$color10" />
+                  <Text fontSize="$3" color="$color11">
                     ID
                   </Text>
                   <Text fontSize="$3" fontWeight="500" flex={1}>
@@ -230,7 +230,7 @@ export default function NotificationDetailScreen() {
                   </Text>
                   <Button
                     size="$2"
-                    variant="ghost"
+                    variant="outlined"
                     icon={Copy}
                     onPress={() => {
                       Clipboard.setStringAsync(notification.id);
@@ -244,7 +244,7 @@ export default function NotificationDetailScreen() {
 
           {/* Additional Data */}
           {notification.data && Object.keys(notification.data).length > 0 && (
-            <Card padding="$4">
+            <Card p="$4">
               <YStack space="$3">
                 <Text fontSize="$5" fontWeight="bold">
                   Additional Data
@@ -254,32 +254,32 @@ export default function NotificationDetailScreen() {
                   {Object.entries(notification.data).map(([key, value], index) => (
                     <React.Fragment key={key}>
                       <XStack
-                        alignItems="flex-start"
+                        items="flex-start"
                         space="$3"
-                        padding="$2"
-                        backgroundColor={key === 'screen' ? '$blue3' : '$gray2'}
-                        borderRadius="$3"
+                        p="$2"
+                        bg={key === 'screen' ? '$blue3' : '$color2'}
+
                         pressStyle={{ scale: 0.98 }}
                         onPress={() => handleDataPress(key, value)}
                       >
-                        <Text fontSize="$3" fontWeight="600" color="$gray11" minWidth={80}>
+                        <Text fontSize="$3" fontWeight="600" color="$color11" width={80}>
                           {key}:
                         </Text>
                         <Text fontSize="$3" flex={1} color={key === 'screen' ? '$blue11' : '$color'}>
                           {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
                         </Text>
                         {key === 'screen' && (
-                          <ExternalLink size={16} color={theme.blue10.val} />
+                          <ExternalLink size={16} color="$blue10" />
                         )}
                       </XStack>
                       {index < Object.entries(notification.data!).length - 1 && (
-                        <Separator marginVertical="$1" />
+                        <Separator my="$1" />
                       )}
                     </React.Fragment>
                   ))}
                 </YStack>
                 
-                <Text fontSize="$2" color="$gray9" textAlign="center">
+                <Text fontSize="$2" color="$color9">
                   Tap on items to copy or navigate
                 </Text>
               </YStack>
@@ -287,7 +287,7 @@ export default function NotificationDetailScreen() {
           )}
 
           {/* Actions */}
-          <Card padding="$4">
+          <Card p="$4">
             <YStack space="$3">
               <Text fontSize="$5" fontWeight="bold">
                 Actions
@@ -297,7 +297,7 @@ export default function NotificationDetailScreen() {
                 {notification.data?.screen && (
                   <Button
                     size="$4"
-                    backgroundColor="$blue9"
+                    bg="$blue9"
                     color="white"
                     icon={ExternalLink}
                     onPress={() => {
@@ -328,7 +328,7 @@ export default function NotificationDetailScreen() {
                   Share Notification
                 </Button>
                 
-                <Separator marginVertical="$2" />
+                <Separator my="$2" />
                 
                 <Button
                   size="$4"
@@ -345,13 +345,13 @@ export default function NotificationDetailScreen() {
           </Card>
 
           {/* Debug Information */}
-          <Card padding="$4" backgroundColor="$gray2">
+          <Card p="$4" bg="$color2">
             <YStack space="$3">
-              <Text fontSize="$4" fontWeight="bold" color="$gray11">
+              <Text fontSize="$4" fontWeight="bold" color="$color11">
                 Debug Information
               </Text>
               
-              <Text fontSize="$2" color="$gray10" fontFamily="$mono">
+              <Text fontSize="$2" color="$color10">
                 {JSON.stringify(notification, null, 2)}
               </Text>
             </YStack>

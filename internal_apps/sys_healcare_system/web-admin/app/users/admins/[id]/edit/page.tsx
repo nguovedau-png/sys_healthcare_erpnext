@@ -89,7 +89,7 @@ export default function EditUserPage({ params }: { params: Promise<{ id: string 
                 <Text type="secondary">Cập nhật thông tin và quyền hạn cho nhân sự: <Text strong>{user?.name}</Text></Text>
             </div>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 {user && (
                     <FormBuilder
                         initialValues={{

@@ -142,7 +142,7 @@ export default function SupportGroupsManagement() {
             key: 'status',
             label: 'TRẠNG THÁI',
             render: (val: string) => (
-                <Tag color={val === 'active' ? 'success' : 'default'} variant="borderless">
+                <Tag color={val === 'active' ? 'success' : 'default'} variant="outlined">
                     {val === 'active' ? 'ĐANG HOẠT ĐỘNG' : 'TẠM NGƯNG'}
                 </Tag>
             )
@@ -170,22 +170,22 @@ export default function SupportGroupsManagement() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic title="Tổng số nhóm" value={total} prefix={<TeamOutlined />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic title="Tổng thành viên" value={groups.reduce((acc, g) => acc + (g.membersCount || 0), 0)} prefix={<SafetyCertificateOutlined />} valueStyle={{ color: '#52c41a' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#e6f7ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#e6f7ff' }}>
                         <Statistic title="Tổng bài viết" value={groups.reduce((acc, g) => acc + (g.postsCount || 0), 0)} prefix={<FileTextOutlined />} valueStyle={{ color: '#1890ff' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic title="Đang hoạt động" value={groups.filter(g => g.status === 'active').length} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#fa8c16' }} />
                     </Card>
                 </Col>

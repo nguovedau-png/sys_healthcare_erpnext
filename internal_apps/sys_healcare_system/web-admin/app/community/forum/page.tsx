@@ -103,7 +103,7 @@ export default function ForumManagement() {
                 <Space orientation="vertical" size={0}>
                     <Text strong style={{ fontSize: '15px' }}>{record.title}</Text>
                     <Space size="small" split={<Text type="secondary" style={{ fontSize: '10px' }}>•</Text>}>
-                        <Tag color="cyan" variant="borderless" style={{ fontSize: '11px' }}>{record.category}</Tag>
+                        <Tag color="cyan" style={{ fontSize: '11px' }}>{record.category}</Tag>
                         <Space size={4}>
                             <UserOutlined style={{ fontSize: '12px', color: '#8c8c8c' }} />
                             <Text type="secondary" style={{ fontSize: '12px' }}>{record.authorName}</Text>
@@ -142,7 +142,7 @@ export default function ForumManagement() {
             key: 'status',
             label: 'TRẠNG THÁI',
             render: (val: string) => (
-                <Tag color={val === 'active' ? 'success' : 'default'} variant="borderless">
+                <Tag color={val === 'active' ? 'success' : 'default'} variant="outlined">
                     {val === 'active' ? 'HOẠT ĐỘNG' : 'ĐÃ KHÓA'}
                 </Tag>
             )
@@ -172,22 +172,22 @@ export default function ForumManagement() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic title="Tổng chủ đề" value={total} prefix={<FileTextOutlined />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic title="Đang hoạt động" value={topics.filter(t => t.status === 'active').length} prefix={<MessageOutlined />} valueStyle={{ color: '#52c41a' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#e6f7ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#e6f7ff' }}>
                         <Statistic title="Tổng lượt xem" value={topics.reduce((acc, t) => acc + (t.views || 0), 0)} prefix={<EyeOutlined />} valueStyle={{ color: '#1890ff' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic title="Thành viên" value={new Set(topics.map(t => t.authorId)).size} prefix={<TeamOutlined />} valueStyle={{ color: '#fa8c16' }} />
                     </Card>
                 </Col>

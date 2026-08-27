@@ -129,7 +129,7 @@ export default function TopSearchesManagement() {
             label: 'Lượt tìm kiếm',
             align: 'center' as const,
             render: (count: number) => (
-                <Tag color="blue" variant="borderless" style={{ fontWeight: 'bold' }}>
+                <Tag color="blue" variant="outlined" style={{ fontWeight: 'bold' }}>
                     {count.toLocaleString()}
                 </Tag>
             )

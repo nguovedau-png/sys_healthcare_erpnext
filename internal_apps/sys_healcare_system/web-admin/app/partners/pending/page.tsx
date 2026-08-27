@@ -160,7 +160,7 @@ export default function PendingPartnersManagement() {
         {
             key: 'type',
             label: 'Loại hình',
-            render: (val: string) => <Tag color="blue" variant="borderless">{val?.toUpperCase()}</Tag>
+            render: (val: string) => <Tag color="blue" variant="outlined">{val?.toUpperCase()}</Tag>
         },
         {
             key: 'email',

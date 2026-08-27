@@ -125,10 +125,10 @@ export default function HospitalsManagement() {
             render: (val: string[]) => (
                 <div style={{ maxWidth: '200px' }}>
                     {val?.slice(0, 2).map((d: string, i: number) => (
-                        <Tag key={i} color="purple" style={{ marginBottom: '4px' }} variant="borderless">{d}</Tag>
+                        <Tag key={i} color="purple" style={{ marginBottom: '4px' }} variant="outlined">{d}</Tag>
                     ))}
                     {val?.length > 2 && (
-                        <Tag color="default" variant="borderless">+{val.length - 2}</Tag>
+                        <Tag color="default" variant="outlined">+{val.length - 2}</Tag>
                     )}
                 </div>
             )
@@ -148,11 +148,11 @@ export default function HospitalsManagement() {
             label: 'Trạng thái',
             render: (val: boolean) => (
                 val ? (
-                    <Tag icon={<SafetyCertificateOutlined />} color="success" variant="borderless">
+                    <Tag icon={<SafetyCertificateOutlined />} color="success" variant="outlined">
                         Đã xác thực
                     </Tag>
                 ) : (
-                    <Tag color="default" variant="borderless">Chưa xác thực</Tag>
+                    <Tag color="default" variant="outlined">Chưa xác thực</Tag>
                 )
             )
         },

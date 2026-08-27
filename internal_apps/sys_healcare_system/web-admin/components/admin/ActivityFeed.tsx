@@ -57,7 +57,7 @@ export default function ActivityFeed() {
     };
 
     return (
-        <Card title={<Title level={4} style={{ margin: 0 }}>Hoạt động trực tuyến</Title>} variant="borderless" style={{ height: '100%' }}>
+        <Card title={<Title level={4} style={{ margin: 0 }}>Hoạt động trực tuyến</Title>} variant="outlined" style={{ height: '100%' }}>
             {activities.length > 0 ? (
                 <List
                     itemLayout="horizontal"

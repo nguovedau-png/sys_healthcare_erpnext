@@ -178,7 +178,7 @@ export default function ForumTopicDetail() {
                 <Col xs={24} lg={16}>
                     <Card
                         title={<Space><FileTextOutlined />Nội dung thảo luận</Space>}
-                        variant="borderless"
+                        variant="outlined"
                         className="shadow-sm"
                     >
                         <Paragraph style={{ fontSize: '16px', lineHeight: '1.8' }}>
@@ -189,7 +189,7 @@ export default function ForumTopicDetail() {
 
                 <Col xs={24} lg={8}>
                     <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
-                        <Card title="Thống kê tương tác" variant="borderless" className="shadow-sm">
+                        <Card title="Thống kê tương tác" variant="outlined" className="shadow-sm">
                             <Row gutter={[16, 16]}>
                                 <Col span={12}>
                                     <Statistic
@@ -210,7 +210,7 @@ export default function ForumTopicDetail() {
                             </Row>
                         </Card>
 
-                        <Card title="Thông tin chi tiết" variant="borderless" className="shadow-sm">
+                        <Card title="Thông tin chi tiết" variant="outlined" className="shadow-sm">
                             <Descriptions column={1} size="small">
                                 <Descriptions.Item label={<Space><FolderOpenOutlined />Danh mục</Space>}>
                                     <Tag color="blue">{topic.category}</Tag>
@@ -224,7 +224,7 @@ export default function ForumTopicDetail() {
                             </Descriptions>
                         </Card>
 
-                        <Card title="Kiểm duyệt" variant="borderless" className="shadow-sm">
+                        <Card title="Kiểm duyệt" variant="outlined" className="shadow-sm">
                             <Space orientation="vertical" style={{ width: '100% ' }}>
                                 <Text>Trạng thái hiện tại: {topic.status === 'active' ? <Text type="success">Đã duyệt</Text> : <Text type="warning">Chờ duyệt</Text>}</Text>
                                 <Button block>Yêu cầu chỉnh sửa</Button>

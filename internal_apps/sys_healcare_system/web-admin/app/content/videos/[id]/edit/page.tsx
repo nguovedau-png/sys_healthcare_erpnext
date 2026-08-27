@@ -146,7 +146,7 @@ export default function EditVideoPage({ params }: { params: Promise<{ id: string
                 </Col>
             </Row>
 
-            <Card variant="borderless" bodyStyle={{ padding: '24px' }}>
+            <Card variant="outlined" bodyStyle={{ padding: '24px' }}>
                 <FormBuilder
                     fields={formFields}
                     onSubmit={handleSubmit}

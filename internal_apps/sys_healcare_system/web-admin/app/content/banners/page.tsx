@@ -98,7 +98,7 @@ export default function BannersManagement() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic
                             title="Tổng số Banner"
                             value={banners.length}
@@ -107,7 +107,7 @@ export default function BannersManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic
                             title="Đang hoạt động"
                             value={banners.filter(b => b.isActive).length}
@@ -117,7 +117,7 @@ export default function BannersManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff1f0' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff1f0' }}>
                         <Statistic
                             title="Đang tạm ngưng"
                             value={banners.filter(b => !b.isActive).length}
@@ -127,7 +127,7 @@ export default function BannersManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f9f0ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f9f0ff' }}>
                         <Statistic
                             title="Vị trí hiển thị"
                             value={new Set(banners.map(b => b.position)).size}
@@ -141,7 +141,7 @@ export default function BannersManagement() {
                 <Row gutter={[24, 24]}>
                     {[1, 2, 3].map(i => (
                         <Col xs={24} sm={12} lg={8} key={i}>
-                            <Card loading variant="borderless" bodyStyle={{ padding: '0px' }} />
+                            <Card loading variant="outlined" bodyStyle={{ padding: '0px' }} />
                         </Col>
                     ))}
                 </Row>
@@ -151,7 +151,7 @@ export default function BannersManagement() {
                         <Col xs={24} sm={12} lg={8} key={banner.id}>
                             <Card
                                 hoverable
-                                variant="borderless"
+                                variant="outlined"
                                 bodyStyle={{ padding: '16px' }}
                                 cover={
                                     <div style={{ position: 'relative', height: 180, overflow: 'hidden', borderRadius: '8px 8px 0 0' }}>
@@ -161,7 +161,7 @@ export default function BannersManagement() {
                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                         />
                                         <div style={{ position: 'absolute', top: 12, left: 12 }}>
-                                            <Tag color={banner.isActive ? 'success' : 'default'} variant="borderless" style={{ borderRadius: '4px' }}>
+                                            <Tag color={banner.isActive ? 'success' : 'default'} variant="outlined" style={{ borderRadius: '4px' }}>
                                                 {banner.isActive ? 'HOẠT ĐỘNG' : 'TẠM NGƯNG'}
                                             </Tag>
                                         </div>
@@ -186,7 +186,7 @@ export default function BannersManagement() {
                                     description={
                                         <Space orientation="vertical" size={12} style={{ display: 'flex', marginTop: 8 }}>
                                             <Space split={<Divider type="vertical" style={{ margin: 0, height: '10px' }} />} style={{ fontSize: '12px' }}>
-                                                <Tag color="processing" variant="borderless" style={{ textTransform: 'uppercase', fontSize: '10px' }}>
+                                                <Tag color="processing" variant="outlined" style={{ textTransform: 'uppercase', fontSize: '10px' }}>
                                                     {banner.position}
                                                 </Tag>
                                                 <Text type="secondary" style={{ fontSize: '12px' }}>ID: {banner.id}</Text>

@@ -1,10 +1,15 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ErpService } from './erp.service';
+import { ErpNextIntegrationService } from './integrations/erpnext.integration.service';
+import { ErpNextDocument } from './integrations/erpnext.types';
 
 @Controller()
 export class ErpController {
-  constructor(private readonly erpService: ErpService) { }
+  constructor(
+    private readonly erpService: ErpService,
+    private readonly erpNext: ErpNextIntegrationService,
+  ) { }
 
   @MessagePattern({ cmd: 'erp.create' })
   createErpKey(@Payload() data: { userId: string; name: string }) {
@@ -24,6 +29,19 @@ export class ErpController {
   @MessagePattern({ cmd: 'get_erp_keys' })
   getErpKeys(userId: string) {
     return this.erpService.getErpKeys(userId);
+  }
+
+  @MessagePattern({ cmd: 'erpnext.health' })
+  erpNextHealth() {
+    return this.erpNext.getHealth();
+  }
+
+  @MessagePattern({ cmd: 'erpnext.upsert' })
+  upsertErpNext(@Payload() document: ErpNextDocument) {
+    if (!document?.doctype || !document?.context?.tenantId || !document?.context?.facilityId || !document?.context?.idempotencyKey) {
+      throw new Error('doctype, tenantId, facilityId and idempotencyKey are required');
+    }
+    return this.erpNext.upsert(document);
   }
 
   // --- Inventory ---

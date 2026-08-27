@@ -137,7 +137,7 @@ export default function CreateCoursePage() {
                 </Col>
             </Row>
 
-            <Card variant="borderless" className="shadow-sm">
+            <Card variant="outlined" className="shadow-sm">
                 <FormBuilder
                     fields={fields}
                     onSubmit={handleSubmit}

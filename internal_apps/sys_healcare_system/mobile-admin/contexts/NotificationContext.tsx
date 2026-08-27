@@ -110,7 +110,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
       // Register device with backend
       if (user && token) {
         const response = await registerDevice(deviceInfo, token);
-        setRegisteredDeviceId(response.data?.id || response.data?._id);
+        setRegisteredDeviceId(response.data?.id || response.data?._id || null);
         console.log('Device registered successfully:', response);
       }
     } catch (error) {

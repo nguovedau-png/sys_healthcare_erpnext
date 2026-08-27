@@ -125,7 +125,7 @@ export default function EditPharmacy() {
                 </div>
             </Space>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <FormBuilder
                     fields={fields}
                     initialValues={initialValues}

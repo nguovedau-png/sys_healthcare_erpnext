@@ -139,7 +139,7 @@ export default function PatientDetail() {
             label: <Space><ContainerOutlined />Tiền sử bệnh lý</Space>,
             children: (
                 <div style={{ marginTop: '16px' }}>
-                    <Card title="Ghi chú hồ sơ bệnh án" variant="borderless" bodyStyle={{ padding: '24px' }}>
+                    <Card title="Ghi chú hồ sơ bệnh án" variant="outlined" bodyStyle={{ padding: '24px' }}>
                         <Paragraph style={{ whiteSpace: 'pre-line', fontSize: '16px' }}>
                             {'Chưa có thông tin tiền sử bệnh lý được ghi nhận.'}
                         </Paragraph>
@@ -242,7 +242,7 @@ export default function PatientDetail() {
                 </Col>
             </Row>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <Tabs items={tabItems} />
             </Card>
         </Space>

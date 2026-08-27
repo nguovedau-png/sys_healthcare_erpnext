@@ -15,7 +15,7 @@ export default function EmailMarketingManagement() {
         try {
             setLoading(true);
             const data = await marketingService.getEmailCampaigns();
-            setEmails(data);
+            setEmails(data.data);
         } catch (error) {
             console.error('Failed to fetch email campaigns', error);
         } finally {

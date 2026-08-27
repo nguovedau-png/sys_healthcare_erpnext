@@ -114,7 +114,7 @@ export default function ModerationManagement() {
                         {record.contentPreview || 'Nội dung không khả dụng'}
                     </Paragraph>
                     <Space size="small">
-                        <Tag color="orange" variant="borderless" style={{ fontSize: '11px' }}>{record.contentType?.toUpperCase()}</Tag>
+                        <Tag color="orange" variant="outlined" style={{ fontSize: '11px' }}>{record.contentType?.toUpperCase()}</Tag>
                         <Text type="secondary" style={{ fontSize: '12px' }}>Tác giả: {record.authorName}</Text>
                     </Space>
                 </Space>
@@ -152,7 +152,7 @@ export default function ModerationManagement() {
                     pending: 'CHỜ DUYỆT',
                     dismissed: 'BỎ QUA'
                 };
-                return <Tag color={colors[val] || 'default'} variant="borderless">{labels[val] || val.toUpperCase()}</Tag>;
+                return <Tag color={colors[val] || 'default'} variant="outlined">{labels[val] || val.toUpperCase()}</Tag>;
             }
         },
     ];
@@ -176,22 +176,22 @@ export default function ModerationManagement() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff2f0' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff2f0' }}>
                         <Statistic title="Tổng báo cáo" value={total} prefix={<FlagOutlined />} valueStyle={{ color: '#cf1322' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fffbe6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fffbe6' }}>
                         <Statistic title="Chưa xử lý" value={reports.filter(r => r.status === 'pending').length} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#d46b08' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic title="Đã giải quyết" value={reports.filter(r => r.status === 'resolved').length} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#52c41a' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic title="Nghiêm trọng" value={reports.filter(r => r.reason?.includes('Spam')).length} prefix={<AlertOutlined />} valueStyle={{ color: '#1890ff' }} />
                     </Card>
                 </Col>

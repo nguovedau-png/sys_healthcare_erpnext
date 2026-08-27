@@ -139,14 +139,14 @@ export default function CourseDetailPage() {
             <Row gutter={24}>
                 <Col span={16}>
                     <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
-                        <Card variant="borderless" className="shadow-sm">
+                        <Card variant="outlined" className="shadow-sm">
                             <Title level={4}>Mô tả chương trình</Title>
                             <Paragraph>
                                 {course.description || 'Chưa có mô tả chi tiết cho khóa học này. Chương trình đào tạo bao gồm các cập nhật mới nhất về kiến thức y khoa chuyên sâu và thực hành lâm sàng.'}
                             </Paragraph>
                         </Card>
 
-                        <Card variant="borderless" className="shadow-sm">
+                        <Card variant="outlined" className="shadow-sm">
                             <Title level={4}>Cấu trúc khóa học</Title>
                             <List
                                 itemLayout="horizontal"
@@ -171,7 +171,7 @@ export default function CourseDetailPage() {
                 </Col>
                 <Col span={8}>
                     <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
-                        <Card variant="borderless" className="shadow-sm">
+                        <Card variant="outlined" className="shadow-sm">
                             <Title level={4}>Thông tin tóm tắt</Title>
                             <Divider style={{ margin: '12px 0' }} />
                             <Row gutter={[16, 16]}>
@@ -190,7 +190,7 @@ export default function CourseDetailPage() {
                             </Row>
                         </Card>
 
-                        <Card variant="borderless" className="shadow-sm">
+                        <Card variant="outlined" className="shadow-sm">
                             <Title level={4}>Giảng viên phụ trách</Title>
                             <Divider style={{ margin: '12px 0' }} />
                             {course.lecturer ? (
@@ -208,7 +208,7 @@ export default function CourseDetailPage() {
                             )}
                         </Card>
 
-                        <Card variant="borderless" className="shadow-sm">
+                        <Card variant="outlined" className="shadow-sm">
                             <Title level={4}>Kiểm tra & Đánh giá</Title>
                             <Divider style={{ margin: '12px 0' }} />
                             <List

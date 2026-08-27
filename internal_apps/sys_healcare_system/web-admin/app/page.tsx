@@ -97,7 +97,7 @@ export default function AdminDashboard() {
 
             <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
                 <Col xs={24} sm={12} md={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic
                             title="Tổng người dùng"
                             value={aggregateStats.totalUsers}
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic
                             title="Đang hoạt động"
                             value={aggregateStats.activeUsers}
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic
                             title="Doanh thu tháng (VNĐ)"
                             value={aggregateStats.totalRevenue / 1000000}
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic
                             title="Tỷ lệ hoàn thành"
                             value={aggregateStats.completionRate}

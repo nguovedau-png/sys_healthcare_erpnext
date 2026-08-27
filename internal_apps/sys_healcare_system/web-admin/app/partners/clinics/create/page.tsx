@@ -84,7 +84,7 @@ export default function CreateClinicPage() {
                 </div>
             </Space>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <FormBuilder
                     fields={fields}
                     onSubmit={handleSubmit}

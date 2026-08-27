@@ -100,7 +100,7 @@ export default function VideosManagement() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic
                             title="Tổng số Video"
                             value={videos.length}
@@ -109,7 +109,7 @@ export default function VideosManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic
                             title="Đã xuất bản"
                             value={videos.filter(v => v.isActive).length}
@@ -119,7 +119,7 @@ export default function VideosManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic
                             title="Lượt xem"
                             value={videos.reduce((acc, v) => acc + (v.view || 0), 0)}
@@ -129,7 +129,7 @@ export default function VideosManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f9f0ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f9f0ff' }}>
                         <Statistic
                             title="Thời lượng (ước tính)"
                             value={videos.length * 15}
@@ -144,7 +144,7 @@ export default function VideosManagement() {
                 <Row gutter={[24, 24]}>
                     {[1, 2, 3].map(i => (
                         <Col xs={24} sm={12} lg={8} key={i}>
-                            <Card loading variant="borderless" bodyStyle={{ padding: '0px' }} />
+                            <Card loading variant="outlined" bodyStyle={{ padding: '0px' }} />
                         </Col>
                     ))}
                 </Row>
@@ -154,7 +154,7 @@ export default function VideosManagement() {
                         <Col xs={24} sm={12} lg={8} key={video.id}>
                             <Card
                                 hoverable
-                                variant="borderless"
+                                variant="outlined"
                                 bodyStyle={{ padding: '16px' }}
                                 cover={
                                     <div style={{ position: 'relative', height: 200, overflow: 'hidden', background: '#000', borderRadius: '8px 8px 0 0' }}>
@@ -174,7 +174,7 @@ export default function VideosManagement() {
                                             <PlayCircleOutlined />
                                         </div>
                                         <div style={{ position: 'absolute', top: 12, left: 12 }}>
-                                            <Tag color={video.isActive ? 'success' : 'default'} variant="borderless" style={{ borderRadius: '4px' }}>
+                                            <Tag color={video.isActive ? 'success' : 'default'} variant="outlined" style={{ borderRadius: '4px' }}>
                                                 {video.isActive ? 'ĐÃ XUẤT BẢN' : 'TẠM ẨN'}
                                             </Tag>
                                         </div>

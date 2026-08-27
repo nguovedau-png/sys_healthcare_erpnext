@@ -123,7 +123,7 @@ export default function QuizResultsPage() {
 
             <Row gutter={16}>
                 <Col xs={24} sm={8}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Tổng lượt làm bài"
                             value={245}
@@ -133,7 +133,7 @@ export default function QuizResultsPage() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={8}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Tỷ lệ đạt"
                             value={78}
@@ -144,7 +144,7 @@ export default function QuizResultsPage() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={8}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Điểm trung bình"
                             value={75.5}
@@ -155,7 +155,7 @@ export default function QuizResultsPage() {
                 </Col>
             </Row>
 
-            <Card variant="borderless" className="shadow-sm">
+            <Card variant="outlined" className="shadow-sm">
                 <Row gutter={16} style={{ marginBottom: 24 }}>
                     <Col span={8}>
                         <Select

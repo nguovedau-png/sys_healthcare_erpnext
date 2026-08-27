@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import DataTable from '@/components/common/DataTable';
-import { Tag, Menu, Dropdown, Button, Modal, message, Space, DatePicker } from 'antd';
+import { Tag, Dropdown, Button, Modal, message } from 'antd';
 import {
     MoreOutlined,
     CheckCircleOutlined,
@@ -10,30 +10,20 @@ import {
     EyeOutlined,
     CalendarOutlined
 } from '@ant-design/icons';
-import bookingService from '@/services/booking.service';
+import bookingService, { type Appointment } from '@/services/booking.service';
 import dayjs from 'dayjs';
 
-interface AppointmentType {
-    id: number;
-    patientName: string; // aggregated
-    doctorName?: string; // aggregated
-    serviceName?: string;
-    date: string;
-    startTime: string;
-    status: string;
-    type: string;
-}
 
 export default function BookingsPage() {
     const [reloadKey, setReloadKey] = useState(0);
 
-    const handleAction = async (key: string, record: AppointmentType) => {
+    const handleAction = async (key: string, record: Appointment) => {
         if (key === 'approve') {
             try {
                 await bookingService.updateAppointment(record.id, { status: 'CONFIRMED' });
                 message.success('Đã xác nhận lịch hẹn');
                 setReloadKey(prev => prev + 1);
-            } catch (error) {
+            } catch {
                 message.error('Lỗi khi cập nhật trạng thái');
             }
         } else if (key === 'reject') {
@@ -48,7 +38,7 @@ export default function BookingsPage() {
                         await bookingService.updateAppointment(record.id, { status: 'CANCELLED' });
                         message.success('Đã hủy lịch hẹn');
                         setReloadKey(prev => prev + 1);
-                    } catch (error) {
+                    } catch {
                         message.error('Lỗi khi hủy lịch');
                     }
                 }
@@ -68,24 +58,24 @@ export default function BookingsPage() {
             title: 'Bệnh nhân',
             dataIndex: 'patientName', // We might need to map 'patientInfo' from backend
             key: 'patientName',
-            render: (text: string, record: any) => record.patientInfo?.fullName || 'Khách vãng lai'
+            render: (text: string) => text || 'Khách vãng lai'
         },
         {
             title: 'Bác sĩ / Dịch vụ',
             key: 'service',
-            render: (_: any, record: any) => (
+            render: (_value: unknown, record: Appointment) => (
                 <div className="flex flex-col">
-                    <span className="font-medium">{record.doctor?.name || 'Chưa chỉ định'}</span>
-                    <span className="text-xs text-gray-500">{record.service?.name}</span>
+                    <span className="font-medium">{record.doctorName || 'Chưa chỉ định'}</span>
+                    <span className="text-xs text-gray-500">{record.service}</span>
                 </div>
             )
         },
         {
             title: 'Thời gian',
             key: 'time',
-            render: (_: any, record: any) => (
+            render: (_value: unknown, record: Appointment) => (
                 <div className="flex flex-col">
-                    <span className="font-medium">{record.startTime}</span>
+                    <span className="font-medium">{record.time}</span>
                     <span className="text-xs text-gray-500">{dayjs(record.date).format('DD/MM/YYYY')}</span>
                 </div>
             )
@@ -109,19 +99,18 @@ export default function BookingsPage() {
         {
             title: 'Thao tác',
             key: 'action',
-            render: (_: any, record: AppointmentType) => (
+            render: (_value: unknown, record: Appointment) => (
                 <Dropdown
-                    overlay={
-                        <Menu onClick={({ key }) => handleAction(key, record)}>
-                            <Menu.Item key="view" icon={<EyeOutlined />}>Xem chi tiết</Menu.Item>
-                            {record.status === 'PENDING' && (
-                                <>
-                                    <Menu.Item key="approve" icon={<CheckCircleOutlined />} className="text-green-600">Xác nhận</Menu.Item>
-                                    <Menu.Item key="reject" icon={<CloseCircleOutlined />} className="text-red-500">Hủy lịch</Menu.Item>
-                                </>
-                            )}
-                        </Menu>
-                    }
+                    menu={{
+                        onClick: ({ key }) => handleAction(key, record),
+                        items: [
+                            { key: 'view', icon: <EyeOutlined />, label: 'Xem chi tiết' },
+                            ...(record.status === 'PENDING' ? [
+                                { key: 'approve', icon: <CheckCircleOutlined />, label: 'Xác nhận', className: 'text-green-600' },
+                                { key: 'reject', icon: <CloseCircleOutlined />, label: 'Hủy lịch', className: 'text-red-500' },
+                            ] : []),
+                        ],
+                    }}
                     trigger={['click']}
                 >
                     <Button type="text" icon={<MoreOutlined />} />
@@ -140,7 +129,7 @@ export default function BookingsPage() {
                 <Button type="primary" icon={<CalendarOutlined />}>Lịch làm việc</Button>
             </div>
 
-            <DataTable
+            <DataTable<Appointment>
                 key={reloadKey}
                 columns={columns}
                 fetchData={async (params) => {
@@ -153,7 +142,7 @@ export default function BookingsPage() {
                     // Flatten or map data if structure is nested
                     return {
                         data: res.data,
-                        total: res.total
+                        total: res.meta?.total ?? res.data.length
                     };
                 }}
                 title="Danh sách lịch hẹn"

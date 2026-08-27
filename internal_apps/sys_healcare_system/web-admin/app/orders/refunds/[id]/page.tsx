@@ -173,7 +173,7 @@ export default function RefundDetail() {
                 </Col>
             </Row>
 
-            <Card title="Thông tin khách hàng & Lý do" variant="borderless">
+            <Card title="Thông tin khách hàng & Lý do" variant="outlined">
                 <Descriptions bordered column={1}>
                     <Descriptions.Item label="Khách hàng">
                         <Text strong>{refund.customerName}</Text>
@@ -187,7 +187,7 @@ export default function RefundDetail() {
                 </Descriptions>
             </Card>
 
-            <Card title="Hình ảnh minh chứng" variant="borderless">
+            <Card title="Hình ảnh minh chứng" variant="outlined">
                 <Space size="large" wrap>
                     <Image.PreviewGroup>
                         {[1, 2].map((idx) => (
@@ -204,7 +204,7 @@ export default function RefundDetail() {
                 </Space>
             </Card>
 
-            <Card title="Thông tin nhận tiền" variant="borderless">
+            <Card title="Thông tin nhận tiền" variant="outlined">
                 <Descriptions bordered column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}>
                     <Descriptions.Item label={<><BankOutlined /> Ngân hàng</>}>
                         <Text strong>Vietcombank</Text>

@@ -180,7 +180,7 @@ export default function QADetail() {
                 <Col xs={24} lg={16}>
                     <Card
                         title={<Space><QuestionCircleOutlined />Nội dung câu hỏi</Space>}
-                        variant="borderless"
+                        variant="outlined"
                         className="shadow-sm"
                         style={{ marginBottom: '24px' }}
                     >
@@ -191,7 +191,7 @@ export default function QADetail() {
 
                     <Card
                         title={<Space><CommentOutlined />Câu trả lời ({qa._count?.answers || 0})</Space>}
-                        variant="borderless"
+                        variant="outlined"
                         className="shadow-sm"
                     >
                         {/* Note: Assuming answers would be fetched or are part of the detailed object in a real API */}
@@ -224,7 +224,7 @@ export default function QADetail() {
 
                 <Col xs={24} lg={8}>
                     <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
-                        <Card title="Thống kê" variant="borderless" className="shadow-sm">
+                        <Card title="Thống kê" variant="outlined" className="shadow-sm">
                             <Row gutter={[16, 16]}>
                                 <Col span={12}>
                                     <Statistic
@@ -245,7 +245,7 @@ export default function QADetail() {
                             </Row>
                         </Card>
 
-                        <Card title="Phân loại" variant="borderless" className="shadow-sm">
+                        <Card title="Phân loại" variant="outlined" className="shadow-sm">
                             <Descriptions column={1} size="small">
                                 <Descriptions.Item label={<Space><FolderOpenOutlined />Chuyên khoa</Space>}>
                                     <Tag color="cyan">{qa.category}</Tag>
@@ -259,7 +259,7 @@ export default function QADetail() {
                             </Descriptions>
                         </Card>
 
-                        <Card title="Tác vụ nhanh" variant="borderless" className="shadow-sm">
+                        <Card title="Tác vụ nhanh" variant="outlined" className="shadow-sm">
                             <Space orientation="vertical" style={{ width: '100%' }}>
                                 <Button block>Yêu cầu chuyên gia trả lời</Button>
                                 <Button block ghost type="primary">Gửi thông báo cho người hỏi</Button>

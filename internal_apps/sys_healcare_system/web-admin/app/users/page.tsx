@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Table, Typography, Card, Space, Button, Modal, Form, Input, message, Popconfirm, Select, Switch, Tag, Row, Col, Statistic, Avatar, Breadcrumb, Tooltip } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined, TeamOutlined, CheckCircleOutlined, StopOutlined, SearchOutlined, FilterOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, UserOutlined, TeamOutlined, CheckCircleOutlined, StopOutlined, SearchOutlined, FilterOutlined, MailOutlined, PhoneOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import userService, { User } from '@/services/user.service';
 import roleService, { Role } from '@/services/role.service';
@@ -262,22 +262,22 @@ export default function UsersPage() {
 
             <Row gutter={16} style={{ marginBottom: '24px' }}>
                 <Col span={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic title="Tổng số nhân sự" value={stats.total} prefix={<TeamOutlined style={{ color: '#1890ff' }} />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic title="Đang hoạt động" value={stats.active} prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic title="Đã khóa" value={stats.inactive} prefix={<StopOutlined style={{ color: '#ff4d4f' }} />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic title="Quản trị viên" value={stats.admins} prefix={<UserOutlined style={{ color: '#722ed1' }} />} />
                     </Card>
                 </Col>

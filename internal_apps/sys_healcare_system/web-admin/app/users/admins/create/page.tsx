@@ -89,7 +89,7 @@ export default function CreateAdmin() {
                 <Text type="secondary">Tạo tài khoản truy cập hệ thống quản trị cho nhân sự mới</Text>
             </div>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <FormBuilder
                     fields={fields}
                     onSubmit={handleSubmit}

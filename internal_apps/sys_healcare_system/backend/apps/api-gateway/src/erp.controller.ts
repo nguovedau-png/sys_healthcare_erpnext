@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Inject, Post, Query, Param, Put, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query, Param, Put, Delete, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
+import { ErpNextUpsertDto } from './dto/erpnext-upsert.dto';
+import { ErpNextSyncGuard } from './guards/erpnext-sync.guard';
 
 @Controller('erp')
 export class ErpController {
@@ -16,6 +18,17 @@ export class ErpController {
     @Get('ping')
     ping() {
         return { message: 'erp controller is alive' };
+    }
+
+    @Get('integrations/erpnext/health')
+    erpNextHealth() {
+        return this.erpClient.send({ cmd: 'erpnext.health' }, {});
+    }
+
+    @Post('integrations/erpnext/upsert')
+    @UseGuards(ErpNextSyncGuard)
+    upsertErpNext(@Body() document: ErpNextUpsertDto) {
+        return this.erpClient.send({ cmd: 'erpnext.upsert' }, document);
     }
 
     @Get('keys/:userId')

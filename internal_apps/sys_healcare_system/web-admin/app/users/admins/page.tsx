@@ -36,7 +36,7 @@ export default function AdminsManagement() {
             setLoading(true);
             const data = await userService.getUsers();
             // Filter only admins if needed, but for now we'll show all as per original logic
-            setAdmins(data);
+            setAdmins(data.data);
         } catch (error) {
             console.error('Failed to fetch users:', error);
             message.error('Lỗi khi tải danh sách quản trị viên');
@@ -61,7 +61,7 @@ export default function AdminsManagement() {
             key: 'roleId',
             label: 'Vai trò',
             render: (val: number) => (
-                <Tag color={val === 1 ? 'purple' : 'default'} variant="borderless">
+                <Tag color={val === 1 ? 'purple' : 'default'} variant="outlined">
                     {val === 1 ? 'Quản trị viên' : 'Nhân sự'}
                 </Tag>
             )
@@ -75,7 +75,7 @@ export default function AdminsManagement() {
             key: 'isActive',
             label: 'Trạng thái',
             render: (val: boolean) => (
-                <Tag color={val ? 'green' : 'red'} variant="borderless">
+                <Tag color={val ? 'green' : 'red'} variant="outlined">
                     {val ? 'Hoạt động' : 'Đã khóa'}
                 </Tag>
             )

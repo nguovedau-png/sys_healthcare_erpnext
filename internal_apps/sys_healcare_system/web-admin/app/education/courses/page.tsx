@@ -109,7 +109,7 @@ export default function EducationCoursesPage() {
             key: 'type',
             label: 'Loại hình',
             render: (val: string) => (
-                <Tag color={val === 'CME' ? 'blue' : 'purple'} variant="borderless">
+                <Tag color={val === 'CME' ? 'blue' : 'purple'} variant="outlined">
                     {val}
                 </Tag>
             )

@@ -117,7 +117,7 @@ export default function NewsPage() {
             key: 'category',
             label: 'Danh mục',
             render: (text: string) => (
-                <Tag color="processing" variant="borderless" icon={<FolderOpenOutlined />}>
+                <Tag color="processing" variant="outlined" icon={<FolderOpenOutlined />}>
                     {text?.toUpperCase()}
                 </Tag>
             ),
@@ -126,7 +126,7 @@ export default function NewsPage() {
             key: 'status',
             label: 'Trạng thái',
             render: (_: any, record: Post) => (
-                <Tag color={record.isActive ? 'success' : 'default'} variant="borderless">
+                <Tag color={record.isActive ? 'success' : 'default'} variant="outlined">
                     {record.isActive ? 'ĐÃ XUẤT BẢN' : 'BẢN NHÁP'}
                 </Tag>
             ),
@@ -156,7 +156,7 @@ export default function NewsPage() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic
                             title="Tổng bài viết"
                             value={allNews.length}
@@ -165,7 +165,7 @@ export default function NewsPage() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic
                             title="Đã xuất bản"
                             value={allNews.filter(n => n.isActive).length}
@@ -175,7 +175,7 @@ export default function NewsPage() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic
                             title="Bản nháp"
                             value={allNews.filter(n => !n.isActive).length}
@@ -185,7 +185,7 @@ export default function NewsPage() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f9f0ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f9f0ff' }}>
                         <Statistic
                             title="Danh mục"
                             value={categories.length}

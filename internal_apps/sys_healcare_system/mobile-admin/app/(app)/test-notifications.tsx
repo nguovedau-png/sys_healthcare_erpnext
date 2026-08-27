@@ -53,13 +53,13 @@ export default function TestNotificationsScreen() {
   };
 
   return (
-    <ScrollView flex={1} backgroundColor="$background">
-      <YStack padding="$4" space="$4">
-        <Text fontSize="$6" fontWeight="bold" textAlign="center">
+    <ScrollView flex={1} bg="$background">
+      <YStack p="$4" space="$4">
+        <Text fontSize="$6" fontWeight="bold">
           Test Notifications
         </Text>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack space="$3">
             <Text fontSize="$5" fontWeight="bold">
               Device Info
@@ -70,7 +70,7 @@ export default function TestNotificationsScreen() {
           </YStack>
         </Card>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack space="$3">
             <Text fontSize="$5" fontWeight="bold">
               Send Local Notification
@@ -97,7 +97,7 @@ export default function TestNotificationsScreen() {
             />
             
             <Button
-              backgroundColor="$blue9"
+              bg="$blue9"
               color="white"
               onPress={handleSendLocalNotification}
             >
@@ -106,7 +106,7 @@ export default function TestNotificationsScreen() {
           </YStack>
         </Card>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack space="$3">
             <Text fontSize="$5" fontWeight="bold">
               Send Push Notification
@@ -116,7 +116,7 @@ export default function TestNotificationsScreen() {
               which then delivers them to this device.
             </Text>
             <Button
-              backgroundColor="$green9"
+              bg="$green9"
               color="white"
               onPress={handleSendPushNotification}
             >
@@ -125,7 +125,7 @@ export default function TestNotificationsScreen() {
           </YStack>
         </Card>
 
-        <Card padding="$4">
+        <Card p="$4">
           <YStack space="$3">
             <Text fontSize="$5" fontWeight="bold">
               Notification Actions

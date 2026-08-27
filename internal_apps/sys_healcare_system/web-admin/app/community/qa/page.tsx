@@ -113,7 +113,7 @@ export default function QAManagement() {
                 <Space orientation="vertical" size={0}>
                     <Text strong style={{ fontSize: '15px' }}>{record.question}</Text>
                     <Space size="small" split={<Text type="secondary" style={{ fontSize: '10px' }}>•</Text>}>
-                        <Tag color="blue" variant="borderless" style={{ fontSize: '11px' }}>{record.category}</Tag>
+                        <Tag color="blue" variant="outlined" style={{ fontSize: '11px' }}>{record.category}</Tag>
                         <Space size={4}>
                             <UserOutlined style={{ fontSize: '12px', color: '#8c8c8c' }} />
                             <Text type="secondary" style={{ fontSize: '12px' }}>{record.askedByName}</Text>
@@ -162,7 +162,7 @@ export default function QAManagement() {
                     pending: 'CHỜ DUYỆT',
                     spam: 'SPAM'
                 };
-                return <Tag color={colors[val] || 'default'} variant="borderless">{labels[val] || val.toUpperCase()}</Tag>;
+                return <Tag color={colors[val] || 'default'} variant="outlined">{labels[val] || val.toUpperCase()}</Tag>;
             }
         },
     ];
@@ -188,22 +188,22 @@ export default function QAManagement() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic title="Tổng câu hỏi" value={total} prefix={<QuestionCircleOutlined />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic title="Chờ xét duyệt" value={questions.filter(q => q.status === 'pending').length} prefix={<ClockCircleOutlined />} valueStyle={{ color: '#fa8c16' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic title="Đã trả lời" value={questions.filter(q => (q._count?.answers || 0) > 0).length} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#52c41a' }} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f9f0ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f9f0ff' }}>
                         <Statistic title="Chuyên khoa" value={new Set(questions.map(q => q.category)).size} prefix={<FolderOpenOutlined />} valueStyle={{ color: '#722ed1' }} />
                     </Card>
                 </Col>

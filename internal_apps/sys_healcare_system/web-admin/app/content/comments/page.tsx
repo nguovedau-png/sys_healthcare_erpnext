@@ -96,7 +96,7 @@ export default function CommentsManagement() {
             render: (type: string) => {
                 const label = getTargetLabel(type);
                 return (
-                    <Tag color={label.color} variant="borderless">
+                    <Tag color={label.color} variant="outlined">
                         {label.text.toUpperCase()}
                     </Tag>
                 );

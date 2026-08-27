@@ -162,7 +162,7 @@ export default function PharmacistsPage() {
             key: 'status',
             label: 'Trạng thái',
             render: (status: string) => (
-                <Tag color={status === 'active' ? 'success' : status === 'pending' ? 'orange' : 'default'} style={{ borderRadius: '10px' }} variant="borderless">
+                <Tag color={status === 'active' ? 'success' : status === 'pending' ? 'orange' : 'default'} style={{ borderRadius: '10px' }} variant="outlined">
                     {status === 'active' ? 'HOẠT ĐỘNG' : status === 'pending' ? 'CHỜ DUYỆT' : 'TẠM DỪNG'}
                 </Tag>
             ),
@@ -195,7 +195,7 @@ export default function PharmacistsPage() {
 
             <Row gutter={16}>
                 <Col span={4}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic
                             title="Hoạt động"
                             value={total} // Using total for simplicity or filter local if needed

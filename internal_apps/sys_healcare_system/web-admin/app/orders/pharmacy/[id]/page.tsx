@@ -187,7 +187,7 @@ export default function PharmacyOrderDetail() {
 
             <Row gutter={24}>
                 <Col span={16}>
-                    <Card title="Chi tiết sản phẩm" variant="borderless">
+                    <Card title="Chi tiết sản phẩm" variant="outlined">
                         <Table
                             dataSource={mockItems}
                             columns={columns}
@@ -205,7 +205,7 @@ export default function PharmacyOrderDetail() {
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card title="Thông tin giao hàng" variant="borderless" style={{ height: '100%' }}>
+                    <Card title="Thông tin giao hàng" variant="outlined" style={{ height: '100%' }}>
                         <Descriptions column={1}>
                             <Descriptions.Item label={<><PhoneOutlined /> Khách hàng</>}>
                                 <Space orientation="vertical" size={0}>

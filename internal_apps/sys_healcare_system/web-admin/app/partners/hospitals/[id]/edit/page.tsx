@@ -108,7 +108,7 @@ export default function EditHospitalPage() {
                 </div>
             </Space>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <FormBuilder
                     fields={fields}
                     initialValues={initialValues}

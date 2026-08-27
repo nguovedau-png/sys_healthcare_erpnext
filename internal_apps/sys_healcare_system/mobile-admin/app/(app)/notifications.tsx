@@ -7,7 +7,6 @@ import {
   Sheet,
   ScrollView,
   Card,
-  Badge,
   Separator,
   Avatar,
   ListItem,
@@ -28,6 +27,7 @@ import { useNotifications } from '../../contexts/NotificationContext';
 import { StoredNotification } from '../../lib/notificationService';
 import { router } from 'expo-router';
 import { Alert, RefreshControl } from 'react-native';
+import { StatusPill } from '../../components/StatusPill';
 
 export default function NotificationsScreen() {
   const theme = useTheme();
@@ -143,21 +143,21 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <YStack flex={1} backgroundColor="$background">
+    <YStack flex={1} bg="$background">
       {/* Header */}
       <XStack
-        padding="$4"
-        paddingTop="$6"
-        backgroundColor="$blue2"
-        alignItems="center"
-        justifyContent="space-between"
+        p="$4"
+        pt="$6"
+        bg="$blue2"
+        items="center"
+        justify="space-between"
         shadowColor="$shadowColor"
         shadowOffset={{ width: 0, height: 2 }}
         shadowOpacity={0.1}
         shadowRadius={4}
         elevation={3}
       >
-        <XStack alignItems="center" space="$3">
+        <XStack items="center" space="$3">
           <Bell size={24} color={safeThemeColor('blue10', '#007AFF')} />
           <YStack>
             <Text fontSize="$6" fontWeight="bold" color="$blue12">
@@ -192,8 +192,8 @@ export default function NotificationsScreen() {
       </XStack>
 
       {/* Search and Filter */}
-      <YStack padding="$4" space="$3">
-        <XStack space="$3" alignItems="center">
+      <YStack p="$4" space="$3">
+        <XStack space="$3" items="center">
           <Input
             flex={1}
             placeholder="Search notifications..."
@@ -210,15 +210,15 @@ export default function NotificationsScreen() {
               key={filter}
               size="$3"
               variant={selectedFilter === filter ? 'outlined' : 'outlined'}
-              backgroundColor={selectedFilter === filter ? '$blue9' : undefined}
+              bg={selectedFilter === filter ? '$blue9' : undefined}
               color={selectedFilter === filter ? 'white' : undefined}
               onPress={() => setSelectedFilter(filter)}
             >
               {filter === 'all' ? 'All' : filter === 'unread' ? 'Unread' : 'Read'}
               {filter === 'unread' && unreadCount > 0 && (
-                <Badge size="$1" backgroundColor="$red9" marginLeft="$2">
+                <StatusPill size="$1" bg="$red9" ml="$2">
                   {unreadCount}
-                </Badge>
+                </StatusPill>
               )}
             </Button>
           ))}
@@ -237,22 +237,22 @@ export default function NotificationsScreen() {
           />
         }
       >
-        <YStack padding="$4" space="$2">
+        <YStack p="$4" space="$2">
           {filteredNotifications.length === 0 ? (
             <YStack
               flex={1}
-              alignItems="center"
-              justifyContent="center"
-              padding="$8"
+              items="center"
+              justify="center"
+              p="$8"
               space="$4"
             >
               <Bell size={48} color={safeThemeColor('gray8', '#C7C7CC')} />
-              <Text fontSize="$5" color="$color" textAlign="center">
+              <Text fontSize="$5" color="$color">
                 {searchQuery || selectedFilter !== 'all'
                   ? 'No notifications match your criteria'
                   : 'No notifications yet'}
               </Text>
-              <Text fontSize="$3" color="$color" textAlign="center">
+              <Text fontSize="$3" color="$color">
                 {searchQuery || selectedFilter !== 'all'
                   ? 'Try adjusting your search or filter'
                   : "When you receive notifications, they'll appear here"}
@@ -262,20 +262,20 @@ export default function NotificationsScreen() {
             filteredNotifications.map((notification, index) => (
               <Card
                 key={notification.id}
-                padding="$4"
-                marginBottom="$2"
-                backgroundColor={notification.read ? '$background' : '$blue2'}
+                p="$4"
+                mb="$2"
+                bg={notification.read ? '$background' : '$blue2'}
                 borderColor={notification.read ? '$borderColor' : '$blue6'}
                 pressStyle={{ scale: 0.98 }}
                 onPress={() => handleNotificationPress(notification)}
               >
-                <XStack space="$3" alignItems="flex-start">
-                  <YStack alignItems="center" paddingTop="$1">
+                <XStack space="$3" items="flex-start">
+                  <YStack items="center" pt="$1">
                     {getNotificationIcon(notification)}
                     {!notification.read && (
-                      <Badge
+                      <StatusPill
                         size="$1"
-                        backgroundColor="$blue9"
+                        bg="$blue9"
                         position="absolute"
                         top={-2}
                         right={-2}
@@ -284,7 +284,7 @@ export default function NotificationsScreen() {
                   </YStack>
                   
                   <YStack flex={1} space="$2">
-                    <XStack justifyContent="space-between" alignItems="flex-start">
+                    <XStack justify="space-between" items="flex-start">
                       <Text
                         fontSize="$4"
                         fontWeight={notification.read ? 'normal' : 'bold'}
@@ -294,7 +294,7 @@ export default function NotificationsScreen() {
                       >
                         {notification.title}
                       </Text>
-                      <Text fontSize="$2" color="$color" marginLeft="$2">
+                      <Text fontSize="$2" color="$color" ml="$2">
                         {formatTime(notification.timestamp)}
                       </Text>
                     </XStack>
@@ -313,9 +313,9 @@ export default function NotificationsScreen() {
                           .filter(([key, value]) => key !== 'screen' && typeof value === 'string')
                           .slice(0, 3)
                           .map(([key, value]) => (
-                            <Badge key={key} size="$1" backgroundColor="$gray5">
+                            <StatusPill key={key} size="$1" bg="$color5">
                               {key}: {String(value).substring(0, 20)}
-                            </Badge>
+                            </StatusPill>
                           ))
                         }
                       </XStack>
@@ -324,7 +324,7 @@ export default function NotificationsScreen() {
                   
                   <Button
                     size="$2"
-                    variant="ghost"
+                    variant="outlined"
                     icon={Trash2}
                     color="$red10"
                     onPress={(e) => {
@@ -334,8 +334,8 @@ export default function NotificationsScreen() {
                   />
                 </XStack>
                 
-                {notification.clicked && (
-                  <XStack marginTop="$2" alignItems="center" space="$2">
+                {notification.data?.clicked && (
+                  <XStack mt="$2" items="center" space="$2">
                     <Check size={14} color={safeThemeColor('green10', '#34C759')} />
                     <Text fontSize="$2" color="$green10">
                       Opened
@@ -358,7 +358,7 @@ export default function NotificationsScreen() {
       >
         <Sheet.Overlay />
         <Sheet.Handle />
-        <Sheet.Frame padding="$4" space="$4">
+        <Sheet.Frame p="$4" space="$4">
           <Text fontSize="$6" fontWeight="bold">
             Notification Settings
           </Text>
@@ -366,11 +366,11 @@ export default function NotificationsScreen() {
           <YStack space="$3">
             <ListItem
               title="Clear All Notifications"
-              subtitle="Remove all notifications from this device"
+              subTitle="Remove all notifications from this device"
               icon={Trash2}
               iconAfter={null}
               onPress={handleClearAll}
-              backgroundColor="$red2"
+              bg="$red2"
               borderColor="$red6"
             />
             

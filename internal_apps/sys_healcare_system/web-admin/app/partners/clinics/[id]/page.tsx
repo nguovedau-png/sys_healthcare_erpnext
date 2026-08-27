@@ -200,7 +200,7 @@ export default function ClinicDetail() {
                 </Col>
             </Row>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <Tabs items={tabItems} />
             </Card>
         </Space>

@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import {
   YStack,
   XStack,
@@ -9,16 +10,27 @@ import {
   Text,
   ScrollView,
   Button,
-  Badge,
+  Spinner,
 } from 'tamagui'
-import { User, Bell, Settings } from '@tamagui/lucide-icons'
+import { User, Bell, Settings, RefreshCw } from '@tamagui/lucide-icons'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNotifications } from '../../contexts/NotificationContext'
 import { router } from 'expo-router'
+import { getErpNextHealth, ErpNextHealth } from '../../services/erpNextService'
 
 export default function DashboardScreen() {
   const { user } = useAuth()
   const { unreadCount, badgeCount, notifications } = useNotifications()
+  const [erpNextHealth, setErpNextHealth] = useState<ErpNextHealth | null>(null)
+  const [erpNextError, setErpNextError] = useState(false)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    getErpNextHealth(controller.signal)
+      .then((health) => { setErpNextHealth(health); setErpNextError(false) })
+      .catch(() => { if (!controller.signal.aborted) setErpNextError(true) })
+    return () => controller.abort()
+  }, [])
 
   const handleNotificationsPress = () => {
     router.push('/notifications')
@@ -29,7 +41,7 @@ export default function DashboardScreen() {
       <ScrollView flex={1} showsVerticalScrollIndicator={false}>
         <YStack gap="$6" maxW={600} width="100%" self="center" px="$4" py="$6">
           {/* Header */}
-          <XStack justifyContent="space-between" alignItems="center">
+          <XStack justify="space-between" items="center">
             <YStack gap="$2" flex={1}>
               <H1 color="$color12" size="$8">
                 Dashboard
@@ -43,20 +55,11 @@ export default function DashboardScreen() {
               variant="outlined"
               icon={Bell}
               onPress={handleNotificationsPress}
-              position="relative"
             >
               {unreadCount > 0 && (
-                <Badge
-                  size="$2"
-                  backgroundColor="$red9"
-                  color="white"
-                  position="absolute"
-                  top={-5}
-                  right={-5}
-                  zIndex={1}
-                >
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </Badge>
+                <XStack bg="$red9" px="$1">
+                  <Text color="white" fontSize="$2">{unreadCount > 99 ? '99+' : unreadCount}</Text>
+                </XStack>
               )}
             </Button>
           </XStack>
@@ -71,19 +74,12 @@ export default function DashboardScreen() {
               onPress={handleNotificationsPress}
             >
               <XStack gap="$4" items="center">
-                <YStack alignItems="center" justifyContent="center">
+                <YStack items="center" justify="center">
                   <Bell size={24} color="$blue10" />
                   {unreadCount > 0 && (
-                    <Badge
-                      size="$1"
-                      backgroundColor="$red9"
-                      color="white"
-                      position="absolute"
-                      top={-5}
-                      right={-5}
-                    >
-                      {unreadCount}
-                    </Badge>
+                    <XStack bg="$red9" px="$1">
+                      <Text color="white" fontSize="$1">{unreadCount}</Text>
+                    </XStack>
                   )}
                 </YStack>
                 <YStack flex={1} gap="$1">
@@ -100,12 +96,27 @@ export default function DashboardScreen() {
                     </Text>
                   )}
                 </YStack>
-                <Button size="$3" variant="outlined" backgroundColor="$blue3">
+                <Button size="$3" variant="outlined" bg="$blue3">
                   View All
                 </Button>
               </XStack>
             </Card>
           )}
+
+          {/* ERPNext integration status */}
+          <Card bg="$color2" borderColor="$borderColor" p="$4">
+            <XStack gap="$4" items="center">
+              <YStack width="$4" height="$4" bg="$color4" items="center" justify="center">
+                {erpNextHealth === null && !erpNextError ? <Spinner size="small" /> : <RefreshCw size={18} color="$color11" />}
+              </YStack>
+              <YStack flex={1} gap="$1">
+                <H3 color="$color12">ERPNext sync</H3>
+                <Text color="$color11" fontSize="$3">
+                  {erpNextError ? 'Không thể kết nối máy chủ' : erpNextHealth?.configured ? (erpNextHealth.consecutiveFailures === 0 ? 'Sẵn sàng đồng bộ CRM, ERP, HR và Accounting' : `Đang suy giảm · ${erpNextHealth.consecutiveFailures} lỗi liên tiếp`) : 'Chưa cấu hình tích hợp'}
+                </Text>
+              </YStack>
+            </XStack>
+          </Card>
 
           {/* User Profile Card */}
           <Card bg="$color2" borderColor="$borderColor" p="$4">

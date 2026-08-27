@@ -141,22 +141,22 @@ export default function VerificationPage() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic title="Chờ xác minh" value={45} valueStyle={{ color: '#faad14' }} prefix={<ClockCircleOutlined />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic title="Đã xác minh" value={1234} valueStyle={{ color: '#3f8600' }} prefix={<CheckCircleOutlined />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff1f0' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff1f0' }}>
                         <Statistic title="Từ chối" value={12} valueStyle={{ color: '#cf1322' }} prefix={<CloseCircleOutlined />} />
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fffbe6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fffbe6' }}>
                         <Statistic title="Hết hạn" value={8} valueStyle={{ color: '#d48806' }} prefix={<WarningOutlined />} />
                     </Card>
                 </Col>

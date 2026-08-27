@@ -79,7 +79,7 @@ export default function QuizManagerPage() {
             key: 'avgScore',
             label: 'Điểm TB',
             render: (val: number) => (
-                <Tag color={val >= 80 ? 'success' : val >= 60 ? 'warning' : 'error'} variant="borderless">
+                <Tag color={val >= 80 ? 'success' : val >= 60 ? 'warning' : 'error'} variant="outlined">
                     {val || 0}%
                 </Tag>
             )
@@ -114,7 +114,7 @@ export default function QuizManagerPage() {
 
             <Row gutter={16}>
                 <Col span={8}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Tổng số bài thi"
                             value={quizzes.length}
@@ -124,7 +124,7 @@ export default function QuizManagerPage() {
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Lượt thi hoàn tất"
                             value={quizzes.reduce((acc, q) => acc + (q.attempts || 0), 0)}
@@ -134,7 +134,7 @@ export default function QuizManagerPage() {
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Tỷ lệ đạt TB"
                             value={quizzes.length ? (quizzes.reduce((acc, q) => acc + (q.avgScore || 0), 0) / quizzes.length).toFixed(1) : 0}

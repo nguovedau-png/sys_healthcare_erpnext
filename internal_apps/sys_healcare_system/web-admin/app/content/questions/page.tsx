@@ -36,7 +36,7 @@ export default function QuestionsManagement() {
         try {
             setLoading(true);
             const data = await communityService.getQAQuestions();
-            setQuestions(data);
+            setQuestions(data.data);
         } catch (error) {
             console.error('Failed to fetch questions', error);
             message.error('Lỗi khi tải danh sách câu hỏi');
@@ -116,11 +116,11 @@ export default function QuestionsManagement() {
                                     <Tag
                                         icon={q.status === 'resolved' ? <CheckCircleOutlined /> : <ClockCircleOutlined />}
                                         color={q.status === 'resolved' ? 'success' : 'warning'}
-                                        variant="borderless"
+                                        variant="outlined"
                                     >
                                         {q.status === 'resolved' ? 'Đã trả lời' : 'Chờ trả lời'}
                                     </Tag>
-                                    <Tag color="processing" variant="borderless">{q.category}</Tag>
+                                    <Tag color="processing" variant="outlined">{q.category}</Tag>
                                 </Space>
 
                                 <div>

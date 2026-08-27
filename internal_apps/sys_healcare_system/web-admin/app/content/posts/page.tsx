@@ -82,6 +82,26 @@ export default function NewsManagement() {
         fetchNews();
     };
 
+    const handleDelete = (id: number) => {
+        Modal.confirm({
+            title: 'Xóa bài viết',
+            content: 'Bạn có chắc chắn muốn xóa bài viết này? Hành động không thể hoàn tác.',
+            okText: 'Xóa',
+            okType: 'danger',
+            cancelText: 'Hủy',
+            onOk: async () => {
+                try {
+                    await contentService.deletePost(id);
+                    message.success('Đã xóa bài viết');
+                    await fetchNews();
+                } catch (error) {
+                    console.error('Failed to delete post', error);
+                    message.error('Không thể xóa bài viết');
+                }
+            },
+        });
+    };
+
     const handleBulkDelete = (keys: React.Key[]) => {
         Modal.confirm({
             title: `Bạn có chắc muốn xóa ${keys.length} bài viết đã chọn?`,
@@ -156,7 +176,7 @@ export default function NewsManagement() {
             dataIndex: 'category',
             key: 'category',
             render: (category) => (
-                <Tag color="blue" variant="borderless">
+                <Tag color="blue" variant="outlined">
                     {category}
                 </Tag>
             ),
@@ -191,7 +211,7 @@ export default function NewsManagement() {
             key: 'isActive',
             align: 'center',
             render: (isActive) => (
-                <Tag color={isActive ? 'success' : 'default'} variant="borderless">
+                <Tag color={isActive ? 'success' : 'default'} variant="outlined">
                     {isActive ? 'ĐÃ XUẤT BẢN' : 'TẠM ẨN'}
                 </Tag>
             ),

@@ -130,12 +130,12 @@ export default function ViewDoctor() {
                 <div style={{ marginTop: '16px' }}>
                     <Row gutter={16}>
                         <Col span={12}>
-                            <Card variant="borderless" bodyStyle={{ padding: '24px' }}>
+                            <Card variant="outlined" bodyStyle={{ padding: '24px' }}>
                                 <Statistic title="Bệnh nhân đã khám" value={150} prefix={<TeamOutlined />} />
                             </Card>
                         </Col>
                         <Col span={12}>
-                            <Card variant="borderless" bodyStyle={{ padding: '24px' }}>
+                            <Card variant="outlined" bodyStyle={{ padding: '24px' }}>
                                 <Statistic title="Đánh giá trung bình" value={doctor.rating || 0} suffix="/ 5" />
                                 <Rate disabled defaultValue={doctor.rating || 0} style={{ fontSize: '14px' }} />
                             </Card>
@@ -226,7 +226,7 @@ export default function ViewDoctor() {
                 </Col>
             </Row>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <Tabs items={tabItems} />
             </Card>
         </Space>

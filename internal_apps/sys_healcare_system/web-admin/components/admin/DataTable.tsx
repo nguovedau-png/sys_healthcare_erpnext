@@ -22,7 +22,7 @@ interface DataTableProps {
     pagination?: {
         currentPage: number;
         totalPages: number;
-        onPageChange: (page: number) => void;
+        onPageChange: (page: number, pageSize?: number) => void;
         pageSize?: number;
     };
     searchable?: boolean;
@@ -156,7 +156,7 @@ export default function DataTable({
                 )}
             </div>
 
-            <Card styles={{ body: { padding: 0 } }} variant="borderless" className="overflow-hidden">
+            <Card styles={{ body: { padding: 0 } }} variant="outlined" className="overflow-hidden">
                 <Table
                     columns={antdColumns}
                     dataSource={data}

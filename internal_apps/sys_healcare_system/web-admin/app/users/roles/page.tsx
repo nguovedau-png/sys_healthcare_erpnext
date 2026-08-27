@@ -292,17 +292,17 @@ export default function RolesPage() {
 
             <Row gutter={16} style={{ marginBottom: '24px' }}>
                 <Col span={8}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic title="Tổng số vai trò" value={roles.length} prefix={<SafetyCertificateOutlined style={{ color: '#1890ff' }} />} />
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic title="Phạm vi quyền" value={Object.keys(permissionGroups).length} suffix="Nhóm" prefix={<LockOutlined style={{ color: '#52c41a' }} />} />
                     </Card>
                 </Col>
                 <Col span={8}>
-                    <Card variant="borderless">
+                    <Card variant="outlined">
                         <Statistic title="Tổng đầu quyền" value={Object.values(permissionGroups).flat().length} prefix={<KeyOutlined style={{ color: '#fa8c16' }} />} />
                     </Card>
                 </Col>

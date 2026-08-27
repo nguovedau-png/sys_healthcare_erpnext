@@ -20,9 +20,9 @@ export default function SeminarCheckinPage() {
         try {
             setLoading(true);
             const seminarData = await seminarService.getSeminars();
-            setSeminars(seminarData);
-            if (seminarData.length > 0 && !selectedSeminarId) {
-                setSelectedSeminarId(seminarData[0].id.toString());
+            setSeminars(seminarData.data);
+            if (seminarData.data.length > 0 && !selectedSeminarId) {
+                setSelectedSeminarId(seminarData.data[0].id.toString());
             }
         } catch (error) {
             console.error('Failed to fetch seminar check-in data', error);

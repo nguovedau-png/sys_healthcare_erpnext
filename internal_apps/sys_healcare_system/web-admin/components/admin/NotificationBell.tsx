@@ -9,11 +9,16 @@ import Link from 'next/link';
 
 const { Text } = Typography;
 
+type NotificationItem = { title?: string; content?: string };
+type AuthUser = { id?: string | number; userId?: string | number };
+
 export default function NotificationBell() {
     const { user } = useAuth();
-    const [notifications, setNotifications] = useState<any[]>([]);
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
-    const [socket, setSocket] = useState<Socket | null>(null);
+    const newSubNotification = (title: string, body: string) => {
+        if (typeof window !== 'undefined' && 'Notification' in window) new Notification(title, { body });
+    };
 
     useEffect(() => {
         if (!user) return;
@@ -26,16 +31,14 @@ export default function NotificationBell() {
                 transports: ['websocket'],
                 timeout: 5000,
             });
-            setSocket(newSocket);
+            newSocket.emit('subscribeToNotifications', { userId: (user as AuthUser).id || (user as AuthUser).userId });
 
-            newSocket.emit('subscribeToNotifications', { userId: (user as any).id || (user as any).userId });
-
-            newSocket.on('notification', (notification) => {
+            newSocket.on('notification', (notification: NotificationItem) => {
                 setNotifications((prev) => [notification, ...prev]);
                 setUnreadCount((prev) => prev + 1);
 
-                if (Notification.permission === 'granted') {
-                    newSubNotification(notification.title, notification.content);
+                if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+                    newSubNotification(notification.title || 'Thông báo', notification.content || '');
                 }
             });
 
@@ -52,9 +55,6 @@ export default function NotificationBell() {
         };
     }, [user]);
 
-    const newSubNotification = (title: string, body: string) => {
-        new Notification(title, { body });
-    };
 
     const menu = (
         <div style={{
@@ -78,10 +78,10 @@ export default function NotificationBell() {
                         <List.Item style={{ padding: '8px 4px', cursor: 'pointer' }}>
                             <List.Item.Meta
                                 avatar={<Avatar icon={<NotificationOutlined />} style={{ backgroundColor: '#1677ff' }} />}
-                                title={<Text strong size="small">{item.title}</Text>}
+                                title={<Text strong style={{ fontSize: '13px' }}>{item.title || 'Thông báo'}</Text>}
                                 description={
                                     <div style={{ fontSize: '12px' }}>
-                                        <div style={{ color: '#595959' }}>{item.content}</div>
+                                        <div style={{ color: '#595959' }}>{item.content || ''}</div>
                                         <div style={{ color: '#bfbfbf', marginTop: '4px' }}>Just now</div>
                                     </div>
                                 }

@@ -202,7 +202,7 @@ export default function PharmacyDetail() {
                 </Col>
             </Row>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <Tabs items={tabItems} />
             </Card>
         </Space>

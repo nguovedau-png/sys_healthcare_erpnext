@@ -129,11 +129,11 @@ export default function PharmaciesManagement() {
             label: 'Trạng thái',
             render: (val: boolean) => (
                 val ? (
-                    <Tag icon={<SafetyCertificateOutlined />} color="success" variant="borderless">
+                    <Tag icon={<SafetyCertificateOutlined />} color="success" variant="outlined">
                         Đã xác thực
                     </Tag>
                 ) : (
-                    <Tag color="default" variant="borderless">Chưa xác thực</Tag>
+                    <Tag color="default" variant="outlined">Chưa xác thực</Tag>
                 )
             )
         },

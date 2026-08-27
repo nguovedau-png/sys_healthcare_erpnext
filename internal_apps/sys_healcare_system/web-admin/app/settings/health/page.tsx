@@ -1,14 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Progress, Badge, Typography, Button, message } from 'antd';
-import { CheckCircleOutlined, CloudServerOutlined, DatabaseOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Statistic, Badge, Typography, Button, message } from 'antd';
+import { CheckCircleOutlined, DatabaseOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { erpNextService, ErpNextHealth } from '../../../services/erpnext.service';
 
 const { Title, Text } = Typography;
 
+type HealthService = { status?: string };
+type HealthResponse = { status?: string; info?: Record<string, HealthService> };
+
 const HealthPage = () => {
     const [loading, setLoading] = useState(false);
-    const [healthData, setHealthData] = useState<any>(null);
+    const [healthData, setHealthData] = useState<HealthResponse | null>(null);
+    const [erpNextHealth, setErpNextHealth] = useState<ErpNextHealth | null>(null);
 
     const fetchHealth = async () => {
         setLoading(true);
@@ -17,11 +22,13 @@ const HealthPage = () => {
             if (res.ok) {
                 const data = await res.json();
                 setHealthData(data);
+                const integrationHealth = await erpNextService.getHealth().catch(() => null);
+                setErpNextHealth(integrationHealth);
                 message.success('System status updated');
             } else {
                 message.error('Failed to fetch system status');
             }
-        } catch (error) {
+        } catch {
             message.error('Network error');
         } finally {
             setLoading(false);
@@ -33,7 +40,7 @@ const HealthPage = () => {
     }, []);
 
     // Helper to determine status color
-    const getStatusColor = (status: string) => status === 'up' ? '#52c41a' : '#f5222d';
+    const getStatusColor = (status?: string) => status === 'up' ? '#52c41a' : '#f5222d';
 
     return (
         <div style={{ padding: '24px' }}>
@@ -59,7 +66,7 @@ const HealthPage = () => {
                         />
                     </Card>
                 </Col>
-                <Col span={8}>
+                <Col xs={24} sm={12} lg={8}>
                     <Card>
                         <Statistic
                             title="Database"
@@ -68,19 +75,30 @@ const HealthPage = () => {
                         />
                     </Card>
                 </Col>
+                <Col xs={24} sm={12} lg={8}>
+                    <Card>
+                        <Statistic
+                            title="ERPNext sync"
+                            value={erpNextHealth?.configured ? (erpNextHealth.consecutiveFailures === 0 ? 'Ready' : 'Degraded') : 'Not configured'}
+                            valueStyle={{ color: !erpNextHealth?.configured ? '#8c8c8c' : erpNextHealth.consecutiveFailures === 0 ? '#52c41a' : '#fa8c16' }}
+                            prefix={<SyncOutlined />}
+                            suffix={erpNextHealth?.configured && erpNextHealth.consecutiveFailures > 0 ? `${erpNextHealth.consecutiveFailures} failures` : undefined}
+                        />
+                    </Card>
+                </Col>
             </Row>
 
             <Title level={4}>Microservices</Title>
             <Row gutter={[16, 16]}>
-                {healthData?.info && Object.entries(healthData.info).map(([key, value]: [string, any]) => (
+                {healthData?.info && Object.entries(healthData.info).map(([key, value]) => (
                     key !== 'database' && (
-                        <Col span={8} key={key}>
+                        <Col xs={24} sm={12} lg={8} key={key}>
                             <Card size="small" bordered={false} className="shadow-sm border-l-4"
                                 style={{ borderLeftColor: getStatusColor(value.status) }}
                             >
                                 <div className="flex justify-between items-center">
                                     <Text strong className="capitalize">{key.replace('_', ' ')}</Text>
-                                    <Badge status={value.status === 'up' ? 'success' : 'error'} text={value.status.toUpperCase()} />
+                                    <Badge status={value.status === 'up' ? 'success' : 'error'} text={(value.status || 'unknown').toUpperCase()} />
                                 </div>
                             </Card>
                         </Col>

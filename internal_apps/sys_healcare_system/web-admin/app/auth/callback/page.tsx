@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { Suspense, useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Spin, App } from 'antd';
 import { useAuth } from '@/providers/AuthProvider';
 import authService from '@/services/auth.service';
 
-export default function CallbackPage() {
+function CallbackPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { setSession } = useAuth();
@@ -51,7 +51,7 @@ export default function CallbackPage() {
                 
                 // Final Redirect to Home
                 router.push('/');
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('OAuth Callback Error:', err);
                 message.error('Xác thực thất bại. Vui lòng thử lại.');
                 router.push('/auth/login');
@@ -69,5 +69,13 @@ export default function CallbackPage() {
                 <p className="text-white/60 text-sm italic">Vui lòng không đóng cửa sổ này</p>
             </div>
         </div>
+    );
+}
+
+export default function CallbackPage() {
+    return (
+        <Suspense fallback={<div className="flex min-h-[400px] items-center justify-center text-white">Đang tải...</div>}>
+            <CallbackPageContent />
+        </Suspense>
     );
 }

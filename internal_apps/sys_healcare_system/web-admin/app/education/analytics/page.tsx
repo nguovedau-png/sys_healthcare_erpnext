@@ -141,7 +141,7 @@ export default function EducationAnalyticsPage() {
             {/* Overview Stats */}
             <Row gutter={16}>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Tổng khóa học"
                             value={stats.totalCourses}
@@ -152,7 +152,7 @@ export default function EducationAnalyticsPage() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Tổng bài học"
                             value={stats.totalLessons}
@@ -163,7 +163,7 @@ export default function EducationAnalyticsPage() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Học viên hoạt động"
                             value={stats.activeStudents}
@@ -174,7 +174,7 @@ export default function EducationAnalyticsPage() {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} lg={6}>
-                    <Card variant="borderless" className="shadow-sm">
+                    <Card variant="outlined" className="shadow-sm">
                         <Statistic
                             title="Đánh giá TB"
                             value={stats.avgRating}
@@ -194,7 +194,7 @@ export default function EducationAnalyticsPage() {
                 <Col span={24}>
                     <Card
                         title={<Space><BarChartOutlined />Top Bài học có lượt tương tác cao nhất</Space>}
-                        variant="borderless"
+                        variant="outlined"
                         className="shadow-sm"
                     >
                         <Table
@@ -210,7 +210,7 @@ export default function EducationAnalyticsPage() {
 
             <Card
                 title={<Space><FilterOutlined />Chi tiết tương tác theo bài học</Space>}
-                variant="borderless"
+                variant="outlined"
                 className="shadow-sm"
             >
                 <Row gutter={24} align="bottom">
@@ -249,17 +249,17 @@ export default function EducationAnalyticsPage() {
 
                 <Row gutter={[16, 16]}>
                     <Col xs={24} sm={8}>
-                        <Card variant="borderless" style={{ background: '#fff1f0', textAlign: 'center' }}>
+                        <Card variant="outlined" style={{ background: '#fff1f0', textAlign: 'center' }}>
                             <Statistic title="Lượt thích" value={450} valueStyle={{ color: '#cf1322' }} prefix={<LikeOutlined />} />
                         </Card>
                     </Col>
                     <Col xs={24} sm={8}>
-                        <Card variant="borderless" style={{ background: '#e6f7ff', textAlign: 'center' }}>
+                        <Card variant="outlined" style={{ background: '#e6f7ff', textAlign: 'center' }}>
                             <Statistic title="Bình luận" value={120} valueStyle={{ color: '#096dd9' }} prefix={<MessageOutlined />} />
                         </Card>
                     </Col>
                     <Col xs={24} sm={8}>
-                        <Card variant="borderless" style={{ background: '#fffbe6', textAlign: 'center' }}>
+                        <Card variant="outlined" style={{ background: '#fffbe6', textAlign: 'center' }}>
                             <Statistic title="Đánh giá" value={4.5} suffix="/5" valueStyle={{ color: '#d48806' }} prefix={<StarOutlined />} />
                         </Card>
                     </Col>

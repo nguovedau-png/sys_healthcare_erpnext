@@ -40,7 +40,7 @@ export default function TopicsManagement() {
         try {
             setLoading(true);
             const data = await communityService.getForumTopics();
-            setTopics(data);
+            setTopics(data.data);
         } catch (error) {
             console.error('Failed to fetch topics', error);
             message.error('Không thể tải danh sách chủ đề');
@@ -81,7 +81,7 @@ export default function TopicsManagement() {
                 <Space orientation="vertical" size={0}>
                     <Text strong style={{ fontSize: '15px' }}>{record.title}</Text>
                     <Space size="small" split={<Text type="secondary" style={{ fontSize: '10px' }}>•</Text>}>
-                        <Tag color="blue" variant="borderless" style={{ fontSize: '11px', borderRadius: '4px' }}>
+                        <Tag color="blue" variant="outlined" style={{ fontSize: '11px', borderRadius: '4px' }}>
                             {record.category}
                         </Tag>
                         <Space size={4}>
@@ -120,7 +120,7 @@ export default function TopicsManagement() {
             key: 'status',
             label: 'Trạng thái',
             render: (status: string) => (
-                <Tag color={status === 'active' ? 'success' : 'default'} variant="borderless">
+                <Tag color={status === 'active' ? 'success' : 'default'} variant="outlined">
                     {status === 'active' ? 'HOẠT ĐỘNG' : 'ĐÃ KHÓA'}
                 </Tag>
             )
@@ -144,7 +144,7 @@ export default function TopicsManagement() {
 
             <Row gutter={16}>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f0f5ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f0f5ff' }}>
                         <Statistic
                             title="Tổng chủ đề"
                             value={topics.length}
@@ -153,7 +153,7 @@ export default function TopicsManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f6ffed' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f6ffed' }}>
                         <Statistic
                             title="Hoạt động"
                             value={topics.filter(t => t.status === 'active').length}
@@ -163,7 +163,7 @@ export default function TopicsManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#fff7e6' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#fff7e6' }}>
                         <Statistic
                             title="Lượt xem"
                             value={topics.reduce((acc, t) => acc + (t.views || 0), 0)}
@@ -173,7 +173,7 @@ export default function TopicsManagement() {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card size="small" variant="borderless" style={{ background: '#f9f0ff' }}>
+                    <Card size="small" variant="outlined" style={{ background: '#f9f0ff' }}>
                         <Statistic
                             title="Danh mục"
                             value={new Set(topics.map(t => t.category)).size}

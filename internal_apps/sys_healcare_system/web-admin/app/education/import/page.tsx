@@ -103,7 +103,7 @@ export default function StudentImportPage() {
 
     if (isFinished) {
         return (
-            <Card variant="borderless" className="shadow-sm">
+            <Card variant="outlined" className="shadow-sm">
                 <Result
                     status="success"
                     title="Import Học viên Thành công!"
@@ -162,7 +162,7 @@ export default function StudentImportPage() {
             />
 
             {currentStep === 0 && (
-                <Card variant="borderless" className="shadow-sm">
+                <Card variant="outlined" className="shadow-sm">
                     <Dragger
                         name="file"
                         multiple={false}
@@ -188,7 +188,7 @@ export default function StudentImportPage() {
 
             {currentStep === 1 && (
                 <Card
-                    variant="borderless"
+                    variant="outlined"
                     className="shadow-sm"
                     title={<Space><FileExcelOutlined />Xem trước dữ liệu ({preview.length} bản ghi)</Space>}
                     extra={

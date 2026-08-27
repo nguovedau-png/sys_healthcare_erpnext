@@ -15,7 +15,7 @@ export default function PushNotificationsManagement() {
         try {
             setLoading(true);
             const data = await marketingService.getPushNotifications();
-            setNotifications(data);
+            setNotifications(data.data);
         } catch (error) {
             console.error('Failed to fetch push notifications', error);
         } finally {

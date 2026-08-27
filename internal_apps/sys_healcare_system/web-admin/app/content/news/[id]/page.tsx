@@ -109,7 +109,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
 
             <Row gutter={24}>
                 <Col xs={24} lg={16}>
-                    <Card variant="borderless" bodyStyle={{ padding: '32px' }}>
+                    <Card variant="outlined" bodyStyle={{ padding: '32px' }}>
                         <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
                             <div>
                                 <Tag color="processing" style={{ marginBottom: 16 }}>{post.category?.toUpperCase()}</Tag>
@@ -153,7 +153,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
 
                 <Col xs={24} lg={8}>
                     <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
-                        <Card title="Thông tin xuất bản" variant="borderless">
+                        <Card title="Thông tin xuất bản" variant="outlined">
                             <Descriptions column={1} size="small">
                                 <Descriptions.Item label="Trạng thái">
                                     <Tag color={post.isActive ? 'success' : 'default'}>
@@ -175,7 +175,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ id: strin
                             </Descriptions>
                         </Card>
 
-                        <Card title="Thống kê tương tác" variant="borderless">
+                        <Card title="Thống kê tương tác" variant="outlined">
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <Statistic title="Bình luận" value={12} prefix={<FileTextOutlined />} />

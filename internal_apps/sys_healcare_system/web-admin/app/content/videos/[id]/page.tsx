@@ -125,7 +125,7 @@ export default function VideoDetailPage({ params }: { params: Promise<{ id: stri
 
             <Row gutter={24}>
                 <Col xs={24} lg={16}>
-                    <Card variant="borderless" bodyStyle={{ padding: 0, overflow: 'hidden' }}>
+                    <Card variant="outlined" bodyStyle={{ padding: 0, overflow: 'hidden' }}>
                         <div style={{ position: 'relative', background: '#000', paddingTop: '56.25%' }}>
                             {embedUrl ? (
                                 <iframe
@@ -158,7 +158,7 @@ export default function VideoDetailPage({ params }: { params: Promise<{ id: stri
                         </div>
                     </Card>
 
-                    <Card variant="borderless" style={{ marginTop: 24 }}>
+                    <Card variant="outlined" style={{ marginTop: 24 }}>
                         <Title level={4}>Mô tả và Ghi chú</Title>
                         <Paragraph style={{ fontSize: '15px', color: '#595959' }}>
                             {video.description || 'Không có mô tả chi tiết cho video này.'}
@@ -166,15 +166,15 @@ export default function VideoDetailPage({ params }: { params: Promise<{ id: stri
                         <Divider />
                         <Space wrap>
                             {video.tags?.split(',').map((tag: string) => (
-                                <Tag key={tag} variant="borderless">#{tag.trim()}</Tag>
-                            )) || <Tag variant="borderless">#healthcare</Tag>}
+                                <Tag key={tag} variant="outlined">#{tag.trim()}</Tag>
+                            )) || <Tag variant="outlined">#healthcare</Tag>}
                         </Space>
                     </Card>
                 </Col>
 
                 <Col xs={24} lg={8}>
                     <Space orientation="vertical" size="large" style={{ display: 'flex' }}>
-                        <Card title="Thông tin chi tiết" variant="borderless">
+                        <Card title="Thông tin chi tiết" variant="outlined">
                             <Descriptions column={1} size="small">
                                 <Descriptions.Item label="Trạng thái">
                                     <Tag color={video.isActive ? 'success' : 'default'}>
@@ -202,7 +202,7 @@ export default function VideoDetailPage({ params }: { params: Promise<{ id: stri
                             </Descriptions>
                         </Card>
 
-                        <Card title="Chỉ số tương tác" variant="borderless">
+                        <Card title="Chỉ số tương tác" variant="outlined">
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <Statistic title="Lượt xem" value={video.view || 0} prefix={<EyeOutlined />} />

@@ -93,7 +93,7 @@ export default function PagesManagement() {
             dataIndex: 'isActive',
             key: 'isActive',
             render: (isActive) => (
-                <Tag color={isActive ? 'green' : 'default'} variant="borderless">
+                <Tag color={isActive ? 'green' : 'default'} variant="outlined">
                     {isActive ? 'ĐÃ XUẤT BẢN' : 'TẠM ẨN'}
                 </Tag>
             ),
@@ -149,7 +149,7 @@ export default function PagesManagement() {
                 </Col>
             </Row>
 
-            <Card variant="borderless">
+            <Card variant="outlined">
                 <Table
                     columns={columns}
                     dataSource={pages}

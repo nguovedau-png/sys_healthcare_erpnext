@@ -105,7 +105,7 @@ export default function CreateBannerPage() {
                 </Col>
             </Row>
 
-            <Card variant="borderless" bodyStyle={{ padding: '24px' }}>
+            <Card variant="outlined" bodyStyle={{ padding: '24px' }}>
                 <FormBuilder
                     fields={formFields}
                     onSubmit={handleSubmit}
