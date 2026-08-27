@@ -60,6 +60,8 @@ docker-compose.override.yml
 # Prisma
 prisma/migrations/
 !prisma/migrations/.gitkeep
+!apps/erp-service/prisma/migrations/
+!apps/erp-service/prisma/migrations/**/*.sql
 
 # Temporary files
 tmp/
@@ -73,6 +75,7 @@ temp/
 *.test.ts
 *.spec.js
 *.spec.ts
+!apps/erp-service/src/integrations/*.spec.ts
 __tests__/
 test/
 tests/

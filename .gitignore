@@ -153,6 +153,7 @@ sites/backups/
 sites/*/backups/
 *.sql.gz
 *.sql
+!internal_apps/sys_healcare_system/backend/apps/erp-service/prisma/migrations/**/*.sql
 
 # Certificates and Secrets
 *.pem

@@ -11,6 +11,9 @@ Repository này cung cấp healthcare operations workspace cho web-admin, API ga
 | `JWT_SECRET` | Yes | Secret ngẫu nhiên tối thiểu 32 bytes, dùng chung giữa auth-service và API gateway; không commit vào repository. |
 | `ERPNEXT_BASE_URL` | Yes for sync | Chỉ dùng HTTPS và phải trỏ tới site ERPNext đã được allowlist. |
 | `ERPNEXT_API_KEY` / `ERPNEXT_API_SECRET` | Yes for sync | Inject qua secret manager; không ghi vào log hoặc image layer. |
+| `ERPNEXT_RETRY_BASE_DELAY_MS` | No | Exponential backoff base in milliseconds; default `250`. |
+| `ERPNEXT_PROCESSING_LEASE_MS` | No | Lease duration before reclaiming abandoned processing; default `120000`. |
+| `ERPNEXT_DEAD_LETTER_THRESHOLD` | No | Attempts before dead-letter; default `5`. |
 | `ERPNEXT_SYNC_TOKEN` | Yes for sync routes | Token service-to-service, rotate định kỳ; gửi qua `x-erpnext-sync-token`. |
 | `DATABASE_URL` | Yes | Database riêng phù hợp schema của từng service; chạy migration trước khi rollout. |
 | `RABBITMQ_URL` | Yes | RabbitMQ durable queues cho gateway và microservices. |
@@ -36,7 +39,7 @@ pnpm audit --prod
 
 ## Database rollout
 
-Schema `SyncOperation` cần được migrate trước khi bật endpoint ERPNext upsert. Migration phải chạy trong một bước riêng trước khi rollout application mới; nếu rollback application thì không nên xoá cột hoặc bảng đã tạo. Các bản ghi sync chứa metadata đã redacted, không phải bản sao payload clinical đầy đủ, vì vậy retry an toàn được thực hiện bằng cách gửi lại payload gốc với cùng `tenantId`, `sourceSystem`, `sourceId` và `idempotencyKey`.
+Schema `SyncOperation` và các bảng `ExternalReference`, `WebhookReceipt`, `ConsentRecord`, `AuditEvent` cần được migrate trước khi bật endpoint ERPNext upsert. Migration nằm tại `internal_apps/sys_healcare_system/backend/apps/erp-service/prisma/migrations/20260827_integration_hardening/migration.sql`; chạy trong một bước riêng trước khi rollout application mới bằng migration runner của PostgreSQL. Script có `IF NOT EXISTS` để an toàn khi retry, nhưng vẫn phải được ghi nhận trong migration ledger. Nếu rollback application thì không nên xoá cột hoặc bảng đã tạo. Các bản ghi sync chứa metadata đã redacted, không phải bản sao payload clinical đầy đủ, vì vậy retry an toàn được thực hiện bằng cách gửi lại payload gốc với cùng `tenantId`, `sourceSystem`, `sourceId` và `idempotencyKey`.
 
 ## Authorization and data handling
 
@@ -46,7 +49,7 @@ Appointment status chỉ đi theo state machine `pending → confirmed → check
 
 ## Observability and recovery
 
-Theo dõi health endpoint, RabbitMQ queue depth, ERPNext latency/error rate và số lượng `FAILED`/`DEAD_LETTER` trong `SyncOperation`. Khi một sync thất bại, kiểm tra `lastErrorCode`, `attemptCount` và `nextAttemptAt`; không retry lỗi validation hoặc replay payload với idempotency key khác. Khi phát hiện conflict do cùng idempotency key nhưng payload khác, dừng replay và xử lý qua reconciliation workflow.
+Theo dõi health endpoint, RabbitMQ queue depth, ERPNext latency/error rate và số lượng `FAILED`/`DEAD_LETTER` trong `SyncOperation`. Khi một sync thất bại, kiểm tra `lastErrorCode`, `attemptCount`, `lastAttemptAt`, `lockedAt` và `nextAttemptAt`; lease quá hạn được phép reclaim có kiểm soát, còn retry bình thường tuân theo exponential backoff; không retry lỗi validation hoặc replay payload với idempotency key khác. Khi phát hiện conflict do cùng idempotency key nhưng payload khác, dừng replay và xử lý qua reconciliation workflow.
 
 ## Rollback
 

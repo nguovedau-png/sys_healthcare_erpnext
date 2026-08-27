@@ -56,6 +56,9 @@ model SyncOperation {
   lastError      String?
   requestSummary Json?
   responseData   Json?
+  remoteModifiedAt DateTime?
+  lastAttemptAt  DateTime?
+  lockedAt       DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   completedAt    DateTime?
@@ -63,6 +66,76 @@ model SyncOperation {
   @@unique([tenantId, sourceSystem, sourceId, idempotencyKey])
   @@index([tenantId, facilityId, status, nextAttemptAt])
   @@index([doctype, sourceId])
+}
+
+model ExternalReference {
+  id               String   @id @default(cuid())
+  tenantId         String
+  facilityId       String
+  entityType       String
+  entityId         String
+  provider         String
+  doctype          String
+  remoteName       String
+  remoteModifiedAt DateTime?
+  versionHash      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([tenantId, facilityId, entityType, entityId])
+  @@unique([provider, doctype, remoteName])
+  @@index([tenantId, facilityId, entityType])
+}
+
+model WebhookReceipt {
+  id                String   @id @default(cuid())
+  provider          String
+  tenantId          String
+  eventId           String
+  signatureVerified Boolean  @default(false)
+  status            String   @default("RECEIVED")
+  payloadHash       String
+  processedAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([provider, tenantId, eventId])
+  @@index([tenantId, status, createdAt])
+}
+
+model ConsentRecord {
+  id            String   @id @default(cuid())
+  tenantId      String
+  facilityId    String
+  patientId     String
+  purpose       String
+  legalBasis    String
+  scope         String
+  status        String
+  policyVersion String
+  capturedAt    DateTime @default(now())
+  withdrawnAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([tenantId, facilityId, patientId, status])
+}
+
+model AuditEvent {
+  id           String   @id @default(cuid())
+  tenantId     String
+  facilityId   String?
+  actorId      String?
+  action       String
+  resourceType String
+  resourceId   String
+  outcome      String
+  requestId    String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([tenantId, facilityId, createdAt])
+  @@index([resourceType, resourceId, createdAt])
 }
 
 model DrugReference {

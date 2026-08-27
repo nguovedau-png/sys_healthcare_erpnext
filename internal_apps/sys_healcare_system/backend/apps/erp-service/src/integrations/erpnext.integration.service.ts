@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException, OnModuleInit } from '
 import { createHash } from 'node:crypto';
 import { Prisma } from '@prisma/client-erp-service';
 import { PrismaService } from '../prisma';
-import { errorSummary, redactForLog } from './erpnext.retry';
+import { errorSummary, redactForLog, retryDelayMs } from './erpnext.retry';
 import { ErpNextClient } from './erpnext.client';
 import {
   ERP_NEXT_DOCTYPES,
@@ -19,12 +19,16 @@ const DEFAULT_DEAD_LETTER_THRESHOLD = 5;
 export class ErpNextIntegrationService implements OnModuleInit {
   private client?: ErpNextClient;
   private deadLetterThreshold = DEFAULT_DEAD_LETTER_THRESHOLD;
+  private retryBaseDelayMs = 250;
+  private processingLeaseMs = 120_000;
 
   constructor(private readonly prisma: PrismaService) {}
 
   onModuleInit() {
     const { ERPNEXT_BASE_URL, ERPNEXT_API_KEY, ERPNEXT_API_SECRET } = process.env;
     this.deadLetterThreshold = this.parseIntegerEnv('ERPNEXT_DEAD_LETTER_THRESHOLD', DEFAULT_DEAD_LETTER_THRESHOLD, 1, 20);
+    this.retryBaseDelayMs = this.parseIntegerEnv('ERPNEXT_RETRY_BASE_DELAY_MS', 250, 0, 10_000);
+    this.processingLeaseMs = this.parseIntegerEnv('ERPNEXT_PROCESSING_LEASE_MS', 120_000, 1_000, 3_600_000);
     if (ERPNEXT_BASE_URL && ERPNEXT_API_KEY && ERPNEXT_API_SECRET) {
       const options: ErpNextClientOptions = {
         baseUrl: ERPNEXT_BASE_URL,
@@ -97,12 +101,18 @@ export class ErpNextIntegrationService implements OnModuleInit {
       where: {
         id: operation.id,
         requestHash,
-        status: { in: ['PENDING', 'FAILED', 'DEAD_LETTER'] },
+        OR: [
+          { status: { in: ['PENDING', 'FAILED', 'DEAD_LETTER'] }, nextAttemptAt: null },
+          { status: { in: ['PENDING', 'FAILED', 'DEAD_LETTER'] }, nextAttemptAt: { lte: new Date() } },
+          { status: 'PROCESSING', lockedAt: { lt: new Date(Date.now() - this.processingLeaseMs) } },
+        ],
       },
       data: {
         status: 'PROCESSING',
         attemptCount: { increment: 1 },
         nextAttemptAt: null,
+        lastAttemptAt: new Date(),
+        lockedAt: new Date(),
         lastError: null,
         lastErrorCode: null,
       },
@@ -125,7 +135,10 @@ export class ErpNextIntegrationService implements OnModuleInit {
         where: { id: operation.id },
         data: {
           status: 'COMPLETED',
+          documentName: this.readRemoteString(data, 'name') ?? operation.documentName,
+          remoteModifiedAt: this.readRemoteDate(data, 'modified'),
           responseData: data as Prisma.InputJsonValue,
+          lockedAt: null,
           completedAt: new Date(),
         },
       });
@@ -139,7 +152,8 @@ export class ErpNextIntegrationService implements OnModuleInit {
           status,
           lastErrorCode: summary.code ?? (summary.status ? `HTTP_${summary.status}` : 'ERP_NEXT_ERROR'),
           lastError: summary.status ? `ERPNext request failed with HTTP ${summary.status}` : 'ERPNext request failed',
-          nextAttemptAt: status === 'FAILED' ? new Date(Date.now() + 60_000) : null,
+          lockedAt: null,
+          nextAttemptAt: status === 'FAILED' ? new Date(Date.now() + retryDelayMs(processing.attemptCount, this.retryBaseDelayMs)) : null,
         },
       });
       throw error;
@@ -237,5 +251,16 @@ export class ErpNextIntegrationService implements OnModuleInit {
 
   private asRecord(value: Prisma.JsonValue | null): Record<string, unknown> | undefined {
     return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
+  }
+
+  private readRemoteString(data: Record<string, unknown>, key: string): string | undefined {
+    return typeof data[key] === 'string' && data[key].length <= 140 ? data[key] : undefined;
+  }
+
+  private readRemoteDate(data: Record<string, unknown>, key: string): Date | undefined {
+    const value = data[key];
+    if (typeof value !== 'string') return undefined;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? undefined : date;
   }
 }
