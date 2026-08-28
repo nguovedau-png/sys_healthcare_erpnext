@@ -1,0 +1,37 @@
+name: Healthcare backend quality
+
+on:
+  push:
+    paths:
+      - 'internal_apps/sys_healcare_system/backend/**'
+      - '.github/workflows/healthcare-backend-quality.yml'
+  pull_request:
+    paths:
+      - 'internal_apps/sys_healcare_system/backend/**'
+      - '.github/workflows/healthcare-backend-quality.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: internal_apps/sys_healcare_system/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: internal_apps/sys_healcare_system/backend/package-lock.json
+      - name: Install dependencies and generate Prisma clients
+        run: npm ci
+      - name: Unit and integration tests
+        run: npm test -- --runInBand
+      - name: Production compile
+        run: npm run build
+      - name: Repository whitespace check
+        working-directory: .
+        run: git diff --check
