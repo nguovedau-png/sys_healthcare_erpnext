@@ -10,25 +10,23 @@ const { Title, Text } = Typography;
 type AppointmentStatus = 'pending' | 'confirmed' | 'checked_in' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
 
 interface Appointment {
-  id: number;
-  patientName: string;
-  patientPhone: string;
-  doctorName?: string;
-  appointmentDate?: string;
+  id: string;
+  patient?: { id: string; fullName: string; phoneLast4: string };
+  practitionerExternalId: string;
+  startsAt: string;
+  endsAt: string;
   status: AppointmentStatus;
-  service?: string;
-  note?: string;
+  serviceCode: string;
+  notes?: string;
 }
 
-interface Consultation {
-  id: number;
-  patientId: string;
-  patientName: string;
-  patientGender?: string;
-  patientAge?: number;
-  type?: string;
-  line?: string;
-  status: 'waiting' | 'examining' | 'completed' | 'absent' | string;
+interface QueueTicket {
+  id: string;
+  appointmentId: string;
+  ticketNumber: number;
+  priority: number;
+  status: 'waiting' | 'called' | 'skipped' | 'completed' | string;
+  appointment?: Appointment;
 }
 
 interface PaginatedResult<T> {
@@ -36,10 +34,26 @@ interface PaginatedResult<T> {
   pagination?: { total?: number };
 }
 
-function unwrap<T>(response: any): PaginatedResult<T> {
-  const body = response?.data?.success ? response.data.data : response?.data;
-  if (Array.isArray(body)) return { data: body };
-  return { data: body?.data ?? [], pagination: body?.pagination };
+type ApiEnvelope<T> = { success?: boolean; data?: T | { data?: T[]; pagination?: { total?: number } } };
+type ApiError = { response?: { data?: { message?: unknown } } };
+
+function unwrap<T>(response: { data?: unknown }): PaginatedResult<T> {
+  const body = response.data as ApiEnvelope<T> | T[] | undefined;
+  const payload = body && !Array.isArray(body) && body.success ? body.data : body;
+  if (Array.isArray(payload)) return { data: payload as T[] };
+  if (payload && typeof payload === 'object') {
+    const result = payload as { data?: unknown; pagination?: { total?: number } };
+    return { data: Array.isArray(result.data) ? result.data as T[] : [], pagination: result.pagination };
+  }
+  return { data: [] };
+}
+
+function errorMessage(error: unknown, fallback: string) {
+  if (error && typeof error === 'object' && 'response' in error) {
+    const message = (error as ApiError).response?.data?.message;
+    if (typeof message === 'string' && message.trim()) return message;
+  }
+  return fallback;
 }
 
 const NEXT_STATUS: Partial<Record<AppointmentStatus, AppointmentStatus>> = {
@@ -63,44 +77,55 @@ const statusColor: Record<string, string> = {
 
 const Operations: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [queueTickets, setQueueTickets] = useState<QueueTicket[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
   const [form] = Form.useForm();
 
+  const tenantId = import.meta.env.VITE_TENANT_ID || 'demo-tenant';
+  const facilityId = import.meta.env.VITE_FACILITY_ID || 'demo-facility';
+
   const fetchQueues = useCallback(async () => {
     setLoading(true);
     try {
-      const [appointmentResponse, consultationResponse] = await Promise.all([
-        api.get('/bookings/appointments', { params: { page: 1, limit: 100, search: search || undefined } }),
-        api.get('/bookings/consultations', { params: { page: 1, limit: 100 } }),
+      const [appointmentResponse, queueResponse] = await Promise.all([
+        api.get('/healthcare/appointments', { params: { tenantId, facilityId } }),
+        api.get('/healthcare/queue', { params: { tenantId, facilityId } }),
       ]);
       setAppointments(unwrap<Appointment>(appointmentResponse).data);
-      setConsultations(unwrap<Consultation>(consultationResponse).data);
-    } catch (error: any) {
-      message.error(error.response?.data?.message || 'Không thể tải hàng đợi khám');
+      setQueueTickets(unwrap<QueueTicket>(queueResponse).data);
+    } catch (error: unknown) {
+      message.error(errorMessage(error, 'Không thể tải lịch hẹn và hàng đợi khám'));
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, [tenantId, facilityId]);
 
   useEffect(() => {
     fetchQueues();
   }, [fetchQueues]);
 
-  const handleCreateAppointment = async (values: { patientName: string; patientPhone: string; email?: string; doctorId?: string; doctorName?: string; service?: string; appointmentDate?: Dayjs; note?: string }) => {
+  const handleCreateAppointment = async (values: { patientId: string; practitionerExternalId: string; serviceCode: string; startsAt?: Dayjs; endsAt?: Dayjs; notes?: string }) => {
     try {
-      await api.post('/bookings/appointments', {
-        ...values,
-        appointmentDate: values.appointmentDate?.toISOString(),
+      if (!values.startsAt || !values.endsAt) return;
+      await api.post('/healthcare/appointments', {
+        tenantId,
+        facilityId,
+        patientId: values.patientId,
+        practitionerExternalId: values.practitionerExternalId,
+        serviceCode: values.serviceCode,
+        startsAt: values.startsAt.toISOString(),
+        endsAt: values.endsAt.toISOString(),
+        notes: values.notes,
+        idempotencyKey: crypto.randomUUID(),
       });
       message.success('Đã tạo lịch hẹn');
       setAppointmentModalOpen(false);
       form.resetFields();
       await fetchQueues();
-    } catch (error: any) {
-      message.error(error.response?.data?.message || 'Không thể tạo lịch hẹn');
+    } catch (error: unknown) {
+      message.error(errorMessage(error, 'Không thể tạo lịch hẹn'));
     }
   };
 
@@ -108,32 +133,40 @@ const Operations: React.FC = () => {
     const next = NEXT_STATUS[appointment.status];
     if (!next) return;
     try {
-      await api.put(`/bookings/appointments/${appointment.id}`, { status: next });
+      if (next === 'checked_in') {
+        await api.post(`/healthcare/appointments/${appointment.id}/check-in`, { priority: 0 });
+      } else {
+        await api.post(`/healthcare/appointments/${appointment.id}/transition`, { status: next });
+      }
       message.success(`Đã chuyển lịch hẹn sang ${next}`);
       await fetchQueues();
-    } catch (error: any) {
-      message.error(error.response?.data?.message || 'Không thể chuyển trạng thái lịch hẹn');
+    } catch (error: unknown) {
+      message.error(errorMessage(error, 'Không thể chuyển trạng thái lịch hẹn'));
     }
   };
 
-  const waitingCount = useMemo(() => consultations.filter((item) => item.status === 'waiting').length, [consultations]);
-  const todayCount = useMemo(() => appointments.filter((item) => item.appointmentDate && dayjs(item.appointmentDate).isSame(dayjs(), 'day')).length, [appointments]);
+  const visibleAppointments = useMemo(() => appointments.filter((item) => {
+    const haystack = `${item.patient?.fullName || ''} ${item.patient?.phoneLast4 || ''} ${item.practitionerExternalId} ${item.serviceCode}`.toLowerCase();
+    return !search || haystack.includes(search.toLowerCase());
+  }), [appointments, search]);
+  const waitingCount = useMemo(() => queueTickets.filter((item) => item.status === 'waiting').length, [queueTickets]);
+  const todayCount = useMemo(() => appointments.filter((item) => dayjs(item.startsAt).isSame(dayjs(), 'day')).length, [appointments]);
   const activeCount = useMemo(() => appointments.filter((item) => !['completed', 'cancelled', 'no_show'].includes(item.status)).length, [appointments]);
 
   const appointmentColumns: ColumnsType<Appointment> = [
-    { title: 'Bệnh nhân', dataIndex: 'patientName', key: 'patientName', render: (name: string, record) => <Space direction="vertical" size={0}><Text strong>{name}</Text><Text type="secondary">{record.patientPhone}</Text></Space> },
-    { title: 'Bác sĩ', dataIndex: 'doctorName', key: 'doctorName', render: (value?: string) => value || 'Chưa phân công' },
-    { title: 'Dịch vụ', dataIndex: 'service', key: 'service', render: (value?: string) => value || '-' },
-    { title: 'Thời gian', dataIndex: 'appointmentDate', key: 'appointmentDate', render: (value?: string) => value ? dayjs(value).format('DD/MM/YYYY HH:mm') : '-' },
+    { title: 'Bệnh nhân', key: 'patient', render: (_, record) => <Space direction="vertical" size={0}><Text strong>{record.patient?.fullName || 'Chưa có tên'}</Text><Text type="secondary">•••• {record.patient?.phoneLast4 || '----'}</Text></Space> },
+    { title: 'Bác sĩ', dataIndex: 'practitionerExternalId', key: 'practitionerExternalId' },
+    { title: 'Dịch vụ', dataIndex: 'serviceCode', key: 'serviceCode' },
+    { title: 'Thời gian', dataIndex: 'startsAt', key: 'startsAt', render: (value?: string) => value ? dayjs(value).format('DD/MM/YYYY HH:mm') : '-' },
     { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (value: string) => <Tag color={statusColor[value] || 'default'}>{value.replace('_', ' ')}</Tag> },
     { title: 'Thao tác', key: 'actions', render: (_, record) => NEXT_STATUS[record.status] ? <Button size="small" type="link" onClick={() => advanceAppointment(record)}>Sang {NEXT_STATUS[record.status]?.replace('_', ' ')}</Button> : <Text type="secondary">Đã kết thúc</Text> },
   ];
 
-  const consultationColumns: ColumnsType<Consultation> = [
-    { title: 'Số hồ sơ', dataIndex: 'patientId', key: 'patientId' },
-    { title: 'Bệnh nhân', dataIndex: 'patientName', key: 'patientName' },
-    { title: 'Tuổi/Giới', key: 'demographics', render: (_, record) => `${record.patientAge ?? '-'} / ${record.patientGender ?? '-'}` },
-    { title: 'Loại khám', dataIndex: 'type', key: 'type' },
+  const queueColumns: ColumnsType<QueueTicket> = [
+    { title: 'Số thứ tự', dataIndex: 'ticketNumber', key: 'ticketNumber', render: (value: number) => <Text strong>#{value}</Text> },
+    { title: 'Bệnh nhân', key: 'patient', render: (_, record) => record.appointment?.patient?.fullName || 'Chưa có tên' },
+    { title: 'Dịch vụ', key: 'service', render: (_, record) => record.appointment?.serviceCode || '-' },
+    { title: 'Ưu tiên', dataIndex: 'priority', key: 'priority' },
     { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (value: string) => <Tag color={statusColor[value] || 'default'}>{value}</Tag> },
   ];
 
@@ -158,30 +191,26 @@ const Operations: React.FC = () => {
         </Row>
 
         <Card title="Lịch hẹn" extra={<Input.Search allowClear placeholder="Tìm bệnh nhân, bác sĩ..." style={{ width: 280 }} onSearch={setSearch} /> }>
-          <Table rowKey="id" columns={appointmentColumns} dataSource={appointments} loading={loading} scroll={{ x: 900 }} pagination={{ pageSize: 10 }} locale={{ emptyText: 'Chưa có lịch hẹn' }} />
+          <Table rowKey="id" columns={appointmentColumns} dataSource={visibleAppointments} loading={loading} scroll={{ x: 900 }} pagination={{ pageSize: 10 }} locale={{ emptyText: 'Chưa có lịch hẹn' }} />
         </Card>
 
         <Card title={<Space><CheckCircleOutlined /> Hàng đợi tiếp nhận</Space>}>
-          <Table rowKey="id" columns={consultationColumns} dataSource={consultations} loading={loading} scroll={{ x: 800 }} pagination={{ pageSize: 10 }} locale={{ emptyText: 'Chưa có bệnh nhân trong hàng đợi' }} />
+          <Table rowKey="id" columns={queueColumns} dataSource={queueTickets} loading={loading} scroll={{ x: 800 }} pagination={{ pageSize: 10 }} locale={{ emptyText: 'Chưa có bệnh nhân trong hàng đợi' }} />
         </Card>
       </Space>
 
       <Modal title="Tạo lịch hẹn" open={appointmentModalOpen} onCancel={() => setAppointmentModalOpen(false)} onOk={() => form.submit()} okText="Tạo lịch hẹn" cancelText="Hủy" confirmLoading={loading} destroyOnClose>
         <Form form={form} layout="vertical" onFinish={handleCreateAppointment} initialValues={{ appointmentDate: dayjs().add(1, 'hour') }}>
           <Row gutter={16}>
-            <Col span={12}><Form.Item name="patientName" label="Họ tên bệnh nhân" rules={[{ required: true, min: 2, max: 160 }]}><Input /></Form.Item></Col>
-            <Col span={12}><Form.Item name="patientPhone" label="Số điện thoại" rules={[{ required: true, pattern: /^(?:\+84|84|0)(?:3|5|7|8|9)[\s().-]?\d{3}[\s.-]?\d{3}[\s.-]?\d{3}$/ }]}><Input placeholder="0901234567" /></Form.Item></Col>
+            <Col xs={24} sm={12}><Form.Item name="patientId" label="Mã bệnh nhân" rules={[{ required: true }]}><Input placeholder="patient-id" /></Form.Item></Col>
+            <Col xs={24} sm={12}><Form.Item name="practitionerExternalId" label="Mã bác sĩ" rules={[{ required: true }]}><Input placeholder="doctor-id" /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}><Form.Item name="doctorName" label="Bác sĩ"><Input /></Form.Item></Col>
-            <Col span={12}><Form.Item name="doctorId" label="Mã bác sĩ"><Input /></Form.Item></Col>
+            <Col xs={24} sm={12}><Form.Item name="serviceCode" label="Mã dịch vụ" rules={[{ required: true }]}><Input placeholder="general-checkup" /></Form.Item></Col>
+            <Col xs={24} sm={12}><Form.Item name="startsAt" label="Bắt đầu" rules={[{ required: true }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" style={{ width: '100%' }} /></Form.Item></Col>
           </Row>
-          <Form.Item name="email" label="Email" rules={[{ type: 'email' }]}><Input /></Form.Item>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="service" label="Dịch vụ"><Input /></Form.Item></Col>
-            <Col span={12}><Form.Item name="appointmentDate" label="Thời gian" rules={[{ required: true }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" style={{ width: '100%' }} /></Form.Item></Col>
-          </Row>
-          <Form.Item name="note" label="Ghi chú"><Input.TextArea rows={3} maxLength={2000} showCount /></Form.Item>
+          <Form.Item name="endsAt" label="Kết thúc" rules={[{ required: true }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" style={{ width: '100%' }} /></Form.Item>
+          <Form.Item name="notes" label="Ghi chú"><Input.TextArea rows={3} maxLength={1000} showCount /></Form.Item>
         </Form>
       </Modal>
     </div>

@@ -58,3 +58,13 @@ Development uses the existing Docker Compose infrastructure. Production must pro
 ## Non-functional targets
 
 For the outpatient core, target p95 API latency below 500 ms for reads and below 800 ms for local writes excluding remote provider latency, 99.9% monthly availability for the application boundary, zero duplicate bookings under concurrency tests, and deterministic recovery after ERPNext timeout or duplicate delivery. These are engineering targets, not a compliance certification.
+
+## 2026-08-28 implementation slice
+
+The active implementation adds a persisted `QueueTicket` model scoped by tenant, facility, queue date, and appointment. Check-in is idempotent on appointment, allocates a unique facility/day ticket number, and advances the appointment with optimistic versioning. Queue transitions are separately validated from appointment transitions so `waiting`, `called`, `skipped`, and `completed` cannot be confused with clinical appointment states.
+
+The billing boundary now exposes a local `BillingIntent` creation contract and a provider-neutral signed payment callback. Callback requests use `x-payment-signature` over `timestamp.rawBody` with a five-minute replay window. `PaymentEvent` is deduplicated by provider/event ID, amount mismatches are rejected, and billing status transitions are monotonic. Refund requests are scoped, capped by the refundable balance, and remain pending for provider/accounting settlement; the service does not store card credentials.
+
+The admin Operations screen now consumes `/healthcare/appointments` and `/healthcare/queue`, masks phone numbers, supports Vietnamese queue/appointment labels, and generates client idempotency keys. CI and the 100-pass quality script target `external_apps/backend`, which is the active application; the historical `internal_apps/sys_healcare_system` path is not used by this slice.
+
+Before production, add a real database migration for the new models through the deployment environment, configure `PAYMENT_WEBHOOK_SECRET` from a secret manager, provision tenant/facility IDs, select approved payment/notification providers, and complete legal/compliance review for the current 2026 personal-data framework.

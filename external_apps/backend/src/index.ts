@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -79,7 +79,11 @@ const limiter = rateLimit(limiterOptions);
 // Apply to all routes
 app.use(limiter as any);
 
-app.use(express.json());
+app.use(express.json({
+    verify: (req, _res, buffer) => {
+        (req as Request & { rawBody?: string }).rawBody = buffer.toString('utf8');
+    },
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(compression() as any);
 app.use(cookieParser());

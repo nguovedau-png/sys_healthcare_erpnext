@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../../middlewares/auth.middleware';
-import { ForbiddenError, HealthcareError } from './healthcare.errors';
+import { ForbiddenError, HealthcareError, ServiceUnavailableError } from './healthcare.errors';
 import { HealthcareService } from './healthcare.service';
 import { getERPNextClient } from './erpnext.client';
-import { parseAmendment, parseAppointment, parseEncounter, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
+import { parseAmendment, parseAppointment, parseBillingIntent, parseEncounter, parsePaymentEvent, parseQueueCheckIn, parseQueueQuery, parseQueueTransition, parseRefund, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
 
 function actor(req: AuthRequest) { return req.user as { id: string; role?: { name?: string; isSystem?: boolean } | null }; }
 function sendError(res: Response, error: unknown) {
@@ -68,6 +68,48 @@ export class HealthcareController {
 
     static async transitionAppointment(req: Request, res: Response) {
         try { return res.json({ success: true, data: await HealthcareService.transitionAppointment(actor(req as AuthRequest), req.params.id, parseTransition(req.body?.status)) }); }
+        catch (error) { return sendError(res, error); }
+    }
+
+    static async checkInAppointment(req: Request, res: Response) {
+        try { return res.status(201).json({ success: true, data: await HealthcareService.checkInAppointment(actor(req as AuthRequest), req.params.id, parseQueueCheckIn(req.body || {})) }); }
+        catch (error) { return sendError(res, error); }
+    }
+
+    static async listQueue(req: Request, res: Response) {
+        try {
+            const scope = parseQueueQuery(req.query);
+            const queueDate = scope.queueDate || new Date();
+            queueDate.setUTCHours(0, 0, 0, 0);
+            return res.json({ success: true, data: await HealthcareService.listQueue(actor(req as AuthRequest), scope.tenantId, scope.facilityId, queueDate, scope.status) });
+        } catch (error) { return sendError(res, error); }
+    }
+
+    static async transitionQueueTicket(req: Request, res: Response) {
+        try { return res.json({ success: true, data: await HealthcareService.transitionQueueTicket(actor(req as AuthRequest), req.params.id, parseQueueTransition(req.body?.status)) }); }
+        catch (error) { return sendError(res, error); }
+    }
+
+    static async createBillingIntent(req: Request, res: Response) {
+        try { return res.status(201).json({ success: true, data: await HealthcareService.createBillingIntent(actor(req as AuthRequest), parseBillingIntent(req.body)) }); }
+        catch (error) { return sendError(res, error); }
+    }
+
+    static async paymentWebhook(req: Request, res: Response) {
+        try {
+            const secret = process.env.PAYMENT_WEBHOOK_SECRET;
+            if (!secret) throw new ServiceUnavailableError('Payment webhook is not configured');
+            const signature = String(req.header('x-payment-signature') || '');
+            const timestamp = String(req.header('x-payment-timestamp') || '');
+            const rawBody = (req as Request & { rawBody?: string }).rawBody || JSON.stringify(req.body);
+            if (!signature || !timestamp || !HealthcareService.verifyPaymentWebhook(secret, rawBody, signature, timestamp)) throw new ForbiddenError('Invalid payment webhook signature');
+            const event = parsePaymentEvent(req.body);
+            return res.json({ success: true, data: await HealthcareService.processPaymentEvent(event) });
+        } catch (error) { return sendError(res, error); }
+    }
+
+    static async requestRefund(req: Request, res: Response) {
+        try { return res.status(201).json({ success: true, data: await HealthcareService.requestRefund(actor(req as AuthRequest), req.params.id, parseRefund(req.body)) }); }
         catch (error) { return sendError(res, error); }
     }
 }

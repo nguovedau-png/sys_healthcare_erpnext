@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "prisma:validate": "prisma validate",
     "start": "node dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "gencode": "ts-node scripts/generate-crud.ts",
     "seed": "ts-node prisma/seed.ts",
     "sync-erpnext": "ts-node scripts/sync-to-erpnext.ts",
-    "worker": "ts-node src/worker.ts"
+    "worker": "ts-node src/worker.ts",
+    "quality": "npm run typecheck && npm test -- --runInBand --silent && npm run build"
   },
   "keywords": [],
   "author": "",

@@ -53,7 +53,8 @@ export const auditMiddleware = (req: AuthRequest, res: Response, next: NextFunct
                     after: sanitizeBody(req.body)
                 });
             } catch (err) {
-                console.error('Audit Log Error:', err);
+                    // Audit failure must not break the request, but should remain observable.
+                    console.error('Audit Log Error:', err instanceof Error ? err.message : 'unknown error');
             }
         }
     });
@@ -61,13 +62,17 @@ export const auditMiddleware = (req: AuthRequest, res: Response, next: NextFunct
     next();
 };
 
-const sanitizeBody = (body: any) => {
-    if (!body) return null;
-    const sanitized = { ...body };
-    // Remove sensitive fields
-    const sensitiveFields = ['password', 'confirmPassword', 'token', 'refreshToken', 'twoFactorSecret'];
-    sensitiveFields.forEach(field => {
-        if (sanitized[field]) sanitized[field] = '[REDACTED]';
-    });
-    return sanitized;
-};
+const REDACTED = '[REDACTED]';
+const SENSITIVE_KEY = /(password|secret|token|authorization|signature|phone|address|fullname|full_name|symptom|assessment|reason|notes|payload|patch|card|cvv|accountnumber|refresh)/i;
+
+function sanitizeBody(body: unknown, depth = 0): unknown {
+    if (body === null || body === undefined) return null;
+    if (depth > 4) return '[TRUNCATED]';
+    if (typeof body !== 'object') return typeof body === 'string' && body.length > 256 ? `${body.slice(0, 256)}…` : body;
+    if (Array.isArray(body)) return body.slice(0, 20).map((item) => sanitizeBody(item, depth + 1));
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(body as Record<string, unknown>)) {
+        result[key] = SENSITIVE_KEY.test(key) ? REDACTED : sanitizeBody(value, depth + 1);
+    }
+    return result;
+}

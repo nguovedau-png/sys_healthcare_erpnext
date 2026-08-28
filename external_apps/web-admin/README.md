@@ -71,3 +71,17 @@ export default defineConfig([
   },
 ])
 ```
+
+## Healthcare operations configuration
+
+The `/healthcare/operations` screen consumes the active backend contracts under `/api/v1/healthcare`. Set the following Vite variables for a facility deployment:
+
+```bash
+VITE_API_URL=http://localhost:3000/api/v1
+VITE_TENANT_ID=your-tenant-id
+VITE_FACILITY_ID=your-facility-id
+```
+
+The screen displays appointments and scoped queue tickets, creates appointments with an idempotency key, and advances an appointment through confirmation and check-in. Tenant and facility IDs must be provisioned by the server; the demo defaults are intended only for local development. Never place ERPNext credentials or payment webhook secrets in frontend variables.
+
+Run `npm run build` for a production compile and `npx playwright test` for the browser smoke suite. The current repository contains legacy lint violations outside the healthcare module; the healthcare Operations file is lint-clean and the production build plus E2E suite are the release gates for this slice.

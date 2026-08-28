@@ -375,6 +375,9 @@ model Tenant {
   orders         HealthcareOrder[]
   billingIntents BillingIntent[]
   syncOperations SyncOperation[]
+  queueTickets   QueueTicket[]
+  paymentEvents  PaymentEvent[]
+  paymentRefunds PaymentRefund[]
 }
 
 model Facility {
@@ -394,6 +397,9 @@ model Facility {
   encounters     Encounter[]
   orders         HealthcareOrder[]
   billingIntents BillingIntent[]
+  queueTickets   QueueTicket[]
+  paymentEvents  PaymentEvent[]
+  paymentRefunds PaymentRefund[]
 
   @@unique([tenantId, code])
   @@index([tenantId, isActive])
@@ -460,11 +466,12 @@ model Appointment {
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 
-  tenant     Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  facility   Facility          @relation(fields: [facilityId], references: [id], onDelete: Cascade)
-  patient    PatientProjection @relation(fields: [patientId], references: [id], onDelete: Restrict)
-  createdBy  User?             @relation("AppointmentCreatedBy", fields: [createdById], references: [id])
-  encounters Encounter[]
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility    Facility          @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  patient     PatientProjection @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  createdBy   User?             @relation("AppointmentCreatedBy", fields: [createdById], references: [id])
+  encounters  Encounter[]
+  queueTicket QueueTicket?
 
   @@unique([tenantId, facilityId, idempotencyKey])
   @@index([tenantId, facilityId, practitionerExternalId, startsAt, endsAt])
@@ -541,8 +548,10 @@ model BillingIntent {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  facility Facility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  tenant   Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility Facility        @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  events   PaymentEvent[]
+  refunds  PaymentRefund[]
 
   @@unique([tenantId, correlationKey])
   @@index([tenantId, facilityId, status])
@@ -600,17 +609,87 @@ model WebhookReceipt {
 }
 
 model ConsentRecord {
-  id         String            @id @default(uuid())
-  tenantId   String
-  facilityId String
-  patientId  String
-  purpose    String
-  status     String
-  capturedAt DateTime          @default(now())
-  expiresAt  DateTime?
-  patient    PatientProjection @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  id            String            @id @default(uuid())
+  tenantId      String
+  facilityId    String
+  patientId     String
+  purpose       String
+  legalBasis    String?
+  policyVersion String?
+  status        String
+  capturedAt    DateTime          @default(now())
+  expiresAt     DateTime?
+  withdrawnAt   DateTime?
+  patient       PatientProjection @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, facilityId, patientId, purpose])
+}
+
+model QueueTicket {
+  id             String    @id @default(uuid())
+  tenantId       String
+  facilityId     String
+  appointmentId  String    @unique
+  queueDate      DateTime  @db.Date
+  ticketNumber   Int
+  priority       Int       @default(0)
+  priorityReason String?
+  status         String    @default("waiting")
+  calledAt       DateTime?
+  completedAt    DateTime?
+  version        Int       @default(1)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility    Facility    @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@unique([facilityId, queueDate, ticketNumber])
+  @@index([tenantId, facilityId, queueDate, status])
+}
+
+model PaymentEvent {
+  id              String    @id @default(uuid())
+  tenantId        String
+  facilityId      String
+  billingIntentId String
+  provider        String
+  eventId         String
+  eventType       String
+  status          String    @default("received")
+  amount          Decimal?  @db.Decimal(18, 2)
+  payloadHash     String
+  receivedAt      DateTime  @default(now())
+  processedAt     DateTime?
+  createdAt       DateTime  @default(now())
+
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility      Facility      @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  billingIntent BillingIntent @relation(fields: [billingIntentId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, eventId])
+  @@index([tenantId, facilityId, billingIntentId, status])
+}
+
+model PaymentRefund {
+  id              String   @id @default(uuid())
+  tenantId        String
+  facilityId      String
+  billingIntentId String
+  amount          Decimal  @db.Decimal(18, 2)
+  reason          String
+  status          String   @default("requested")
+  requestedById   String?
+  resolvedById    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility      Facility      @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  billingIntent BillingIntent @relation(fields: [billingIntentId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, facilityId, status])
 }
 
 model Demo {

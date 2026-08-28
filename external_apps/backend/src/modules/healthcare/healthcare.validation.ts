@@ -3,6 +3,9 @@ import { BadRequestError } from './healthcare.errors';
 const ALLOWED_PATIENT_FIELDS = new Set(['fullName', 'phone', 'dateOfBirth', 'sex', 'address', 'tenantId', 'facilityId']);
 const ALLOWED_APPOINTMENT_FIELDS = new Set(['patientId', 'practitionerExternalId', 'serviceCode', 'startsAt', 'endsAt', 'notes', 'tenantId', 'facilityId', 'idempotencyKey']);
 const ALLOWED_ENCOUNTER_FIELDS = new Set(['patientId', 'appointmentId', 'practitionerExternalId', 'reason', 'assessment', 'tenantId', 'facilityId']);
+const ALLOWED_BILLING_FIELDS = new Set(['tenantId', 'facilityId', 'patientId', 'appointmentId', 'amount', 'currency', 'correlationKey']);
+const ALLOWED_PAYMENT_EVENT_FIELDS = new Set(['tenantId', 'facilityId', 'billingIntentId', 'provider', 'eventId', 'eventType', 'status', 'amount']);
+const ALLOWED_REFUND_FIELDS = new Set(['amount', 'reason']);
 
 export function assertObject(value: unknown, name: string): asserts value is Record<string, unknown> {
     if (!value || typeof value !== 'object' || Array.isArray(value)) throw new BadRequestError(`${name} must be an object`);
@@ -38,6 +41,12 @@ function optionalDate(value: unknown, field: string): Date | undefined {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) throw new BadRequestError(`${field} must be an ISO date`);
     return date;
+}
+
+function positiveAmount(value: unknown, field = 'amount'): number {
+    const amount = typeof value === 'number' ? value : typeof value === 'string' && value.trim() ? Number(value) : NaN;
+    if (!Number.isFinite(amount) || amount <= 0 || amount > 1_000_000_000_000 || Math.round(amount * 100) !== amount * 100) throw new BadRequestError(`${field} must be a positive amount with at most 2 decimal places`);
+    return amount;
 }
 
 export function parseScopeQuery(query: unknown) {
@@ -116,4 +125,71 @@ export function parseTransition(value: unknown) {
     const status = nonEmpty(value, 'status', 32);
     if (!['confirmed', 'checked_in', 'in_progress', 'completed', 'cancelled', 'no_show'].includes(status)) throw new BadRequestError('unsupported appointment status');
     return status;
+}
+
+export function parseQueueQuery(query: unknown) {
+    assertObject(query, 'query');
+    rejectUnknown(query, new Set(['tenantId', 'facilityId', 'queueDate', 'status']));
+    const queueDate = optionalDate(query.queueDate, 'queueDate');
+    const status = optionalString(query.status, 'status', 32);
+    if (status && !['waiting', 'called', 'skipped', 'completed'].includes(status)) throw new BadRequestError('unsupported queue status');
+    return {
+        tenantId: nonEmpty(query.tenantId, 'tenantId', 100),
+        facilityId: nonEmpty(query.facilityId, 'facilityId', 100),
+        queueDate,
+        status,
+    };
+}
+
+export function parseQueueTransition(value: unknown) {
+    const status = nonEmpty(value, 'status', 32);
+    if (!['waiting', 'called', 'skipped', 'completed'].includes(status)) throw new BadRequestError('unsupported queue status');
+    return status;
+}
+
+export function parseQueueCheckIn(body: unknown) {
+    assertObject(body, 'checkIn');
+    rejectUnknown(body, new Set(['priority', 'priorityReason']));
+    const priority = body.priority === undefined ? 0 : Number(body.priority);
+    if (!Number.isInteger(priority) || priority < 0 || priority > 100) throw new BadRequestError('priority must be an integer from 0 to 100');
+    return { priority, priorityReason: optionalString(body.priorityReason, 'priorityReason', 500) };
+}
+
+export function parseBillingIntent(body: unknown) {
+    assertObject(body, 'billingIntent');
+    rejectUnknown(body, ALLOWED_BILLING_FIELDS);
+    const currency = (optionalString(body.currency, 'currency', 3) || 'VND').toUpperCase();
+    if (!/^[A-Z]{3}$/.test(currency)) throw new BadRequestError('currency must be a 3-letter code');
+    return {
+        tenantId: nonEmpty(body.tenantId, 'tenantId', 100),
+        facilityId: nonEmpty(body.facilityId, 'facilityId', 100),
+        patientId: nonEmpty(body.patientId, 'patientId', 100),
+        appointmentId: optionalString(body.appointmentId, 'appointmentId', 100),
+        amount: positiveAmount(body.amount),
+        currency,
+        correlationKey: nonEmpty(body.correlationKey, 'correlationKey', 128),
+    };
+}
+
+export function parsePaymentEvent(body: unknown) {
+    assertObject(body, 'paymentEvent');
+    rejectUnknown(body, ALLOWED_PAYMENT_EVENT_FIELDS);
+    const status = nonEmpty(body.status, 'status', 32).toLowerCase();
+    if (!['paid', 'failed', 'cancelled', 'refunded', 'partially_refunded'].includes(status)) throw new BadRequestError('unsupported payment status');
+    return {
+        tenantId: nonEmpty(body.tenantId, 'tenantId', 100),
+        facilityId: nonEmpty(body.facilityId, 'facilityId', 100),
+        billingIntentId: nonEmpty(body.billingIntentId, 'billingIntentId', 100),
+        provider: nonEmpty(body.provider, 'provider', 64),
+        eventId: nonEmpty(body.eventId, 'eventId', 200),
+        eventType: nonEmpty(body.eventType, 'eventType', 100),
+        status,
+        amount: body.amount === undefined ? undefined : positiveAmount(body.amount),
+    };
+}
+
+export function parseRefund(body: unknown) {
+    assertObject(body, 'refund');
+    rejectUnknown(body, ALLOWED_REFUND_FIELDS);
+    return { amount: positiveAmount(body.amount), reason: nonEmpty(body.reason, 'reason', 1000) };
 }

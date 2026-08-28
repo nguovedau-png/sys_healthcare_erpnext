@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import prisma from '../../config/prisma';
 import { ConflictError, ForbiddenError, NotFoundError } from './healthcare.errors';
 
@@ -8,6 +9,13 @@ const TRANSITIONS: Record<string, string[]> = {
     checked_in: ['in_progress', 'cancelled'],
     in_progress: ['completed', 'cancelled'],
 };
+const QUEUE_TRANSITIONS: Record<string, string[]> = {
+    waiting: ['called', 'skipped', 'completed'],
+    called: ['waiting', 'skipped', 'completed'],
+    skipped: ['waiting', 'completed'],
+    completed: [],
+};
+const PAYMENT_STATUSES = new Set(['paid', 'failed', 'cancelled', 'refunded', 'partially_refunded']);
 
 type Actor = { id: string; role?: { name?: string; isSystem?: boolean } | null };
 
@@ -15,6 +23,19 @@ async function assertScope(actor: Actor, tenantId: string, facilityId: string, r
     if (actor.role?.isSystem && actor.role.name === 'Admin') return;
     const scope = await prisma.userRoleScope.findFirst({ where: { userId: actor.id, tenantId, ...(roles ? { role: { in: roles } } : {}), OR: [{ facilityId }, { facilityId: null }] } });
     if (!scope) throw new ForbiddenError();
+}
+
+function sameAppointmentRequest(prior: any, data: any) {
+    return prior.patientId === data.patientId && prior.practitionerExternalId === data.practitionerExternalId && prior.serviceCode === data.serviceCode && prior.startsAt.getTime() === data.startsAt.getTime() && prior.endsAt.getTime() === data.endsAt.getTime();
+}
+
+function paymentTransitionAllowed(current: string, next: string) {
+    if (!PAYMENT_STATUSES.has(next)) return false;
+    if (current === next) return true;
+    if (current === 'pending' || current === 'failed') return ['paid', 'cancelled', 'failed'].includes(next);
+    if (current === 'paid') return ['partially_refunded', 'refunded'].includes(next);
+    if (current === 'partially_refunded') return next === 'refunded';
+    return false;
 }
 
 export class HealthcareService {
@@ -45,8 +66,7 @@ export class HealthcareService {
         if (!patient) throw new NotFoundError('Patient not found in facility scope');
         const prior = await prisma.appointment.findUnique({ where: { tenantId_facilityId_idempotencyKey: { tenantId: data.tenantId, facilityId: data.facilityId, idempotencyKey: data.idempotencyKey } } });
         if (prior) {
-            const sameRequest = prior.patientId === data.patientId && prior.practitionerExternalId === data.practitionerExternalId && prior.serviceCode === data.serviceCode && prior.startsAt.getTime() === data.startsAt.getTime() && prior.endsAt.getTime() === data.endsAt.getTime();
-            if (!sameRequest) throw new ConflictError('Idempotency key was already used for a different appointment payload');
+            if (!sameAppointmentRequest(prior, data)) throw new ConflictError('Idempotency key was already used for a different appointment payload');
             return prior;
         }
         const durationMs = data.endsAt.getTime() - data.startsAt.getTime();
@@ -56,7 +76,11 @@ export class HealthcareService {
         try {
             return await prisma.appointment.create({ data: { ...data, createdById: actor.id } });
         } catch (error: any) {
-            if (error?.code === 'P2002') return prisma.appointment.findUniqueOrThrow({ where: { tenantId_facilityId_idempotencyKey: { tenantId: data.tenantId, facilityId: data.facilityId, idempotencyKey: data.idempotencyKey } } });
+            if (error?.code === 'P2002') {
+                const raced = await prisma.appointment.findUnique({ where: { tenantId_facilityId_idempotencyKey: { tenantId: data.tenantId, facilityId: data.facilityId, idempotencyKey: data.idempotencyKey } } });
+                if (raced && sameAppointmentRequest(raced, data)) return raced;
+                throw new ConflictError('Appointment was created concurrently with a different payload');
+            }
             throw error;
         }
     }
@@ -100,6 +124,108 @@ export class HealthcareService {
         const updated = await prisma.appointment.updateMany({ where: { id, status: appointment.status, version: appointment.version }, data: { status, version: { increment: 1 } } });
         if (updated.count !== 1) throw new ConflictError('Appointment changed by another request; reload before retrying');
         return prisma.appointment.findUniqueOrThrow({ where: { id } });
+    }
+
+    static async checkInAppointment(actor: Actor, appointmentId: string, data: { priority: number; priorityReason?: string }) {
+        const appointment = await prisma.appointment.findUnique({ where: { id: appointmentId } });
+        if (!appointment) throw new NotFoundError('Appointment not found');
+        await assertScope(actor, appointment.tenantId, appointment.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse']);
+        if (appointment.status !== 'confirmed') throw new ConflictError('Only confirmed appointments can be checked in');
+        const existing = await prisma.queueTicket.findUnique({ where: { appointmentId }, select: { id: true, ticketNumber: true, status: true } });
+        if (existing) return existing;
+        const queueDate = new Date(appointment.startsAt);
+        queueDate.setUTCHours(0, 0, 0, 0);
+        const last = await prisma.queueTicket.findFirst({ where: { tenantId: appointment.tenantId, facilityId: appointment.facilityId, queueDate }, orderBy: { ticketNumber: 'desc' }, select: { ticketNumber: true } });
+        const ticketNumber = (last?.ticketNumber || 0) + 1;
+        try {
+            return await prisma.$transaction(async (tx) => {
+                const ticket = await tx.queueTicket.create({ data: { tenantId: appointment.tenantId, facilityId: appointment.facilityId, appointmentId, queueDate, ticketNumber, priority: data.priority, priorityReason: data.priorityReason, status: 'waiting' } });
+                const updated = await tx.appointment.updateMany({ where: { id: appointmentId, status: 'confirmed', version: appointment.version }, data: { status: 'checked_in', version: { increment: 1 } } });
+                if (updated.count !== 1) throw new ConflictError('Appointment changed by another request; check-in was rolled back');
+                return ticket;
+            });
+        } catch (error: any) {
+            if (error?.code === 'P2002') return prisma.queueTicket.findUniqueOrThrow({ where: { appointmentId } });
+            throw error;
+        }
+    }
+
+    static async listQueue(actor: Actor, tenantId: string, facilityId: string, queueDate: Date, status?: string) {
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner']);
+        return prisma.queueTicket.findMany({ where: { tenantId, facilityId, queueDate, ...(status ? { status } : {}) }, include: { appointment: { include: { patient: { select: { id: true, fullName: true, phoneLast4: true } } } } }, orderBy: [{ priority: 'desc' }, { ticketNumber: 'asc' }] });
+    }
+
+    static async transitionQueueTicket(actor: Actor, id: string, status: string) {
+        const ticket = await prisma.queueTicket.findUnique({ where: { id } });
+        if (!ticket) throw new NotFoundError('Queue ticket not found');
+        await assertScope(actor, ticket.tenantId, ticket.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse']);
+        if (!QUEUE_TRANSITIONS[ticket.status]?.includes(status)) throw new ConflictError(`Cannot transition queue ticket from ${ticket.status} to ${status}`);
+        const updated = await prisma.queueTicket.updateMany({ where: { id, status: ticket.status, version: ticket.version }, data: { status, version: { increment: 1 }, ...(status === 'called' ? { calledAt: new Date() } : {}), ...(status === 'completed' ? { completedAt: new Date() } : {}) } });
+        if (updated.count !== 1) throw new ConflictError('Queue ticket changed by another request; reload before retrying');
+        return prisma.queueTicket.findUniqueOrThrow({ where: { id } });
+    }
+
+    static async createBillingIntent(actor: Actor, data: { tenantId: string; facilityId: string; patientId: string; appointmentId?: string; amount: number; currency: string; correlationKey: string }) {
+        await assertScope(actor, data.tenantId, data.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'finance']);
+        const patient = await prisma.patientProjection.findFirst({ where: { id: data.patientId, tenantId: data.tenantId, facilityId: data.facilityId, status: 'active' }, select: { id: true } });
+        if (!patient) throw new NotFoundError('Patient not found in facility scope');
+        if (data.appointmentId) {
+            const appointment = await prisma.appointment.findFirst({ where: { id: data.appointmentId, tenantId: data.tenantId, facilityId: data.facilityId, patientId: data.patientId }, select: { id: true } });
+            if (!appointment) throw new NotFoundError('Appointment not found in facility scope');
+        }
+        const prior = await prisma.billingIntent.findUnique({ where: { tenantId_correlationKey: { tenantId: data.tenantId, correlationKey: data.correlationKey } } });
+        if (prior) {
+            if (Number(prior.amount) !== data.amount || prior.patientId !== data.patientId || prior.facilityId !== data.facilityId) throw new ConflictError('Correlation key was already used for a different billing payload');
+            return prior;
+        }
+        try {
+            return await prisma.billingIntent.create({ data: { ...data, status: 'pending' } });
+        } catch (error: any) {
+            if (error?.code === 'P2002') return prisma.billingIntent.findUniqueOrThrow({ where: { tenantId_correlationKey: { tenantId: data.tenantId, correlationKey: data.correlationKey } } });
+            throw error;
+        }
+    }
+
+    static verifyPaymentWebhook(secret: string, body: string, signature: string, timestamp: string) {
+        const timestampNumber = Number(timestamp);
+        if (!Number.isInteger(timestampNumber) || Math.abs(Date.now() - timestampNumber * 1000) > 5 * 60 * 1000) return false;
+        const expected = crypto.createHmac('sha256', secret).update(`${timestamp}.${body}`).digest('hex');
+        const supplied = signature.startsWith('sha256=') ? signature.slice(7) : signature;
+        return supplied.length === expected.length && crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(expected));
+    }
+
+    static async processPaymentEvent(data: { tenantId: string; facilityId: string; billingIntentId: string; provider: string; eventId: string; eventType: string; status: string; amount?: number }) {
+        const intent = await prisma.billingIntent.findUnique({ where: { id: data.billingIntentId } });
+        if (!intent) throw new NotFoundError('Billing intent not found');
+        if (intent.tenantId !== data.tenantId || intent.facilityId !== data.facilityId) throw new ForbiddenError('Payment event is outside billing scope');
+        if (data.amount !== undefined && Number(intent.amount) !== data.amount) throw new ConflictError('Payment amount does not match billing intent');
+        const existing = await prisma.paymentEvent.findUnique({ where: { provider_eventId: { provider: data.provider, eventId: data.eventId } } });
+        if (existing) return { duplicate: true, event: existing, billingIntent: intent };
+        if (!paymentTransitionAllowed(intent.status, data.status)) throw new ConflictError(`Cannot transition billing intent from ${intent.status} to ${data.status}`);
+        try {
+            const [event, billingIntent] = await prisma.$transaction([
+                prisma.paymentEvent.create({ data: { ...data, status: 'processed', payloadHash: crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex'), amount: data.amount } }),
+                prisma.billingIntent.update({ where: { id: intent.id }, data: { status: data.status } }),
+            ]);
+            return { duplicate: false, event, billingIntent };
+        } catch (error: any) {
+            if (error?.code === 'P2002') {
+                const raced = await prisma.paymentEvent.findUnique({ where: { provider_eventId: { provider: data.provider, eventId: data.eventId } } });
+                if (raced) return { duplicate: true, event: raced, billingIntent: intent };
+            }
+            throw error;
+        }
+    }
+
+    static async requestRefund(actor: Actor, billingIntentId: string, data: { amount: number; reason: string }) {
+        const intent = await prisma.billingIntent.findUnique({ where: { id: billingIntentId } });
+        if (!intent) throw new NotFoundError('Billing intent not found');
+        await assertScope(actor, intent.tenantId, intent.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'finance']);
+        if (!['paid', 'partially_refunded'].includes(intent.status)) throw new ConflictError('Only paid billing intents can be refunded');
+        const existing = await prisma.paymentRefund.findMany({ where: { billingIntentId, status: { notIn: ['rejected', 'cancelled'] } }, select: { amount: true } });
+        const alreadyRequested = existing.reduce((total, refund) => total + Number(refund.amount), 0);
+        if (alreadyRequested + data.amount > Number(intent.amount)) throw new ConflictError('Refund amount exceeds the refundable balance');
+        return prisma.paymentRefund.create({ data: { tenantId: intent.tenantId, facilityId: intent.facilityId, billingIntentId, amount: data.amount, reason: data.reason, status: 'requested', requestedById: actor.id } });
     }
 }
 

@@ -44,4 +44,22 @@ describe('Healthcare API boundary', () => {
         expect(response.status).toBe(403);
         expect(response.body).toMatchObject({ success: false, code: 'FORBIDDEN' });
     });
+
+    test('accepts queue query parameters and keeps the queue scoped', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1' } as any);
+        prismaMock.queueTicket.findMany.mockResolvedValue([]);
+        const response = await request(app)
+            .get('/api/v1/healthcare/queue?tenantId=tenant-1&facilityId=facility-1&queueDate=2026-08-28&status=waiting')
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ success: true, data: [] });
+        expect(prismaMock.queueTicket.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ tenantId: 'tenant-1', facilityId: 'facility-1', status: 'waiting' }) }));
+    });
+
+    test('rejects payment callback when the webhook secret is not configured', async () => {
+        delete process.env.PAYMENT_WEBHOOK_SECRET;
+        const response = await request(app).post('/api/v1/healthcare/payments/webhook').send({ eventId: 'e-1' });
+        expect(response.status).toBe(503);
+        expect(response.body).toMatchObject({ success: false, code: 'SERVICE_UNAVAILABLE' });
+    });
 });

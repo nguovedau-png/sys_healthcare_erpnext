@@ -17,3 +17,6 @@ export class NotFoundError extends HealthcareError {
 export class ConflictError extends HealthcareError {
     constructor(message: string, details?: unknown) { super(409, message, 'CONFLICT', details); }
 }
+export class ServiceUnavailableError extends HealthcareError {
+    constructor(message = 'Service is not configured') { super(503, message, 'SERVICE_UNAVAILABLE'); }
+}
