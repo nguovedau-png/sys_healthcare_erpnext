@@ -75,6 +75,19 @@ const statusColor: Record<string, string> = {
   examining: 'processing',
 };
 
+const statusLabel: Record<string, string> = {
+  pending: 'Chờ xác nhận',
+  confirmed: 'Đã xác nhận',
+  checked_in: 'Đã check-in',
+  in_progress: 'Đang khám',
+  completed: 'Hoàn tất',
+  cancelled: 'Đã hủy',
+  no_show: 'Không đến',
+  waiting: 'Đang chờ',
+  called: 'Đã gọi',
+  skipped: 'Bỏ qua',
+};
+
 const Operations: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [queueTickets, setQueueTickets] = useState<QueueTicket[]>([]);
@@ -109,6 +122,14 @@ const Operations: React.FC = () => {
   const handleCreateAppointment = async (values: { patientId: string; practitionerExternalId: string; serviceCode: string; startsAt?: Dayjs; endsAt?: Dayjs; notes?: string }) => {
     try {
       if (!values.startsAt || !values.endsAt) return;
+      if (!values.endsAt.isAfter(values.startsAt)) {
+        message.error('Thời gian kết thúc phải sau thời gian bắt đầu');
+        return;
+      }
+      if (values.startsAt.isBefore(dayjs())) {
+        message.error('Không thể tạo lịch hẹn trong quá khứ');
+        return;
+      }
       await api.post('/healthcare/appointments', {
         tenantId,
         facilityId,
@@ -158,8 +179,8 @@ const Operations: React.FC = () => {
     { title: 'Bác sĩ', dataIndex: 'practitionerExternalId', key: 'practitionerExternalId' },
     { title: 'Dịch vụ', dataIndex: 'serviceCode', key: 'serviceCode' },
     { title: 'Thời gian', dataIndex: 'startsAt', key: 'startsAt', render: (value?: string) => value ? dayjs(value).format('DD/MM/YYYY HH:mm') : '-' },
-    { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (value: string) => <Tag color={statusColor[value] || 'default'}>{value.replace('_', ' ')}</Tag> },
-    { title: 'Thao tác', key: 'actions', render: (_, record) => NEXT_STATUS[record.status] ? <Button size="small" type="link" onClick={() => advanceAppointment(record)}>Sang {NEXT_STATUS[record.status]?.replace('_', ' ')}</Button> : <Text type="secondary">Đã kết thúc</Text> },
+    { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (value: string) => <Tag color={statusColor[value] || 'default'}>{statusLabel[value] || value.replace('_', ' ')}</Tag> },
+    { title: 'Thao tác', key: 'actions', render: (_, record) => NEXT_STATUS[record.status] ? <Button size="small" type="link" onClick={() => advanceAppointment(record)}>Sang {statusLabel[NEXT_STATUS[record.status]!] || NEXT_STATUS[record.status]?.replace('_', ' ')}</Button> : <Text type="secondary">Đã kết thúc</Text> },
   ];
 
   const queueColumns: ColumnsType<QueueTicket> = [
@@ -167,7 +188,7 @@ const Operations: React.FC = () => {
     { title: 'Bệnh nhân', key: 'patient', render: (_, record) => record.appointment?.patient?.fullName || 'Chưa có tên' },
     { title: 'Dịch vụ', key: 'service', render: (_, record) => record.appointment?.serviceCode || '-' },
     { title: 'Ưu tiên', dataIndex: 'priority', key: 'priority' },
-    { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (value: string) => <Tag color={statusColor[value] || 'default'}>{value}</Tag> },
+    { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (value: string) => <Tag color={statusColor[value] || 'default'}>{statusLabel[value] || value}</Tag> },
   ];
 
   return (
@@ -190,7 +211,7 @@ const Operations: React.FC = () => {
           <Col xs={24} sm={8}><Card><Statistic title="Đang chờ khám" value={waitingCount} prefix={<TeamOutlined />} valueStyle={{ color: '#d48806' }} /></Card></Col>
         </Row>
 
-        <Card title="Lịch hẹn" extra={<Input.Search allowClear placeholder="Tìm bệnh nhân, bác sĩ..." style={{ width: 280 }} onSearch={setSearch} /> }>
+        <Card title="Lịch hẹn" extra={<Input.Search allowClear placeholder="Tìm bệnh nhân, bác sĩ..." style={{ width: 'min(280px, 100%)' }} onChange={(event) => setSearch(event.target.value)} onSearch={setSearch} /> }>
           <Table rowKey="id" columns={appointmentColumns} dataSource={visibleAppointments} loading={loading} scroll={{ x: 900 }} pagination={{ pageSize: 10 }} locale={{ emptyText: 'Chưa có lịch hẹn' }} />
         </Card>
 
@@ -200,16 +221,16 @@ const Operations: React.FC = () => {
       </Space>
 
       <Modal title="Tạo lịch hẹn" open={appointmentModalOpen} onCancel={() => setAppointmentModalOpen(false)} onOk={() => form.submit()} okText="Tạo lịch hẹn" cancelText="Hủy" confirmLoading={loading} destroyOnClose>
-        <Form form={form} layout="vertical" onFinish={handleCreateAppointment} initialValues={{ appointmentDate: dayjs().add(1, 'hour') }}>
+        <Form form={form} layout="vertical" onFinish={handleCreateAppointment} initialValues={{ startsAt: dayjs().add(1, 'hour'), endsAt: dayjs().add(1, 'hour').add(30, 'minute') }}>
           <Row gutter={16}>
             <Col xs={24} sm={12}><Form.Item name="patientId" label="Mã bệnh nhân" rules={[{ required: true }]}><Input placeholder="patient-id" /></Form.Item></Col>
             <Col xs={24} sm={12}><Form.Item name="practitionerExternalId" label="Mã bác sĩ" rules={[{ required: true }]}><Input placeholder="doctor-id" /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
             <Col xs={24} sm={12}><Form.Item name="serviceCode" label="Mã dịch vụ" rules={[{ required: true }]}><Input placeholder="general-checkup" /></Form.Item></Col>
-            <Col xs={24} sm={12}><Form.Item name="startsAt" label="Bắt đầu" rules={[{ required: true }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" style={{ width: '100%' }} /></Form.Item></Col>
+            <Col xs={24} sm={12}><Form.Item name="startsAt" label="Bắt đầu" rules={[{ required: true, message: 'Chọn thời gian bắt đầu' }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" disabledDate={(date) => date.isBefore(dayjs().startOf('day'))} style={{ width: '100%' }} /></Form.Item></Col>
           </Row>
-          <Form.Item name="endsAt" label="Kết thúc" rules={[{ required: true }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" style={{ width: '100%' }} /></Form.Item>
+          <Form.Item name="endsAt" label="Kết thúc" rules={[{ required: true, message: 'Chọn thời gian kết thúc' }]}><DatePicker showTime format="DD/MM/YYYY HH:mm" disabledDate={(date) => date.isBefore(dayjs().startOf('day'))} style={{ width: '100%' }} /></Form.Item>
           <Form.Item name="notes" label="Ghi chú"><Input.TextArea rows={3} maxLength={1000} showCount /></Form.Item>
         </Form>
       </Modal>
