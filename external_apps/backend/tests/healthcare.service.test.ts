@@ -42,11 +42,28 @@ describe('healthcare service rules', () => {
         expect(prismaMock.encounter.updateMany).not.toHaveBeenCalled();
     });
 
-    test('returns existing appointment for repeated idempotency key', async () => {
-        const existing = { id: 'appointment-existing', status: 'pending' };
+    test('rejects reuse of idempotency key with a different payload', async () => {
+        const existing = { id: 'appointment-existing', status: 'pending', patientId: 'patient-1', practitionerExternalId: 'doc-1', serviceCode: 'general', startsAt: new Date(Date.now() + 3600000), endsAt: new Date(Date.now() + 7200000) };
         prismaMock.patientProjection.findFirst.mockResolvedValue({ id: 'patient-1' } as any);
         prismaMock.appointment.findUnique.mockResolvedValue(existing as any);
-        await expect(HealthcareService.createAppointment(admin, { ...patientData, patientId: 'patient-1', practitionerExternalId: 'doc-1', serviceCode: 'general', startsAt: new Date(Date.now() + 3600000), endsAt: new Date(Date.now() + 7200000), idempotencyKey: 'request-1' })).resolves.toEqual(existing);
+        await expect(HealthcareService.createAppointment(admin, { ...patientData, patientId: 'patient-1', practitionerExternalId: 'doc-2', serviceCode: 'general', startsAt: existing.startsAt, endsAt: existing.endsAt, idempotencyKey: 'request-1' })).rejects.toMatchObject({ statusCode: 409 });
+        expect(prismaMock.appointment.create).not.toHaveBeenCalled();
+    });
+
+    test('allows a tenant-wide role scope to access a facility', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'tenant-scope', facilityId: null } as any);
+        prismaMock.patientProjection.findMany.mockResolvedValue([]);
+        await expect(HealthcareService.searchPatients({ id: 'tenant-admin', role: { name: 'tenant_admin', isSystem: false } }, 'tenant-1', 'facility-1')).resolves.toEqual([]);
+        expect(prismaMock.userRoleScope.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ OR: [{ facilityId: 'facility-1' }, { facilityId: null }] }) }));
+    });
+
+    test('returns existing appointment for repeated idempotency key', async () => {
+        const startsAt = new Date(Date.now() + 3600000);
+        const endsAt = new Date(Date.now() + 7200000);
+        const existing = { id: 'appointment-existing', status: 'pending', patientId: 'patient-1', practitionerExternalId: 'doc-1', serviceCode: 'general', startsAt, endsAt };
+        prismaMock.patientProjection.findFirst.mockResolvedValue({ id: 'patient-1' } as any);
+        prismaMock.appointment.findUnique.mockResolvedValue(existing as any);
+        await expect(HealthcareService.createAppointment(admin, { ...patientData, patientId: 'patient-1', practitionerExternalId: 'doc-1', serviceCode: 'general', startsAt, endsAt, idempotencyKey: 'request-1' })).resolves.toEqual(existing);
         expect(prismaMock.appointment.create).not.toHaveBeenCalled();
     });
 });

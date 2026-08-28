@@ -40,6 +40,18 @@ function optionalDate(value: unknown, field: string): Date | undefined {
     return date;
 }
 
+export function parseScopeQuery(query: unknown) {
+    assertObject(query, 'query');
+    rejectUnknown(query, new Set(['tenantId', 'facilityId', 'q', 'from', 'to']));
+    return {
+        tenantId: nonEmpty(query.tenantId, 'tenantId', 100),
+        facilityId: nonEmpty(query.facilityId, 'facilityId', 100),
+        q: optionalString(query.q, 'q', 160),
+        from: optionalDate(query.from, 'from'),
+        to: optionalDate(query.to, 'to'),
+    };
+}
+
 export function parsePatient(body: unknown) {
     assertObject(body, 'patient');
     rejectUnknown(body, ALLOWED_PATIENT_FIELDS);

@@ -13,7 +13,7 @@ type Actor = { id: string; role?: { name?: string; isSystem?: boolean } | null }
 
 async function assertScope(actor: Actor, tenantId: string, facilityId: string, roles?: string[]) {
     if (actor.role?.isSystem && actor.role.name === 'Admin') return;
-    const scope = await prisma.userRoleScope.findFirst({ where: { userId: actor.id, tenantId, facilityId, ...(roles ? { role: { in: roles } } : {}) } });
+    const scope = await prisma.userRoleScope.findFirst({ where: { userId: actor.id, tenantId, ...(roles ? { role: { in: roles } } : {}), OR: [{ facilityId }, { facilityId: null }] } });
     if (!scope) throw new ForbiddenError();
 }
 
@@ -35,7 +35,7 @@ export class HealthcareService {
     }
 
     static async listAppointments(actor: Actor, tenantId: string, facilityId: string, from?: Date, to?: Date) {
-        await assertScope(actor, tenantId, facilityId);
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner', 'pharmacist', 'lab_technician', 'finance', 'hr_manager', 'auditor']);
         return prisma.appointment.findMany({ where: { tenantId, facilityId, ...(from || to ? { startsAt: { ...(from ? { gte: from } : {}), ...(to ? { lt: to } : {}) } } : {}) }, include: { patient: { select: { id: true, fullName: true, phoneLast4: true } } }, orderBy: { startsAt: 'asc' }, take: 200 });
     }
 
@@ -44,9 +44,13 @@ export class HealthcareService {
         const patient = await prisma.patientProjection.findFirst({ where: { id: data.patientId, tenantId: data.tenantId, facilityId: data.facilityId, status: 'active' }, select: { id: true } });
         if (!patient) throw new NotFoundError('Patient not found in facility scope');
         const prior = await prisma.appointment.findUnique({ where: { tenantId_facilityId_idempotencyKey: { tenantId: data.tenantId, facilityId: data.facilityId, idempotencyKey: data.idempotencyKey } } });
-        if (prior) return prior;
+        if (prior) {
+            const sameRequest = prior.patientId === data.patientId && prior.practitionerExternalId === data.practitionerExternalId && prior.serviceCode === data.serviceCode && prior.startsAt.getTime() === data.startsAt.getTime() && prior.endsAt.getTime() === data.endsAt.getTime();
+            if (!sameRequest) throw new ConflictError('Idempotency key was already used for a different appointment payload');
+            return prior;
+        }
         const durationMs = data.endsAt.getTime() - data.startsAt.getTime();
-        if (durationMs <= 0 || durationMs > 24 * 60 * 60 * 1000) throw new ConflictError('Appointment duration must be between 1 minute and 24 hours');
+        if (durationMs < 60 * 1000 || durationMs > 24 * 60 * 60 * 1000) throw new ConflictError('Appointment duration must be between 1 minute and 24 hours');
         const overlap = await prisma.appointment.findFirst({ where: { tenantId: data.tenantId, facilityId: data.facilityId, practitionerExternalId: data.practitionerExternalId, status: { notIn: [...TERMINAL] }, startsAt: { lt: data.endsAt }, endsAt: { gt: data.startsAt } }, select: { id: true, startsAt: true, endsAt: true } });
         if (overlap) throw new ConflictError('Practitioner already has an overlapping appointment', { appointmentId: overlap.id });
         try {
@@ -84,13 +88,14 @@ export class HealthcareService {
         if (!encounter) throw new NotFoundError('Encounter not found');
         await assertScope(actor, encounter.tenantId, encounter.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'practitioner']);
         if (encounter.status !== 'signed') throw new ConflictError('Only signed encounters can be amended');
+        if (actor.role?.name === 'practitioner' && encounter.practitionerExternalId !== actor.id) throw new ForbiddenError('Only the assigned practitioner can amend this encounter');
         return prisma.clinicalAmendment.create({ data: { encounterId: id, reason, patch, createdById: actor.id } });
     }
 
     static async transitionAppointment(actor: Actor, id: string, status: string) {
         const appointment = await prisma.appointment.findUnique({ where: { id } });
         if (!appointment) throw new NotFoundError('Appointment not found');
-        await assertScope(actor, appointment.tenantId, appointment.facilityId);
+        await assertScope(actor, appointment.tenantId, appointment.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner']);
         if (!TRANSITIONS[appointment.status]?.includes(status)) throw new ConflictError(`Cannot transition appointment from ${appointment.status} to ${status}`);
         const updated = await prisma.appointment.updateMany({ where: { id, status: appointment.status, version: appointment.version }, data: { status, version: { increment: 1 } } });
         if (updated.count !== 1) throw new ConflictError('Appointment changed by another request; reload before retrying');

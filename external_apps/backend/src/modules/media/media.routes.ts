@@ -23,7 +23,7 @@ const upload = multer({
 });
 
 // Routes
-router.post('/upload', authenticate, upload.single('file'), MediaController.uploadMedia);
+router.post('/upload', authenticate, upload.single('file') as any, MediaController.uploadMedia);
 router.get('/', authenticate, MediaController.getMedia);
 router.delete('/:id', authenticate, MediaController.deleteMedia);
 

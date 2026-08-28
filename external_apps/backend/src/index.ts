@@ -77,11 +77,11 @@ if (pubClient) {
 const limiter = rateLimit(limiterOptions);
 
 // Apply to all routes
-app.use(limiter);
+app.use(limiter as any);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(compression());
+app.use(compression() as any);
 app.use(cookieParser());
 
 // Swagger
@@ -117,7 +117,7 @@ const options = {
 };
 
 const specs = swaggerJsdoc(options);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+app.use('/api-docs', swaggerUi.serve as any, swaggerUi.setup(specs) as any);
 
 import authRoutes from './modules/auth/auth.routes';
 import userRoutes from './modules/user/user.routes';

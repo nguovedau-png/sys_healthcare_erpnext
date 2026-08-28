@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { AuthRequest } from '../../middlewares/auth.middleware';
-import { HealthcareError } from './healthcare.errors';
+import { ForbiddenError, HealthcareError } from './healthcare.errors';
 import { HealthcareService } from './healthcare.service';
 import { getERPNextClient } from './erpnext.client';
-import { parseAmendment, parseAppointment, parseEncounter, parsePatient, parseTransition } from './healthcare.validation';
+import { parseAmendment, parseAppointment, parseEncounter, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
 
 function actor(req: AuthRequest) { return req.user as { id: string; role?: { name?: string; isSystem?: boolean } | null }; }
 function sendError(res: Response, error: unknown) {
@@ -14,15 +14,22 @@ function sendError(res: Response, error: unknown) {
 export class HealthcareController {
     static async erpnextStatus(req: Request, res: Response) {
         try {
+            const current = actor(req as AuthRequest);
+            const role = current.role?.name;
+            if (!(current.role?.isSystem && role === 'Admin') && !['platform_admin', 'tenant_admin', 'integration_operator'].includes(role || '')) throw new ForbiddenError('ERPNext integration status is restricted');
             const client = getERPNextClient();
             if (!client) return res.json({ success: true, data: { configured: false, reachable: false } });
             await client.health();
             return res.json({ success: true, data: { configured: true, reachable: true } });
-        } catch { return res.json({ success: true, data: { configured: true, reachable: false } }); }
+        } catch (error) {
+            if (error instanceof HealthcareError) return sendError(res, error);
+            return res.json({ success: true, data: { configured: true, reachable: false } });
+        }
     }
     static async searchPatients(req: Request, res: Response) {
         try {
-            const result = await HealthcareService.searchPatients(actor(req as AuthRequest), String(req.query.tenantId), String(req.query.facilityId), typeof req.query.q === 'string' ? req.query.q : undefined);
+            const scope = parseScopeQuery(req.query);
+            const result = await HealthcareService.searchPatients(actor(req as AuthRequest), scope.tenantId, scope.facilityId, scope.q);
             return res.json({ success: true, data: result });
         } catch (error) { return sendError(res, error); }
     }
@@ -34,10 +41,8 @@ export class HealthcareController {
 
     static async listAppointments(req: Request, res: Response) {
         try {
-            const from = typeof req.query.from === 'string' ? new Date(req.query.from) : undefined;
-            const to = typeof req.query.to === 'string' ? new Date(req.query.to) : undefined;
-            if ((from && Number.isNaN(from.getTime())) || (to && Number.isNaN(to.getTime()))) return res.status(400).json({ success: false, code: 'BAD_REQUEST', message: 'from/to must be ISO dates' });
-            return res.json({ success: true, data: await HealthcareService.listAppointments(actor(req as AuthRequest), String(req.query.tenantId), String(req.query.facilityId), from, to) });
+            const scope = parseScopeQuery(req.query);
+            return res.json({ success: true, data: await HealthcareService.listAppointments(actor(req as AuthRequest), scope.tenantId, scope.facilityId, scope.from, scope.to) });
         } catch (error) { return sendError(res, error); }
     }
 
