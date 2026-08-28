@@ -377,9 +377,9 @@ model Tenant {
   syncOperations SyncOperation[]
   queueTickets   QueueTicket[]
   paymentEvents  PaymentEvent[]
-  paymentRefunds PaymentRefund[]
+    paymentRefunds PaymentRefund[]
+  patientRelationships PatientRelationship[]
 }
-
 model Facility {
   id        String   @id @default(uuid())
   tenantId  String
@@ -399,8 +399,8 @@ model Facility {
   billingIntents BillingIntent[]
   queueTickets   QueueTicket[]
   paymentEvents  PaymentEvent[]
-  paymentRefunds PaymentRefund[]
-
+    paymentRefunds  PaymentRefund[]
+  patientRelationships PatientRelationship[]
   @@unique([tenantId, code])
   @@index([tenantId, isActive])
 }
@@ -443,10 +443,36 @@ model PatientProjection {
   appointments Appointment[]
   encounters   Encounter[]
   orders       HealthcareOrder[]
-  consents     ConsentRecord[]
+    consents      ConsentRecord[]
+  familyLinksAsGuardian PatientRelationship[] @relation("GuardianPatient")
+  familyLinksAsDependent PatientRelationship[] @relation("DependentPatient")
 
   @@unique([tenantId, facilityId, normalizedPhone])
   @@index([tenantId, facilityId, fullName])
+}
+
+model PatientRelationship {
+  id                 String   @id @default(uuid())
+  tenantId           String
+  facilityId         String
+  guardianPatientId  String
+  dependentPatientId String
+  relationship       String
+  consentStatus      String   @default("pending")
+  consentCapturedAt  DateTime?
+  revokedAt          DateTime?
+  createdById        String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  facility  Facility          @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  guardian  PatientProjection @relation("GuardianPatient", fields: [guardianPatientId], references: [id], onDelete: Cascade)
+  dependent PatientProjection @relation("DependentPatient", fields: [dependentPatientId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, facilityId, guardianPatientId, dependentPatientId])
+  @@index([tenantId, facilityId, guardianPatientId, consentStatus])
+  @@index([tenantId, facilityId, dependentPatientId, consentStatus])
 }
 
 model Appointment {

@@ -55,6 +55,38 @@ export class HealthcareService {
         return prisma.patientProjection.create({ data: { ...data, createdById: actor.id } });
     }
 
+    static async listFamilyLinks(actor: Actor, tenantId: string, facilityId: string, guardianPatientId: string) {
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner']);
+        const guardian = await prisma.patientProjection.findFirst({ where: { id: guardianPatientId, tenantId, facilityId, status: 'active' }, select: { id: true } });
+        if (!guardian) throw new NotFoundError('Guardian patient not found in facility scope');
+        return prisma.patientRelationship.findMany({
+            where: { tenantId, facilityId, guardianPatientId, revokedAt: null },
+            select: { id: true, relationship: true, consentStatus: true, consentCapturedAt: true, createdAt: true, dependent: { select: { id: true, fullName: true, phoneLast4: true, dateOfBirth: true, sex: true, status: true } } },
+            orderBy: { createdAt: 'asc' },
+        });
+    }
+
+    static async createFamilyLink(actor: Actor, tenantId: string, facilityId: string, guardianPatientId: string, data: { dependentPatientId: string; relationship: string; consentStatus: string }) {
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist']);
+        if (guardianPatientId === data.dependentPatientId) throw new ConflictError('A patient cannot be linked to themselves');
+        const patients = await prisma.patientProjection.findMany({ where: { id: { in: [guardianPatientId, data.dependentPatientId] }, tenantId, facilityId, status: 'active' }, select: { id: true } });
+        if (patients.length !== 2) throw new NotFoundError('Both patients must exist in the same active facility scope');
+        const existing = await prisma.patientRelationship.findUnique({ where: { tenantId_facilityId_guardianPatientId_dependentPatientId: { tenantId, facilityId, guardianPatientId, dependentPatientId: data.dependentPatientId } } });
+        const linkData = { relationship: data.relationship, consentStatus: data.consentStatus, consentCapturedAt: data.consentStatus === 'active' ? new Date() : null, revokedAt: null };
+        if (existing) {
+            if (!existing.revokedAt) throw new ConflictError('Family link already exists');
+            return prisma.patientRelationship.update({ where: { id: existing.id }, data: linkData });
+        }
+        return prisma.patientRelationship.create({ data: { tenantId, facilityId, guardianPatientId, dependentPatientId: data.dependentPatientId, ...linkData, createdById: actor.id } });
+    }
+
+    static async revokeFamilyLink(actor: Actor, tenantId: string, facilityId: string, linkId: string) {
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist']);
+        const link = await prisma.patientRelationship.findFirst({ where: { id: linkId, tenantId, facilityId, revokedAt: null } });
+        if (!link) throw new NotFoundError('Family link not found in facility scope');
+        return prisma.patientRelationship.update({ where: { id: link.id }, data: { consentStatus: 'revoked', revokedAt: new Date() } });
+    }
+
     static async listAppointments(actor: Actor, tenantId: string, facilityId: string, from?: Date, to?: Date) {
         await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner', 'pharmacist', 'lab_technician', 'finance', 'hr_manager', 'auditor']);
         return prisma.appointment.findMany({ where: { tenantId, facilityId, ...(from || to ? { startsAt: { ...(from ? { gte: from } : {}), ...(to ? { lt: to } : {}) } } : {}) }, include: { patient: { select: { id: true, fullName: true, phoneLast4: true } } }, orderBy: { startsAt: 'asc' }, take: 200 });

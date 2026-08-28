@@ -3,7 +3,7 @@ import { AuthRequest } from '../../middlewares/auth.middleware';
 import { ForbiddenError, HealthcareError, ServiceUnavailableError } from './healthcare.errors';
 import { HealthcareService } from './healthcare.service';
 import { getERPNextClient } from './erpnext.client';
-import { parseAmendment, parseAppointment, parseBillingIntent, parseEncounter, parsePaymentEvent, parseQueueCheckIn, parseQueueQuery, parseQueueTransition, parseRefund, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
+import { parseAmendment, parseAppointment, parseBillingIntent, parseEncounter, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn, parseQueueQuery, parseQueueTransition, parseRefund, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
 
 function actor(req: AuthRequest) { return req.user as { id: string; role?: { name?: string; isSystem?: boolean } | null }; }
 function sendError(res: Response, error: unknown) {
@@ -37,6 +37,28 @@ export class HealthcareController {
     static async registerPatient(req: Request, res: Response) {
         try { return res.status(201).json({ success: true, data: await HealthcareService.registerPatient(actor(req as AuthRequest), parsePatient(req.body)) }); }
         catch (error) { return sendError(res, error); }
+    }
+
+    static async listFamilyLinks(req: Request, res: Response) {
+        try {
+            const scope = parseScopeQuery(req.query);
+            return res.json({ success: true, data: await HealthcareService.listFamilyLinks(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.patientId) });
+        } catch (error) { return sendError(res, error); }
+    }
+
+    static async createFamilyLink(req: Request, res: Response) {
+        try {
+            const scope = parseScopeQuery({ ...req.body, q: undefined, from: undefined, to: undefined });
+            const link = parseFamilyLink(req.body);
+            return res.status(201).json({ success: true, data: await HealthcareService.createFamilyLink(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.patientId, link) });
+        } catch (error) { return sendError(res, error); }
+    }
+
+    static async revokeFamilyLink(req: Request, res: Response) {
+        try {
+            const scope = parseScopeQuery(req.query);
+            return res.json({ success: true, data: await HealthcareService.revokeFamilyLink(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.linkId) });
+        } catch (error) { return sendError(res, error); }
     }
 
     static async listAppointments(req: Request, res: Response) {

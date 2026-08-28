@@ -20,6 +20,13 @@ interface Appointment {
   notes?: string;
 }
 
+interface FamilyLink {
+  id: string;
+  relationship: string;
+  consentStatus: 'pending' | 'active' | string;
+  dependent: { id: string; fullName: string; phoneLast4: string; dateOfBirth?: string; sex?: string; status: string };
+}
+
 interface QueueTicket {
   id: string;
   appointmentId: string;
@@ -95,6 +102,9 @@ const Operations: React.FC = () => {
   const [search, setSearch] = useState('');
   const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const [familyPatientId, setFamilyPatientId] = useState('');
+  const [familyLinks, setFamilyLinks] = useState<FamilyLink[]>([]);
+  const [familyLoading, setFamilyLoading] = useState(false);
 
   const tenantId = import.meta.env.VITE_TENANT_ID || 'demo-tenant';
   const facilityId = import.meta.env.VITE_FACILITY_ID || 'demo-facility';
@@ -118,6 +128,22 @@ const Operations: React.FC = () => {
   useEffect(() => {
     fetchQueues();
   }, [fetchQueues]);
+
+  const loadFamilyLinks = async (patientId = familyPatientId) => {
+    if (!patientId.trim()) {
+      setFamilyLinks([]);
+      return;
+    }
+    setFamilyLoading(true);
+    try {
+      const response = await api.get(`/healthcare/patients/${encodeURIComponent(patientId.trim())}/family-links`, { params: { tenantId, facilityId } });
+      setFamilyLinks(unwrap<FamilyLink>(response).data);
+    } catch (error: unknown) {
+      message.error(errorMessage(error, 'Không thể tải hồ sơ người thân'));
+    } finally {
+      setFamilyLoading(false);
+    }
+  };
 
   const handleCreateAppointment = async (values: { patientId: string; practitionerExternalId: string; serviceCode: string; startsAt?: Dayjs; endsAt?: Dayjs; notes?: string }) => {
     try {
@@ -213,6 +239,14 @@ const Operations: React.FC = () => {
 
         <Card title="Lịch hẹn" extra={<Input.Search allowClear placeholder="Tìm bệnh nhân, bác sĩ..." style={{ width: 'min(280px, 100%)' }} onChange={(event) => setSearch(event.target.value)} onSearch={setSearch} /> }>
           <Table rowKey="id" columns={appointmentColumns} dataSource={visibleAppointments} loading={loading} scroll={{ x: 900 }} pagination={{ pageSize: 10 }} locale={{ emptyText: 'Chưa có lịch hẹn' }} />
+        </Card>
+
+        <Card title="Hồ sơ gia đình" extra={<Input.Search allowClear enterButton="Tra cứu" placeholder="Mã bệnh nhân" value={familyPatientId} onChange={(event) => setFamilyPatientId(event.target.value)} onSearch={() => loadFamilyLinks()} loading={familyLoading} style={{ width: 'min(280px, 100%)' }} />}>
+          <Table rowKey="id" size="small" loading={familyLoading} dataSource={familyLinks} pagination={false} scroll={{ x: 620 }} locale={{ emptyText: familyPatientId ? 'Chưa có người thân được liên kết' : 'Nhập mã bệnh nhân để tra cứu' }} columns={[
+            { title: 'Người phụ thuộc', key: 'dependent', render: (_: unknown, record: FamilyLink) => <Space direction="vertical" size={0}><Text strong>{record.dependent.fullName}</Text><Text type="secondary">•••• {record.dependent.phoneLast4}</Text></Space> },
+            { title: 'Quan hệ', dataIndex: 'relationship', key: 'relationship' },
+            { title: 'Ủy quyền', dataIndex: 'consentStatus', key: 'consentStatus', render: (value: string) => <Tag color={value === 'active' ? 'green' : 'gold'}>{value === 'active' ? 'Đã xác nhận' : 'Chờ xác nhận'}</Tag> },
+          ] as ColumnsType<FamilyLink>} />
         </Card>
 
         <Card title={<Space><CheckCircleOutlined /> Hàng đợi tiếp nhận</Space>}>

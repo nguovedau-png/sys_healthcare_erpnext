@@ -6,6 +6,7 @@ const ALLOWED_ENCOUNTER_FIELDS = new Set(['patientId', 'appointmentId', 'practit
 const ALLOWED_BILLING_FIELDS = new Set(['tenantId', 'facilityId', 'patientId', 'appointmentId', 'amount', 'currency', 'correlationKey']);
 const ALLOWED_PAYMENT_EVENT_FIELDS = new Set(['tenantId', 'facilityId', 'billingIntentId', 'provider', 'eventId', 'eventType', 'status', 'amount']);
 const ALLOWED_REFUND_FIELDS = new Set(['amount', 'reason']);
+const ALLOWED_FAMILY_FIELDS = new Set(['dependentPatientId', 'relationship', 'consentStatus']);
 
 export function assertObject(value: unknown, name: string): asserts value is Record<string, unknown> {
     if (!value || typeof value !== 'object' || Array.isArray(value)) throw new BadRequestError(`${name} must be an object`);
@@ -185,6 +186,18 @@ export function parsePaymentEvent(body: unknown) {
         eventType: nonEmpty(body.eventType, 'eventType', 100),
         status,
         amount: body.amount === undefined ? undefined : positiveAmount(body.amount),
+    };
+}
+
+export function parseFamilyLink(body: unknown) {
+    assertObject(body, 'familyLink');
+    rejectUnknown(body, ALLOWED_FAMILY_FIELDS);
+    const consentStatus = optionalString(body.consentStatus, 'consentStatus', 32) || 'pending';
+    if (!['pending', 'active'].includes(consentStatus)) throw new BadRequestError('consentStatus must be pending or active');
+    return {
+        dependentPatientId: nonEmpty(body.dependentPatientId, 'dependentPatientId', 100),
+        relationship: nonEmpty(body.relationship, 'relationship', 80),
+        consentStatus,
     };
 }
 

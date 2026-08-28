@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { prismaMock } from './setup';
 import { ConflictError, ForbiddenError } from '../src/modules/healthcare/healthcare.errors';
 import { HealthcareService } from '../src/modules/healthcare/healthcare.service';
-import { parseBillingIntent, parsePaymentEvent, parseQueueCheckIn } from '../src/modules/healthcare/healthcare.validation';
+import { parseBillingIntent, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn } from '../src/modules/healthcare/healthcare.validation';
 
 describe('healthcare advanced operational rules', () => {
     const admin = { id: 'admin-1', role: { name: 'Admin', isSystem: true } };
@@ -73,6 +73,38 @@ describe('healthcare advanced operational rules', () => {
         prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope' } as any);
         prismaMock.paymentRefund.findMany.mockResolvedValue([{ amount: 80000 }] as any);
         await expect(HealthcareService.requestRefund(admin, 'b-1', { amount: 30000, reason: 'duplicate charge' })).rejects.toBeInstanceOf(ConflictError);
+    });
+
+    test('validates family links and defaults consent to pending', () => {
+        expect(parseFamilyLink({ dependentPatientId: 'p-2', relationship: 'child' })).toEqual({ dependentPatientId: 'p-2', relationship: 'child', consentStatus: 'pending' });
+        expect(parseFamilyLink({ dependentPatientId: 'p-2', relationship: 'child', consentStatus: 'active' }).consentStatus).toBe('active');
+        expect(() => parseFamilyLink({ dependentPatientId: 'p-2', relationship: 'child', consentStatus: 'revoked' })).toThrow('consentStatus');
+    });
+
+    test('creates an active family link only for two patients in the same facility', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope' } as any);
+        prismaMock.patientProjection.findMany.mockResolvedValue([{ id: 'p-1' }, { id: 'p-2' }] as any);
+        prismaMock.patientRelationship.findUnique.mockResolvedValue(null);
+        prismaMock.patientRelationship.create.mockResolvedValue({ id: 'link-1', consentStatus: 'active' } as any);
+        await expect(HealthcareService.createFamilyLink(admin, 't-1', 'f-1', 'p-1', { dependentPatientId: 'p-2', relationship: 'child', consentStatus: 'active' })).resolves.toMatchObject({ id: 'link-1' });
+        expect(prismaMock.patientRelationship.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ tenantId: 't-1', facilityId: 'f-1', guardianPatientId: 'p-1', dependentPatientId: 'p-2', consentStatus: 'active', createdById: 'admin-1' }) }));
+    });
+
+    test('rejects self-links, cross-facility patients, and duplicate active links', async () => {
+        await expect(HealthcareService.createFamilyLink(admin, 't-1', 'f-1', 'p-1', { dependentPatientId: 'p-1', relationship: 'self', consentStatus: 'pending' })).rejects.toBeInstanceOf(ConflictError);
+        prismaMock.patientProjection.findMany.mockResolvedValue([{ id: 'p-1' }] as any);
+        await expect(HealthcareService.createFamilyLink(admin, 't-1', 'f-1', 'p-1', { dependentPatientId: 'p-2', relationship: 'child', consentStatus: 'pending' })).rejects.toThrow('same active facility');
+        prismaMock.patientProjection.findMany.mockResolvedValue([{ id: 'p-1' }, { id: 'p-2' }] as any);
+        prismaMock.patientRelationship.findUnique.mockResolvedValue({ id: 'link-1', revokedAt: null } as any);
+        await expect(HealthcareService.createFamilyLink(admin, 't-1', 'f-1', 'p-1', { dependentPatientId: 'p-2', relationship: 'child', consentStatus: 'pending' })).rejects.toBeInstanceOf(ConflictError);
+    });
+
+    test('revokes a family link without deleting history', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope' } as any);
+        prismaMock.patientRelationship.findFirst.mockResolvedValue({ id: 'link-1', revokedAt: null } as any);
+        prismaMock.patientRelationship.update.mockResolvedValue({ id: 'link-1', consentStatus: 'revoked' } as any);
+        await expect(HealthcareService.revokeFamilyLink(admin, 't-1', 'f-1', 'link-1')).resolves.toMatchObject({ consentStatus: 'revoked' });
+        expect(prismaMock.patientRelationship.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ consentStatus: 'revoked' }) }));
     });
 
     test('accepts supported payment event statuses only', () => {
