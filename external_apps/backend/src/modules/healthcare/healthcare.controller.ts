@@ -3,7 +3,7 @@ import { AuthRequest } from '../../middlewares/auth.middleware';
 import { ForbiddenError, HealthcareError, ServiceUnavailableError } from './healthcare.errors';
 import { HealthcareService } from './healthcare.service';
 import { getERPNextClient } from './erpnext.client';
-import { parseAmendment, parseAppointment, parseBillingIntent, parseBillingQuery, parseEncounter, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn, parseQueueQuery, parseQueueTransition, parseRefund, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
+import { parseAmendment, parseAppointment, parseBillingIntent, parseBillingQuery, parseConsent, parseEncounter, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn, parseQueueQuery, parseQueueTransition, parseRefund, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
 
 function actor(req: AuthRequest) { return req.user as { id: string; role?: { name?: string; isSystem?: boolean } | null }; }
 function sendError(res: Response, error: unknown) {
@@ -48,7 +48,7 @@ export class HealthcareController {
 
     static async createFamilyLink(req: Request, res: Response) {
         try {
-            const scope = parseScopeQuery({ ...req.body, q: undefined, from: undefined, to: undefined });
+            const scope = parseScopeQuery({ tenantId: req.body?.tenantId, facilityId: req.body?.facilityId });
             const link = parseFamilyLink(req.body);
             return res.status(201).json({ success: true, data: await HealthcareService.createFamilyLink(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.patientId, link) });
         } catch (error) { return sendError(res, error); }
@@ -58,6 +58,27 @@ export class HealthcareController {
         try {
             const scope = parseScopeQuery(req.query);
             return res.json({ success: true, data: await HealthcareService.revokeFamilyLink(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.linkId) });
+        } catch (error) { return sendError(res, error); }
+    }
+
+    static async listConsents(req: Request, res: Response) {
+        try {
+            const scope = parseScopeQuery(req.query);
+            return res.json({ success: true, data: await HealthcareService.listConsents(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.patientId) });
+        } catch (error) { return sendError(res, error); }
+    }
+
+    static async captureConsent(req: Request, res: Response) {
+        try {
+            const scope = parseScopeQuery({ tenantId: req.body?.tenantId, facilityId: req.body?.facilityId });
+            return res.status(201).json({ success: true, data: await HealthcareService.captureConsent(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.patientId, parseConsent(req.body)) });
+        } catch (error) { return sendError(res, error); }
+    }
+
+    static async withdrawConsent(req: Request, res: Response) {
+        try {
+            const scope = parseScopeQuery(req.query);
+            return res.json({ success: true, data: await HealthcareService.withdrawConsent(actor(req as AuthRequest), scope.tenantId, scope.facilityId, req.params.id) });
         } catch (error) { return sendError(res, error); }
     }
 

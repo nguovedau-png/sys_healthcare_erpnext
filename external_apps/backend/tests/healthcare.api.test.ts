@@ -45,6 +45,58 @@ describe('Healthcare API boundary', () => {
         expect(response.body).toMatchObject({ success: false, code: 'FORBIDDEN' });
     });
 
+    test('lists consent history only for a patient in the requested facility', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1' } as any);
+        prismaMock.patientProjection.findFirst.mockResolvedValue({ id: 'patient-1' } as any);
+        prismaMock.consentRecord.findMany.mockResolvedValue([{ id: 'consent-1', purpose: 'care', status: 'active' }] as any);
+        const response = await request(app)
+            .get('/api/v1/healthcare/patients/patient-1/consents?tenantId=tenant-1&facilityId=facility-1')
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ success: true, data: [{ id: 'consent-1', purpose: 'care', status: 'active' }] });
+        expect(prismaMock.consentRecord.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { tenantId: 'tenant-1', facilityId: 'facility-1', patientId: 'patient-1' } }));
+    });
+
+    test('captures consent with explicit scope and rejects unknown payload fields', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1' } as any);
+        prismaMock.patientProjection.findFirst.mockResolvedValue({ id: 'patient-1' } as any);
+        prismaMock.consentRecord.updateMany.mockResolvedValue({ count: 0 } as any);
+        prismaMock.consentRecord.create.mockResolvedValue({ id: 'consent-2', purpose: 'care', status: 'active' } as any);
+        (prismaMock.$transaction as jest.Mock).mockImplementationOnce(async (callback) => callback(prismaMock));
+        const response = await request(app)
+            .post('/api/v1/healthcare/patients/patient-1/consents')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ tenantId: 'tenant-1', facilityId: 'facility-1', purpose: 'care', policyVersion: 'v1' });
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual({ success: true, data: { id: 'consent-2', purpose: 'care', status: 'active' } });
+        const invalid = await request(app)
+            .post('/api/v1/healthcare/patients/patient-1/consents')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ tenantId: 'tenant-1', facilityId: 'facility-1', purpose: 'care', unexpected: true });
+        expect(invalid.status).toBe(400);
+    });
+
+    test('creates a family link with explicit body scope', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1' } as any);
+        prismaMock.patientProjection.findMany.mockResolvedValue([{ id: 'patient-1' }, { id: 'patient-2' }] as any);
+        prismaMock.patientRelationship.findUnique.mockResolvedValue(null);
+        prismaMock.patientRelationship.create.mockResolvedValue({ id: 'link-1', consentStatus: 'active' } as any);
+        const response = await request(app)
+            .post('/api/v1/healthcare/patients/patient-1/family-links')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ tenantId: 'tenant-1', facilityId: 'facility-1', dependentPatientId: 'patient-2', relationship: 'child', consentStatus: 'active' });
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual({ success: true, data: { id: 'link-1', consentStatus: 'active' } });
+    });
+
+    test('requires explicit scope for consent withdrawal', async () => {
+        const response = await request(app)
+            .post('/api/v1/healthcare/consents/consent-1/withdraw')
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(400);
+        expect(prismaMock.consentRecord.findFirst).not.toHaveBeenCalled();
+    });
+
     test('accepts queue query parameters and keeps the queue scoped', async () => {
         prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1' } as any);
         prismaMock.queueTicket.findMany.mockResolvedValue([]);

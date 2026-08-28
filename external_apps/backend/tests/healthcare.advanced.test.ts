@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { prismaMock } from './setup';
 import { ConflictError, ForbiddenError } from '../src/modules/healthcare/healthcare.errors';
 import { HealthcareService } from '../src/modules/healthcare/healthcare.service';
-import { parseBillingIntent, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn } from '../src/modules/healthcare/healthcare.validation';
+import { parseBillingIntent, parseConsent, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn } from '../src/modules/healthcare/healthcare.validation';
 
 describe('healthcare advanced operational rules', () => {
     const admin = { id: 'admin-1', role: { name: 'Admin', isSystem: true } };
@@ -105,6 +105,38 @@ describe('healthcare advanced operational rules', () => {
         prismaMock.patientRelationship.update.mockResolvedValue({ id: 'link-1', consentStatus: 'revoked' } as any);
         await expect(HealthcareService.revokeFamilyLink(admin, 't-1', 'f-1', 'link-1')).resolves.toMatchObject({ consentStatus: 'revoked' });
         expect(prismaMock.patientRelationship.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ consentStatus: 'revoked' }) }));
+    });
+
+    test('validates consent purpose, status, expiry, and unknown fields', () => {
+        expect(parseConsent({ purpose: 'care', policyVersion: 'v1', expiresAt: '2099-01-01T00:00:00.000Z' })).toMatchObject({ purpose: 'care', status: 'active', policyVersion: 'v1' });
+        expect(parseConsent({ purpose: 'marketing', status: 'withdrawn' }).status).toBe('withdrawn');
+        expect(() => parseConsent({ purpose: 'care', status: 'active', secret: 'leak' })).toThrow('Unknown fields');
+        expect(() => parseConsent({ purpose: 'care', status: 'invalid' })).toThrow('status');
+    });
+
+    test('captures consent by withdrawing the prior active version', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope' } as any);
+        prismaMock.patientProjection.findFirst.mockResolvedValue({ id: 'p-1' } as any);
+        prismaMock.consentRecord.updateMany.mockResolvedValue({ count: 1 } as any);
+        prismaMock.consentRecord.create.mockResolvedValue({ id: 'c-2', purpose: 'care', status: 'active' } as any);
+        (prismaMock.$transaction as jest.Mock).mockImplementationOnce(async (callback) => callback(prismaMock));
+        await expect(HealthcareService.captureConsent(admin, 't-1', 'f-1', 'p-1', { purpose: 'care', status: 'active', policyVersion: 'v2' })).resolves.toMatchObject({ id: 'c-2' });
+        expect(prismaMock.consentRecord.updateMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ patientId: 'p-1', purpose: 'care', status: 'active' }) }));
+    });
+
+    test('withdraws consent once and remains safe on replay', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope' } as any);
+        prismaMock.consentRecord.findFirst.mockResolvedValueOnce({ id: 'c-1', tenantId: 't-1', facilityId: 'f-1', status: 'active', withdrawnAt: null } as any).mockResolvedValueOnce({ id: 'c-1', tenantId: 't-1', facilityId: 'f-1', status: 'withdrawn', withdrawnAt: new Date() } as any);
+        prismaMock.consentRecord.update.mockResolvedValue({ id: 'c-1', status: 'withdrawn' } as any);
+        await expect(HealthcareService.withdrawConsent(admin, 't-1', 'f-1', 'c-1')).resolves.toMatchObject({ status: 'withdrawn' });
+        await expect(HealthcareService.withdrawConsent(admin, 't-1', 'f-1', 'c-1')).resolves.toMatchObject({ status: 'withdrawn' });
+        expect(prismaMock.consentRecord.update).toHaveBeenCalledTimes(1);
+    });
+
+    test('does not expose consent outside patient facility scope', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope' } as any);
+        prismaMock.patientProjection.findFirst.mockResolvedValue(null);
+        await expect(HealthcareService.listConsents(admin, 't-1', 'f-1', 'other-patient')).rejects.toThrow('facility scope');
     });
 
     test('accepts supported payment event statuses only', () => {

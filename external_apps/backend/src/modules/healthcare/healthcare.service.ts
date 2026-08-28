@@ -165,21 +165,25 @@ export class HealthcareService {
         if (appointment.status !== 'confirmed') throw new ConflictError('Only confirmed appointments can be checked in');
         const existing = await prisma.queueTicket.findUnique({ where: { appointmentId }, select: { id: true, ticketNumber: true, status: true } });
         if (existing) return existing;
-        const queueDate = new Date(appointment.startsAt);
-        queueDate.setUTCHours(0, 0, 0, 0);
-        const last = await prisma.queueTicket.findFirst({ where: { tenantId: appointment.tenantId, facilityId: appointment.facilityId, queueDate }, orderBy: { ticketNumber: 'desc' }, select: { ticketNumber: true } });
-        const ticketNumber = (last?.ticketNumber || 0) + 1;
-        try {
-            return await prisma.$transaction(async (tx) => {
-                const ticket = await tx.queueTicket.create({ data: { tenantId: appointment.tenantId, facilityId: appointment.facilityId, appointmentId, queueDate, ticketNumber, priority: data.priority, priorityReason: data.priorityReason, status: 'waiting' } });
-                const updated = await tx.appointment.updateMany({ where: { id: appointmentId, status: 'confirmed', version: appointment.version }, data: { status: 'checked_in', version: { increment: 1 } } });
-                if (updated.count !== 1) throw new ConflictError('Appointment changed by another request; check-in was rolled back');
-                return ticket;
-            });
-        } catch (error: any) {
-            if (error?.code === 'P2002') return prisma.queueTicket.findUniqueOrThrow({ where: { appointmentId } });
-            throw error;
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+            try {
+                return await prisma.$transaction(async (tx) => {
+                    const queueDate = new Date(appointment.startsAt);
+                    queueDate.setUTCHours(0, 0, 0, 0);
+                    const last = await tx.queueTicket.findFirst({ where: { tenantId: appointment.tenantId, facilityId: appointment.facilityId, queueDate }, orderBy: { ticketNumber: 'desc' }, select: { ticketNumber: true } });
+                    const ticketNumber = (last?.ticketNumber || 0) + 1;
+                    const ticket = await tx.queueTicket.create({ data: { tenantId: appointment.tenantId, facilityId: appointment.facilityId, appointmentId, queueDate, ticketNumber, priority: data.priority, priorityReason: data.priorityReason, status: 'waiting' } });
+                    const updated = await tx.appointment.updateMany({ where: { id: appointmentId, status: 'confirmed', version: appointment.version }, data: { status: 'checked_in', version: { increment: 1 } } });
+                    if (updated.count !== 1) throw new ConflictError('Appointment changed by another request; check-in was rolled back');
+                    return ticket;
+                });
+            } catch (error: any) {
+                if (error?.code === 'P2002' && attempt < 2) continue;
+                if (error?.code === 'P2002') return prisma.queueTicket.findUniqueOrThrow({ where: { appointmentId } });
+                throw error;
+            }
         }
+        return prisma.queueTicket.findUniqueOrThrow({ where: { appointmentId } });
     }
 
     static async listQueue(actor: Actor, tenantId: string, facilityId: string, queueDate: Date, status?: string) {
@@ -268,6 +272,46 @@ export class HealthcareService {
             }
             throw error;
         }
+    }
+
+    static async listConsents(actor: Actor, tenantId: string, facilityId: string, patientId: string) {
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner', 'finance', 'auditor']);
+        const patient = await prisma.patientProjection.findFirst({ where: { id: patientId, tenantId, facilityId }, select: { id: true } });
+        if (!patient) throw new NotFoundError('Patient not found in facility scope');
+        return prisma.consentRecord.findMany({
+            where: { tenantId, facilityId, patientId },
+            orderBy: [{ purpose: 'asc' }, { capturedAt: 'desc' }],
+            select: { id: true, purpose: true, legalBasis: true, policyVersion: true, status: true, capturedAt: true, expiresAt: true, withdrawnAt: true },
+        });
+    }
+
+    static async captureConsent(actor: Actor, tenantId: string, facilityId: string, patientId: string, data: { purpose: string; legalBasis?: string; policyVersion?: string; status: string; expiresAt?: Date }) {
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner']);
+        const patient = await prisma.patientProjection.findFirst({ where: { id: patientId, tenantId, facilityId, status: 'active' }, select: { id: true } });
+        if (!patient) throw new NotFoundError('Patient not found in facility scope');
+        if (data.expiresAt && data.expiresAt <= new Date()) throw new ConflictError('Consent expiry must be in the future');
+        try {
+            return await prisma.$transaction(async (tx) => {
+                if (data.status === 'active') {
+                    await tx.consentRecord.updateMany({
+                        where: { tenantId, facilityId, patientId, purpose: data.purpose, status: 'active', withdrawnAt: null },
+                        data: { status: 'withdrawn', withdrawnAt: new Date() },
+                    });
+                }
+                return tx.consentRecord.create({ data: { tenantId, facilityId, patientId, purpose: data.purpose, legalBasis: data.legalBasis, policyVersion: data.policyVersion, status: data.status, expiresAt: data.expiresAt, ...(data.status === 'withdrawn' ? { withdrawnAt: new Date() } : {}) } });
+            });
+        } catch (error: any) {
+            if (error?.code === 'P2002') throw new ConflictError('Consent changed by another request; reload and retry');
+            throw error;
+        }
+    }
+
+    static async withdrawConsent(actor: Actor, tenantId: string, facilityId: string, consentId: string) {
+        await assertScope(actor, tenantId, facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'nurse', 'practitioner']);
+        const consent = await prisma.consentRecord.findFirst({ where: { id: consentId, tenantId, facilityId } });
+        if (!consent) throw new NotFoundError('Consent record not found in facility scope');
+        if (consent.status === 'withdrawn' || consent.withdrawnAt) return consent;
+        return prisma.consentRecord.update({ where: { id: consentId }, data: { status: 'withdrawn', withdrawnAt: new Date() } });
     }
 
     static async requestRefund(actor: Actor, billingIntentId: string, data: { amount: number; reason: string }) {

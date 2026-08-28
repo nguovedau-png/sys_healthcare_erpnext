@@ -76,3 +76,8 @@ Track booking completion, median time-to-book, no-show rate, duplicate-patient r
 [4]: https://www.mobihealthnews.com/news/asia/vietnamese-digital-health-startup-jio-health-nets-20m-in-series-b-round "MobiHealthNews — Jio Health in Vietnam"
 [5]: https://www.dlapiperdataprotection.com/?t=law&c=VN "DLA Piper — Data protection laws in Vietnam"
 [6]: https://benhandientu.moh.gov.vn/van-bang-phap-ly-co-hieu-luc "Vietnam Ministry of Health — Effective legal documents for electronic medical records"
+
+
+## Implementation status update — 2026-08-28
+
+The purpose-bound consent workflow is now implemented in the healthcare API and admin operations surface. Staff can list scoped consent history, capture active consent with purpose/legal-basis/policy-version/expiry metadata, replace an active consent atomically, and withdraw consent idempotently while preserving history. Queue ticket allocation now selects the daily sequence inside the transaction with retry-safe unique-key handling. These changes move two items from planned Must Have scope into delivered baseline; patient-facing consent text/evidence, notifications, verified reviews, search projections, provider adapters, and AI remain staged backlog.

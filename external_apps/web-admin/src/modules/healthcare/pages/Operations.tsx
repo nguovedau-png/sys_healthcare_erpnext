@@ -27,6 +27,17 @@ interface FamilyLink {
   dependent: { id: string; fullName: string; phoneLast4: string; dateOfBirth?: string; sex?: string; status: string };
 }
 
+interface ConsentRecord {
+  id: string;
+  purpose: string;
+  legalBasis?: string;
+  policyVersion?: string;
+  status: 'active' | 'withdrawn' | string;
+  capturedAt: string;
+  expiresAt?: string;
+  withdrawnAt?: string;
+}
+
 interface QueueTicket {
   id: string;
   appointmentId: string;
@@ -105,6 +116,11 @@ const Operations: React.FC = () => {
   const [familyPatientId, setFamilyPatientId] = useState('');
   const [familyLinks, setFamilyLinks] = useState<FamilyLink[]>([]);
   const [familyLoading, setFamilyLoading] = useState(false);
+  const [consentPatientId, setConsentPatientId] = useState('');
+  const [consents, setConsents] = useState<ConsentRecord[]>([]);
+  const [consentLoading, setConsentLoading] = useState(false);
+  const [consentModalOpen, setConsentModalOpen] = useState(false);
+  const [consentForm] = Form.useForm();
 
   const tenantId = import.meta.env.VITE_TENANT_ID || 'demo-tenant';
   const facilityId = import.meta.env.VITE_FACILITY_ID || 'demo-facility';
@@ -142,6 +158,56 @@ const Operations: React.FC = () => {
       message.error(errorMessage(error, 'Không thể tải hồ sơ người thân'));
     } finally {
       setFamilyLoading(false);
+    }
+  };
+
+  const loadConsents = async (patientId = consentPatientId) => {
+    if (!patientId.trim()) {
+      setConsents([]);
+      return;
+    }
+    setConsentLoading(true);
+    try {
+      const response = await api.get(`/healthcare/patients/${encodeURIComponent(patientId.trim())}/consents`, { params: { tenantId, facilityId } });
+      setConsents(unwrap<ConsentRecord>(response).data);
+    } catch (error: unknown) {
+      message.error(errorMessage(error, 'Không thể tải lịch sử đồng ý'));
+    } finally {
+      setConsentLoading(false);
+    }
+  };
+
+  const handleCaptureConsent = async (values: { purpose: string; legalBasis?: string; policyVersion?: string; expiresAt?: Dayjs }) => {
+    if (!consentPatientId.trim()) {
+      message.error('Nhập mã bệnh nhân trước khi ghi nhận đồng ý');
+      return;
+    }
+    try {
+      await api.post(`/healthcare/patients/${encodeURIComponent(consentPatientId.trim())}/consents`, {
+        tenantId,
+        facilityId,
+        purpose: values.purpose,
+        legalBasis: values.legalBasis,
+        policyVersion: values.policyVersion,
+        status: 'active',
+        expiresAt: values.expiresAt?.toISOString(),
+      });
+      message.success('Đã ghi nhận đồng ý mới');
+      setConsentModalOpen(false);
+      consentForm.resetFields();
+      await loadConsents();
+    } catch (error: unknown) {
+      message.error(errorMessage(error, 'Không thể ghi nhận đồng ý'));
+    }
+  };
+
+  const handleWithdrawConsent = async (record: ConsentRecord) => {
+    try {
+      await api.post(`/healthcare/consents/${encodeURIComponent(record.id)}/withdraw`, null, { params: { tenantId, facilityId } });
+      message.success('Đã thu hồi đồng ý');
+      await loadConsents();
+    } catch (error: unknown) {
+      message.error(errorMessage(error, 'Không thể thu hồi đồng ý'));
     }
   };
 
@@ -249,10 +315,30 @@ const Operations: React.FC = () => {
           ] as ColumnsType<FamilyLink>} />
         </Card>
 
+        <Card title="Đồng ý xử lý dữ liệu" extra={<Space wrap><Input.Search allowClear enterButton="Tra cứu" placeholder="Mã bệnh nhân" value={consentPatientId} onChange={(event) => setConsentPatientId(event.target.value)} onSearch={() => loadConsents()} loading={consentLoading} style={{ width: 'min(280px, 100%)' }} /><Button type="primary" icon={<PlusOutlined />} disabled={!consentPatientId.trim()} onClick={() => setConsentModalOpen(true)}>Ghi nhận</Button></Space>}>
+          <Table rowKey="id" size="small" loading={consentLoading} dataSource={consents} pagination={false} scroll={{ x: 760 }} locale={{ emptyText: consentPatientId ? 'Chưa có bản ghi đồng ý' : 'Nhập mã bệnh nhân để tra cứu' }} columns={[
+            { title: 'Mục đích', dataIndex: 'purpose', key: 'purpose' },
+            { title: 'Phiên bản', dataIndex: 'policyVersion', key: 'policyVersion', render: (value?: string) => value || '-' },
+            { title: 'Ghi nhận', dataIndex: 'capturedAt', key: 'capturedAt', render: (value: string) => dayjs(value).format('DD/MM/YYYY HH:mm') },
+            { title: 'Hết hạn', dataIndex: 'expiresAt', key: 'expiresAt', render: (value?: string) => value ? dayjs(value).format('DD/MM/YYYY') : 'Không thời hạn' },
+            { title: 'Trạng thái', dataIndex: 'status', key: 'status', render: (value: string) => <Tag color={value === 'active' ? 'green' : 'default'}>{value === 'active' ? 'Đang hiệu lực' : 'Đã thu hồi'}</Tag> },
+            { title: 'Thao tác', key: 'actions', render: (_: unknown, record: ConsentRecord) => record.status === 'active' ? <Button size="small" type="link" danger onClick={() => handleWithdrawConsent(record)}>Thu hồi</Button> : <Text type="secondary">-</Text> },
+          ] as ColumnsType<ConsentRecord>} />
+        </Card>
+
         <Card title={<Space><CheckCircleOutlined /> Hàng đợi tiếp nhận</Space>}>
           <Table rowKey="id" columns={queueColumns} dataSource={queueTickets} loading={loading} scroll={{ x: 800 }} pagination={{ pageSize: 10 }} locale={{ emptyText: 'Chưa có bệnh nhân trong hàng đợi' }} />
         </Card>
       </Space>
+
+      <Modal title="Ghi nhận đồng ý xử lý dữ liệu" open={consentModalOpen} onCancel={() => setConsentModalOpen(false)} onOk={() => consentForm.submit()} okText="Lưu đồng ý" cancelText="Hủy" confirmLoading={consentLoading} destroyOnClose>
+        <Form form={consentForm} layout="vertical" onFinish={handleCaptureConsent}>
+          <Form.Item name="purpose" label="Mục đích xử lý" rules={[{ required: true, message: 'Nhập mục đích xử lý' }]}><Input placeholder="Ví dụ: chăm sóc và điều trị" maxLength={160} /></Form.Item>
+          <Form.Item name="legalBasis" label="Căn cứ pháp lý"><Input placeholder="Căn cứ hoặc thông báo áp dụng" maxLength={160} /></Form.Item>
+          <Form.Item name="policyVersion" label="Phiên bản chính sách"><Input placeholder="Ví dụ: privacy-v1" maxLength={80} /></Form.Item>
+          <Form.Item name="expiresAt" label="Ngày hết hạn"><DatePicker format="DD/MM/YYYY" disabledDate={(date) => date.isBefore(dayjs().startOf('day'))} style={{ width: '100%' }} /></Form.Item>
+        </Form>
+      </Modal>
 
       <Modal title="Tạo lịch hẹn" open={appointmentModalOpen} onCancel={() => setAppointmentModalOpen(false)} onOk={() => form.submit()} okText="Tạo lịch hẹn" cancelText="Hủy" confirmLoading={loading} destroyOnClose>
         <Form form={form} layout="vertical" onFinish={handleCreateAppointment} initialValues={{ startsAt: dayjs().add(1, 'hour'), endsAt: dayjs().add(1, 'hour').add(30, 'minute') }}>

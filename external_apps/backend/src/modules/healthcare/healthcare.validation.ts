@@ -7,7 +7,8 @@ const ALLOWED_BILLING_FIELDS = new Set(['tenantId', 'facilityId', 'patientId', '
 const ALLOWED_PAYMENT_EVENT_FIELDS = new Set(['tenantId', 'facilityId', 'billingIntentId', 'provider', 'eventId', 'eventType', 'status', 'amount']);
 const ALLOWED_REFUND_FIELDS = new Set(['amount', 'reason']);
 const ALLOWED_BILLING_QUERY_FIELDS = new Set(['tenantId', 'facilityId', 'status', 'provider', 'from', 'to', 'take']);
-const ALLOWED_FAMILY_FIELDS = new Set(['dependentPatientId', 'relationship', 'consentStatus']);
+const ALLOWED_FAMILY_FIELDS = new Set(['tenantId', 'facilityId', 'dependentPatientId', 'relationship', 'consentStatus']);
+const ALLOWED_CONSENT_FIELDS = new Set(['tenantId', 'facilityId', 'purpose', 'legalBasis', 'policyVersion', 'status', 'expiresAt']);
 
 export function assertObject(value: unknown, name: string): asserts value is Record<string, unknown> {
     if (!value || typeof value !== 'object' || Array.isArray(value)) throw new BadRequestError(`${name} must be an object`);
@@ -213,6 +214,20 @@ export function parseFamilyLink(body: unknown) {
         dependentPatientId: nonEmpty(body.dependentPatientId, 'dependentPatientId', 100),
         relationship: nonEmpty(body.relationship, 'relationship', 80),
         consentStatus,
+    };
+}
+
+export function parseConsent(body: unknown) {
+    assertObject(body, 'consent');
+    rejectUnknown(body, ALLOWED_CONSENT_FIELDS);
+    const status = (optionalString(body.status, 'status', 32) || 'active').toLowerCase();
+    if (!['active', 'withdrawn'].includes(status)) throw new BadRequestError('status must be active or withdrawn');
+    return {
+        purpose: nonEmpty(body.purpose, 'purpose', 160),
+        legalBasis: optionalString(body.legalBasis, 'legalBasis', 160),
+        policyVersion: optionalString(body.policyVersion, 'policyVersion', 80),
+        status,
+        expiresAt: optionalDate(body.expiresAt, 'expiresAt'),
     };
 }
 

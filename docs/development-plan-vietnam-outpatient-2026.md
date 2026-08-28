@@ -86,3 +86,18 @@ The first implementation slice is intentionally narrow and high-value: make the 
 ## Assumptions recorded
 
 The active application is `external_apps/backend`; the repository also contains historical/internal healthcare applications that are not rewritten in this slice. Existing Prisma schema and route conventions are retained. Real provider credentials, facility identifiers, and legal policy text are not fabricated. Payment and notification implementations use interfaces and local state until a provider is selected and configured. The 100-loop request is implemented as repeated automated quality cycles with substantive test/build/diff checks at checkpoints; it does not replace fixing concrete defects found by tests.
+
+
+## Implemented increment — purpose-bound consent workflow (2026-08-28)
+
+**Objective and user story.** As a receptionist, nurse, practitioner, or facility administrator, I can capture a patient's purpose-specific consent with the applicable policy version and expiry, inspect the consent history within my facility, and withdraw an active consent without deleting the historical record. This closes a market and compliance gap while remaining a modular extension of the existing patient workflow.
+
+**Functional requirements.** The API accepts a bounded purpose, optional legal basis and policy version, an active/withdrawn status, and an optional future expiry. Capturing a new active consent withdraws any prior active record for the same patient, facility, and purpose in one database transaction. Withdrawal is idempotent and preserves the original record. Listing returns only minimum consent metadata and only within the caller's tenant/facility scope.
+
+**API contract.** `GET /api/v1/healthcare/patients/:patientId/consents?tenantId=...&facilityId=...` lists history; `POST /api/v1/healthcare/patients/:patientId/consents` captures a new version; `POST /api/v1/healthcare/consents/:id/withdraw?tenantId=...&facilityId=...` withdraws a record. Request DTOs reject unknown fields and enforce bounded values before service execution.
+
+**Database and security.** The existing `ConsentRecord` model is reused, preserving `tenantId`, `facilityId`, `patientId`, purpose, legal basis, policy version, status, capture time, expiry, and withdrawal time. Authorization is enforced server-side through the existing scoped role lookup. Cross-facility patient and consent IDs return scoped not-found errors, and no consent payload is written to normal logs by this change.
+
+**Edge cases and acceptance criteria.** Expired-on-arrival consent is rejected; invalid status or unknown fields are rejected; a cross-scope patient cannot be listed or mutated; replacing active consent creates a new version and withdraws the previous version atomically; repeating withdrawal returns the already withdrawn record without a second mutation. Focused tests cover validation, version replacement, idempotent withdrawal, and facility-scope isolation.
+
+**Dependencies.** Existing auth/RBAC, Prisma schema, patient projection, and audit middleware. Notifications, patient self-service consent, consent-text rendering, and data-subject export remain V1 backlog items and are not fabricated in this slice.
