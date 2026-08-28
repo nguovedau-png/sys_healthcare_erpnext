@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../../../node_modules/.prisma/client-jobs-service';
+import { PrismaClient } from '../../../node_modules/.prisma/client-jobs-service';
 
 const prisma = new PrismaClient();
 

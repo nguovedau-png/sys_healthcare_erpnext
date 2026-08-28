@@ -25,6 +25,23 @@ describe('healthcare service rules', () => {
         expect(prismaMock.appointment.create).not.toHaveBeenCalled();
     });
 
+    test('transitions an appointment using the current status and version', async () => {
+        const appointment = { id: 'appointment-1', tenantId: 'tenant-1', facilityId: 'facility-1', status: 'pending', version: 3 };
+        prismaMock.appointment.findUnique.mockResolvedValue(appointment as any);
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1' } as any);
+        prismaMock.appointment.updateMany.mockResolvedValue({ count: 1 } as any);
+        prismaMock.appointment.findUniqueOrThrow.mockResolvedValue({ ...appointment, status: 'confirmed', version: 4 } as any);
+        await expect(HealthcareService.transitionAppointment({ id: 'user-1', role: { name: 'receptionist', isSystem: false } }, 'appointment-1', 'confirmed')).resolves.toMatchObject({ status: 'confirmed', version: 4 });
+        expect(prismaMock.appointment.updateMany).toHaveBeenCalledWith({ where: { id: 'appointment-1', status: 'pending', version: 3 }, data: { status: 'confirmed', version: { increment: 1 } } });
+    });
+
+    test('rejects signing an encounter by a different practitioner', async () => {
+        prismaMock.encounter.findUnique.mockResolvedValue({ id: 'encounter-1', tenantId: 'tenant-1', facilityId: 'facility-1', practitionerExternalId: 'doc-1', status: 'draft', reason: 'follow-up', assessment: 'stable' } as any);
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1' } as any);
+        await expect(HealthcareService.submitEncounter({ id: 'doc-2', role: { name: 'practitioner', isSystem: false } }, 'encounter-1')).rejects.toBeInstanceOf(ForbiddenError);
+        expect(prismaMock.encounter.updateMany).not.toHaveBeenCalled();
+    });
+
     test('returns existing appointment for repeated idempotency key', async () => {
         const existing = { id: 'appointment-existing', status: 'pending' };
         prismaMock.patientProjection.findFirst.mockResolvedValue({ id: 'patient-1' } as any);

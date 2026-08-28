@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client-partner-service';
+import { PrismaClient } from '../../../node_modules/.prisma/client-partner-service';
 
 const prisma = new PrismaClient();
 
@@ -103,11 +103,11 @@ async function main() {
         await prisma.clinic.createMany({
             data: [
                 { name: 'Phòng khám Đa khoa Hoàn Mỹ', address: '60-62 Phan Xích Long, Phú Nhuận, TP.HCM', phone: '028-39971010', email: 'info@hoanmy.com', specialties: ['Nội khoa', 'Ngoại khoa'], rating: 4.5, ratingCount: 234, isVerified: true, status: 'active', description: 'Phòng khám đa khoa uy tín.', degree: 'Phòng khám đa khoa', gallery: gallery, services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
-                { name: 'Phòng khám Family Medical', address: '34 Lê Duẩn, Q.1, TP.HCM', phone: '028-38227848', email: 'hcmc@vietnammedicalpractice.com', specialties: ['Nội khoa', 'Nhi khoa'], rating: 4.7, ratingCount: 456, isVerified: true, status: 'active', description: 'Phòng khám quốc tế.', degree: 'Phòng khám quốc tế', gallery: gallery, indoorMap: ['/img/map/family.png'], services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
+                { name: 'Phòng khám Family Medical', address: '34 Lê Duẩn, Q.1, TP.HCM', phone: '028-38227848', email: 'hcmc@vietnammedicalpractice.com', specialties: ['Nội khoa', 'Nhi khoa'], rating: 4.7, ratingCount: 456, isVerified: true, status: 'active', description: 'Phòng khám quốc tế.', degree: 'Phòng khám quốc tế', gallery: gallery, services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
                 { name: 'Phòng khám Đa khoa Sài Gòn', address: '123 Nguyễn Thị Minh Khai, Q.3, TP.HCM', phone: '028-39301919', specialties: ['Tim mạch', 'Tiêu hóa'], rating: 4.4, ratingCount: 178, isVerified: true, status: 'active', description: 'Phòng khám chuyên khoa.', degree: 'Phòng khám chuyên khoa', gallery: gallery, services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
                 { name: 'Phòng khám Nhi Đồng', address: '456 Lê Văn Sỹ, Q.3, TP.HCM', phone: '028-39303030', email: 'nhi@clinic.vn', specialties: ['Nhi khoa', 'Tiêm chủng'], rating: 4.6, ratingCount: 312, isVerified: true, status: 'active', description: 'Chuyên khám và điều trị nhi.', degree: 'Phòng khám nhi', gallery: gallery, services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
                 { name: 'Phòng khám Da liễu Đông Á', address: '789 Cách Mạng Tháng 8, Q.10, TP.HCM', phone: '028-39757575', specialties: ['Da liễu', 'Thẩm mỹ'], rating: 4.3, ratingCount: 156, isVerified: true, status: 'active', description: 'Chuyên da liễu và thẩm mỹ.', degree: 'Phòng khám chuyên khoa', gallery: gallery, services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
-                { name: 'Phòng khám Nha Khoa Paris', address: '234 Pasteur, Q.3, TP.HCM', phone: '028-38234567', email: 'paris@dental.vn', specialties: ['Nha khoa', 'Implant'], rating: 4.8, ratingCount: 523, isVerified: true, status: 'active', description: 'Nha khoa thẩm mỹ cao cấp.', degree: 'Phòng khám nha khoa', gallery: gallery, indoorMap: ['/img/map/paris.png'], services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
+                { name: 'Phòng khám Nha Khoa Paris', address: '234 Pasteur, Q.3, TP.HCM', phone: '028-38234567', email: 'paris@dental.vn', specialties: ['Nha khoa', 'Implant'], rating: 4.8, ratingCount: 523, isVerified: true, status: 'active', description: 'Nha khoa thẩm mỹ cao cấp.', degree: 'Phòng khám nha khoa', gallery: gallery, services: servicesData, worktime: worktimeData, ratingData: ratingData, qaData: qaData },
             ]
         });
     }

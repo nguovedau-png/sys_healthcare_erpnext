@@ -31,23 +31,26 @@ app.get(/\/uploads\/(.*)/, MediaController.serveMedia);
 const httpServer = createServer(app);
 
 // Redis Adapter Setup
+const redisEnabled = process.env.NODE_ENV !== 'test' && process.env.REDIS_DISABLED !== 'true';
 const redisConfig = {
     host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    password: process.env.REDIS_PASSWORD,
+    port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
+    password: process.env.REDIS_PASSWORD || undefined,
+    lazyConnect: true,
+    maxRetriesPerRequest: 1,
 };
-const pubClient = new IORedis(redisConfig);
-const subClient = pubClient.duplicate();
+const pubClient = redisEnabled ? new IORedis(redisConfig) : null;
+const subClient = pubClient ? pubClient.duplicate() : null;
 
 const io = new Server(httpServer, {
     cors: {
-        origin: '*',
+        origin: (process.env.CORS_ORIGINS || 'http://localhost:5173').split(',').map((origin) => origin.trim()),
         methods: ['GET', 'POST'],
     },
-    adapter: createAdapter(pubClient, subClient),
+    ...(pubClient && subClient ? { adapter: createAdapter(pubClient, subClient) } : {}),
 });
 
-import rateLimit from 'express-rate-limit';
+import rateLimit, { Options as RateLimitOptions } from 'express-rate-limit';
 import { RedisStore } from 'rate-limit-redis';
 
 // ... existing imports ...
@@ -58,17 +61,20 @@ app.use(helmet());
 app.use(cors());
 
 // Rate Limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 100, // Limit each IP to 100 requests per windowMs
+const limiterOptions: Partial<RateLimitOptions> = {
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
     standardHeaders: true,
     legacyHeaders: false,
-    store: new RedisStore({
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+};
+if (pubClient) {
+    limiterOptions.store = new RedisStore({
         // @ts-expect-error - Known issue with ioredis types compatibility
         sendCommand: (...args: string[]) => pubClient.call(...args),
-    }),
-    message: 'Too many requests from this IP, please try again after 15 minutes',
-});
+    });
+}
+const limiter = rateLimit(limiterOptions);
 
 // Apply to all routes
 app.use(limiter);
@@ -142,8 +148,10 @@ app.use(auditMiddleware);
 
 // Routes
 // Routes
-// function to setup routes (async)
-async function setupRoutes() {
+let routesRegistered = false;
+function setupRoutes() {
+    if (routesRegistered) return;
+    routesRegistered = true;
     // Metrics Endpoint (Exposed for Prometheus)
     app.get('/metrics', getMetrics);
 
@@ -173,9 +181,6 @@ async function setupRoutes() {
         app.use('/api/v1/oidc', oidcRoutes);
         app.use('/api/v1/healthcare', healthcareRoutes);
 
-        // OIDC Provider Middleware (Mounts at /oidc)
-        const oidc = await initOidcProvider(process.env.API_URL || 'http://localhost:3000');
-        app.use('/oidc', oidc.callback());
     }
 }
 
@@ -201,7 +206,9 @@ async function bootstrap() {
         await prisma.$connect();
         logger.info('Database connected successfully');
 
-        await setupRoutes();
+        setupRoutes();
+        const oidc = await initOidcProvider(process.env.API_URL || 'http://localhost:3000');
+        app.use('/oidc', oidc.callback());
 
         // Listen on all network interfaces (0.0.0.0) for iOS Simulator access
         httpServer.listen(PORT, () => {
@@ -214,6 +221,8 @@ async function bootstrap() {
         process.exit(1);
     }
 }
+
+setupRoutes();
 
 if (process.env.NODE_ENV !== 'test') {
     bootstrap();

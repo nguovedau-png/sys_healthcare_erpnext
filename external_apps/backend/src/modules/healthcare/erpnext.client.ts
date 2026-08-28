@@ -33,10 +33,14 @@ export class ERPNextClient {
         return response.data.data?.[0] ?? null;
     }
 
-    async upsertCustomer(data: { name: string; email_id: string; mobile_no?: string }) {
+    async upsertCustomer(data: { customer_name: string; email_id: string; mobile_no?: string }) {
         const existing = await this.findCustomerByEmail(data.email_id);
         if (existing) return this.request({ method: 'PUT', url: `/api/resource/Customer/${encodeURIComponent(existing.name)}`, data }).then((response) => response.data);
         return this.request({ method: 'POST', url: '/api/resource/Customer', data }).then((response) => response.data);
+    }
+
+    async deleteCustomer(name: string) {
+        return this.request({ method: 'DELETE', url: `/api/resource/Customer/${encodeURIComponent(name)}` }).then((response) => response.data);
     }
 }
 

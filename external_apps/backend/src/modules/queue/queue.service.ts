@@ -5,23 +5,30 @@ import { sendEmail } from '../notification/email.service';
 import { NotificationService } from '../notification/notification.service';
 import prisma from '../../config/prisma';
 
+const isTest = process.env.NODE_ENV === 'test';
 const redisConfig = {
     host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT || '6379'),
-    password: process.env.REDIS_PASSWORD,
+    port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
+    password: process.env.REDIS_PASSWORD || undefined,
     maxRetriesPerRequest: null,
 };
 
-const connection = new IORedis(redisConfig);
+const connection = isTest ? null : new IORedis(redisConfig);
+const noopQueue = {
+    add: async () => ({ id: 'test-job' }),
+    addBulk: async () => [],
+} as unknown as Queue;
+const createQueue = (name: string) => connection ? new Queue(name, { connection }) : noopQueue;
 
-export const emailQueue = new Queue('email', { connection });
-export const notificationQueue = new Queue('notification', { connection });
-export const heavyJobQueue = new Queue('heavy-job', { connection });
-export const webhookQueue = new Queue('webhook', { connection });
-export const erpnextSyncQueue = new Queue('erpnext-sync', { connection });
+export const emailQueue = createQueue('email');
+export const notificationQueue = createQueue('notification');
+export const heavyJobQueue = createQueue('heavy-job');
+export const webhookQueue = createQueue('webhook');
+export const erpnextSyncQueue = createQueue('erpnext-sync');
 
 // Workers are initialized only when explicitly called
 export const setupWorkers = () => {
+    if (!connection) throw new Error('Redis is required to start queue workers');
     logger.info('Initializing workers...');
 
     // Email Worker

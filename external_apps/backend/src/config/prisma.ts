@@ -1,6 +1,15 @@
 import { PrismaClient } from '@prisma/client';
-import { erpnextSyncQueue } from '../modules/queue/queue.service';
 import logger from '../utils/logger';
+
+async function enqueueUserSync(action: 'upsert' | 'delete', payload: Record<string, unknown>) {
+    if (process.env.NODE_ENV === 'test' || !process.env.ERPNEXT_URL || !process.env.ERPNEXT_API_KEY || !process.env.ERPNEXT_API_SECRET) return;
+    try {
+        const { erpnextSyncQueue } = await import('../modules/queue/queue.service');
+        await erpnextSyncQueue.add(`sync-${action}`, { action, ...payload });
+    } catch (error) {
+        logger.error('Failed to queue ERPNext user sync', { action, error: error instanceof Error ? error.message : 'unknown error' });
+    }
+}
 
 const prismaClient = new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
@@ -11,14 +20,12 @@ const prisma = prismaClient.$extends({
         user: {
             async create({ args, query }) {
                 const result = await query(args);
-                erpnextSyncQueue.add('sync-create', { action: 'upsert', user: result })
-                    .catch(err => logger.error('Failed to queue ERPNext create sync:', err));
+                void enqueueUserSync('upsert', { user: result });
                 return result;
             },
             async update({ args, query }) {
                 const result = await query(args);
-                erpnextSyncQueue.add('sync-update', { action: 'upsert', user: result })
-                    .catch(err => logger.error('Failed to queue ERPNext update sync:', err));
+                void enqueueUserSync('upsert', { user: result });
                 return result;
             },
             async delete({ args, query }) {
@@ -26,15 +33,13 @@ const prisma = prismaClient.$extends({
                 // args.where usually contains id or email
                 const result = await query(args);
                 if (result && result.email) {
-                    erpnextSyncQueue.add('sync-delete', { action: 'delete', email: result.email })
-                        .catch(err => logger.error('Failed to queue ERPNext delete sync:', err));
+                    void enqueueUserSync('delete', { email: result.email });
                 }
                 return result;
             },
             async upsert({ args, query }) {
                 const result = await query(args);
-                erpnextSyncQueue.add('sync-upsert', { action: 'upsert', user: result })
-                    .catch(err => logger.error('Failed to queue ERPNext upsert sync:', err));
+                void enqueueUserSync('upsert', { user: result });
                 return result;
             }
         },

@@ -174,7 +174,7 @@ export class BookingService implements OnModuleInit {
     async createAppointment(data: Record<string, unknown>) {
         const sanitized = sanitizeAppointmentData(data);
         assertAppointmentInput(sanitized, { requireSlot: true });
-        const normalizedData = {
+        const normalizedData: Record<string, unknown> = {
             ...sanitized,
             patientPhone: normalizeVietnamesePhone(sanitized.patientPhone),
             appointmentDate: new Date(String(sanitized.appointmentDate)),
@@ -184,7 +184,7 @@ export class BookingService implements OnModuleInit {
         const existing = await this.prisma.appointment.findFirst({
             where: {
                 doctorId: String(normalizedData.doctorId),
-                appointmentDate: normalizedData.appointmentDate,
+                appointmentDate: normalizedData.appointmentDate as Date,
                 status: { notIn: ['cancelled', 'no_show'] },
             },
         });
