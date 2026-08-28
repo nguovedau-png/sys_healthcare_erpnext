@@ -18,6 +18,7 @@ router.post('/appointments/:id/transition', HealthcareController.transitionAppoi
 router.post('/appointments/:id/check-in', HealthcareController.checkInAppointment);
 router.get('/queue', HealthcareController.listQueue);
 router.post('/queue/:id/transition', HealthcareController.transitionQueueTicket);
+router.get('/billing-intents', HealthcareController.listBillingIntents);
 router.post('/billing-intents', HealthcareController.createBillingIntent);
 router.post('/billing-intents/:id/refunds', HealthcareController.requestRefund);
 router.post('/encounters', HealthcareController.createEncounter);

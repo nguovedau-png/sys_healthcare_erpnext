@@ -6,6 +6,7 @@ const ALLOWED_ENCOUNTER_FIELDS = new Set(['patientId', 'appointmentId', 'practit
 const ALLOWED_BILLING_FIELDS = new Set(['tenantId', 'facilityId', 'patientId', 'appointmentId', 'amount', 'currency', 'correlationKey']);
 const ALLOWED_PAYMENT_EVENT_FIELDS = new Set(['tenantId', 'facilityId', 'billingIntentId', 'provider', 'eventId', 'eventType', 'status', 'amount']);
 const ALLOWED_REFUND_FIELDS = new Set(['amount', 'reason']);
+const ALLOWED_BILLING_QUERY_FIELDS = new Set(['tenantId', 'facilityId', 'status', 'provider', 'from', 'to', 'take']);
 const ALLOWED_FAMILY_FIELDS = new Set(['dependentPatientId', 'relationship', 'consentStatus']);
 
 export function assertObject(value: unknown, name: string): asserts value is Record<string, unknown> {
@@ -170,6 +171,20 @@ export function parseBillingIntent(body: unknown) {
         currency,
         correlationKey: nonEmpty(body.correlationKey, 'correlationKey', 128),
     };
+}
+
+export function parseBillingQuery(query: unknown) {
+    assertObject(query, 'query');
+    rejectUnknown(query, ALLOWED_BILLING_QUERY_FIELDS);
+    const status = optionalString(query.status, 'status', 32);
+    if (status && !['pending', 'paid', 'failed', 'cancelled', 'refunded', 'partially_refunded'].includes(status)) throw new BadRequestError('unsupported billing status');
+    const provider = optionalString(query.provider, 'provider', 64);
+    const from = optionalDate(query.from, 'from');
+    const to = optionalDate(query.to, 'to');
+    if (from && to && from >= to) throw new BadRequestError('to must be after from');
+    const take = query.take === undefined ? 50 : Number(query.take);
+    if (!Number.isInteger(take) || take < 1 || take > 200) throw new BadRequestError('take must be an integer from 1 to 200');
+    return { tenantId: nonEmpty(query.tenantId, 'tenantId', 100), facilityId: nonEmpty(query.facilityId, 'facilityId', 100), status, provider, from, to, take };
 }
 
 export function parsePaymentEvent(body: unknown) {

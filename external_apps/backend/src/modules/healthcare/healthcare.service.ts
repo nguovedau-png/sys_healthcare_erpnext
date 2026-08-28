@@ -197,6 +197,27 @@ export class HealthcareService {
         return prisma.queueTicket.findUniqueOrThrow({ where: { id } });
     }
 
+    static async listBillingIntents(actor: Actor, query: { tenantId: string; facilityId: string; status?: string; provider?: string; from?: Date; to?: Date; take: number }) {
+        await assertScope(actor, query.tenantId, query.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'finance', 'auditor']);
+        const intents = await prisma.billingIntent.findMany({
+            where: {
+                tenantId: query.tenantId,
+                facilityId: query.facilityId,
+                ...(query.status ? { status: query.status } : {}),
+                ...(query.from || query.to ? { createdAt: { ...(query.from ? { gte: query.from } : {}), ...(query.to ? { lt: query.to } : {}) } } : {}),
+                ...(query.provider ? { events: { some: { provider: query.provider } } } : {}),
+            },
+            select: {
+                id: true, patientId: true, appointmentId: true, correlationKey: true, amount: true, currency: true, status: true, erpnextName: true, lastError: true, createdAt: true, updatedAt: true,
+                events: { orderBy: { receivedAt: 'desc' }, take: 10, select: { id: true, provider: true, eventId: true, eventType: true, status: true, amount: true, receivedAt: true, processedAt: true } },
+                refunds: { orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, amount: true, reason: true, status: true, createdAt: true, updatedAt: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+            take: query.take,
+        });
+        return intents;
+    }
+
     static async createBillingIntent(actor: Actor, data: { tenantId: string; facilityId: string; patientId: string; appointmentId?: string; amount: number; currency: string; correlationKey: string }) {
         await assertScope(actor, data.tenantId, data.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'receptionist', 'finance']);
         const patient = await prisma.patientProjection.findFirst({ where: { id: data.patientId, tenantId: data.tenantId, facilityId: data.facilityId, status: 'active' }, select: { id: true } });

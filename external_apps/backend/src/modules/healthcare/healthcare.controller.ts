@@ -3,7 +3,7 @@ import { AuthRequest } from '../../middlewares/auth.middleware';
 import { ForbiddenError, HealthcareError, ServiceUnavailableError } from './healthcare.errors';
 import { HealthcareService } from './healthcare.service';
 import { getERPNextClient } from './erpnext.client';
-import { parseAmendment, parseAppointment, parseBillingIntent, parseEncounter, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn, parseQueueQuery, parseQueueTransition, parseRefund, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
+import { parseAmendment, parseAppointment, parseBillingIntent, parseBillingQuery, parseEncounter, parseFamilyLink, parsePaymentEvent, parseQueueCheckIn, parseQueueQuery, parseQueueTransition, parseRefund, parsePatient, parseScopeQuery, parseTransition } from './healthcare.validation';
 
 function actor(req: AuthRequest) { return req.user as { id: string; role?: { name?: string; isSystem?: boolean } | null }; }
 function sendError(res: Response, error: unknown) {
@@ -112,6 +112,10 @@ export class HealthcareController {
         catch (error) { return sendError(res, error); }
     }
 
+    static async listBillingIntents(req: Request, res: Response) {
+        try { return res.json({ success: true, data: await HealthcareService.listBillingIntents(actor(req as AuthRequest), parseBillingQuery(req.query)) }); }
+        catch (error) { return sendError(res, error); }
+    }
     static async createBillingIntent(req: Request, res: Response) {
         try { return res.status(201).json({ success: true, data: await HealthcareService.createBillingIntent(actor(req as AuthRequest), parseBillingIntent(req.body)) }); }
         catch (error) { return sendError(res, error); }

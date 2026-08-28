@@ -56,6 +56,34 @@ describe('Healthcare API boundary', () => {
         expect(prismaMock.queueTicket.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ tenantId: 'tenant-1', facilityId: 'facility-1', status: 'waiting' }) }));
     });
 
+    test('allows finance to read scoped billing reconciliation data', async () => {
+        prismaMock.user.findUnique.mockResolvedValue({
+            id: 'facility-user',
+            role: { name: 'finance', isSystem: false, permissions: [] },
+        } as any);
+        prismaMock.userRoleScope.findFirst.mockResolvedValue({ id: 'scope-1', facilityId: 'facility-1' } as any);
+        prismaMock.billingIntent.findMany.mockResolvedValue([{ id: 'bill-1', status: 'paid', events: [], refunds: [] }] as any);
+        const response = await request(app)
+            .get('/api/v1/healthcare/billing-intents?tenantId=tenant-1&facilityId=facility-1&status=paid&provider=qr&take=25')
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ success: true, data: [{ id: 'bill-1', status: 'paid', events: [], refunds: [] }] });
+        expect(prismaMock.billingIntent.findMany).toHaveBeenCalledWith(expect.objectContaining({
+            where: expect.objectContaining({ tenantId: 'tenant-1', facilityId: 'facility-1', status: 'paid', events: { some: { provider: 'qr' } } }),
+            take: 25,
+        }));
+    });
+
+    test('denies billing reconciliation to a receptionist', async () => {
+        prismaMock.userRoleScope.findFirst.mockResolvedValue(null);
+        const response = await request(app)
+            .get('/api/v1/healthcare/billing-intents?tenantId=tenant-1&facilityId=facility-1')
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(403);
+        expect(response.body).toMatchObject({ success: false, code: 'FORBIDDEN' });
+        expect(prismaMock.billingIntent.findMany).not.toHaveBeenCalled();
+    });
+
     test('rejects payment callback when the webhook secret is not configured', async () => {
         delete process.env.PAYMENT_WEBHOOK_SECRET;
         const response = await request(app).post('/api/v1/healthcare/payments/webhook').send({ eventId: 'e-1' });
