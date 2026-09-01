@@ -27,3 +27,7 @@ All invoice document names are length-bounded, newline-rejected and URL-encoded.
 Run `npx prisma generate` and apply the checked-in Prisma migrations before starting the external backend. Configure `ERPNEXT_URL`, `ERPNEXT_API_KEY`, `ERPNEXT_API_SECRET`, `ERPNEXT_TIMEOUT_MS`, and `ERPNEXT_MAX_RETRIES` only through the deployment secret manager. Configure `DATABASE_URL`, `JWT_SECRET`, and payment webhook secrets independently; never place real values in `.env.example`, source files, logs, or Git history.
 
 Before go-live, execute a staging reconciliation against a non-production ERPNext tenant, confirm that the linked Sales Invoice reference is present on BillingIntent, verify a mismatched amount is surfaced as `attention_required`, and perform a rollback drill using the deployment runbook. A live deployment cannot be certified from this sandbox because production credentials and infrastructure access are not present.
+
+## Dependency audit note
+
+The non-breaking audit remediation upgraded the vulnerable nested `form-data` package. The remaining report contains eight moderate UUID-related transitive findings beneath the current Firebase Admin dependency tree; the package manager offers a breaking downgrade of `firebase-admin` as the automatic fix. That downgrade was not applied because it would change the authentication integration contract. Production security review must either approve this documented residual risk or schedule a separately tested Firebase Admin major-version migration before go-live.
