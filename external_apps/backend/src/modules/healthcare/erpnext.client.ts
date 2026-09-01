@@ -2,6 +2,18 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export type ERPNextClientConfig = { baseUrl: string; apiKey: string; apiSecret: string; timeoutMs?: number; maxRetries?: number };
 
+export type ERPNextReadDoctype = 'Customer' | 'Supplier' | 'Employee' | 'Item' | 'Sales Invoice' | 'Purchase Invoice' | 'Payment Entry';
+
+const READ_FIELDS: Record<ERPNextReadDoctype, readonly string[]> = {
+    Customer: ['name', 'customer_name', 'email_id', 'mobile_no', 'disabled'],
+    Supplier: ['name', 'supplier_name', 'supplier_group', 'disabled'],
+    Employee: ['name', 'employee_name', 'user_id', 'department', 'status'],
+    Item: ['name', 'item_code', 'item_name', 'item_group', 'stock_uom', 'disabled'],
+    'Sales Invoice': ['name', 'customer', 'posting_date', 'due_date', 'status', 'grand_total', 'outstanding_amount', 'currency'],
+    'Purchase Invoice': ['name', 'supplier', 'posting_date', 'due_date', 'status', 'grand_total', 'outstanding_amount', 'currency'],
+    'Payment Entry': ['name', 'party', 'posting_date', 'paid_amount', 'received_amount', 'payment_type', 'reference_no', 'status', 'currency'],
+};
+
 export class ERPNextClient {
     private readonly http: AxiosInstance;
     private readonly maxRetries: number;
@@ -26,6 +38,25 @@ export class ERPNextClient {
     async health() {
         const response = await this.request<{ data: unknown }>({ method: 'GET', url: '/api/method/frappe.auth.get_logged_user' });
         return { ok: response.status >= 200 && response.status < 300 };
+    }
+
+    async listDocuments(doctype: ERPNextReadDoctype, filters: Array<[string, string, string | number]>, limit = 50) {
+        const fields = READ_FIELDS[doctype];
+        if (!fields) throw new Error('Unsupported ERPNext read doctype');
+        const boundedLimit = Math.max(1, Math.min(limit, 100));
+        const response = await this.request<{ data: unknown[] }>({ method: 'GET', url: `/api/resource/${encodeURIComponent(doctype)}`, params: { filters: JSON.stringify(filters), fields: JSON.stringify(fields), limit_page_length: boundedLimit } });
+        return response.data.data || [];
+    }
+
+    async getDocument(doctype: ERPNextReadDoctype, name: string) {
+        if (!name || name.length > 140 || /[\\r\\n]/.test(name)) throw new Error('Invalid ERPNext document name');
+        const response = await this.request<{ data: Record<string, unknown> }>({ method: 'GET', url: `/api/resource/${encodeURIComponent(doctype)}/${encodeURIComponent(name)}`, params: { fields: JSON.stringify(READ_FIELDS[doctype]) } });
+        return response.data.data;
+    }
+
+    async getSalesInvoice(name: string) {
+        const document = await this.getDocument('Sales Invoice', name);
+        return { name: String(document.name || name), customer: document.customer ? String(document.customer) : null, status: document.status ? String(document.status) : null, postingDate: document.posting_date ? String(document.posting_date) : null, dueDate: document.due_date ? String(document.due_date) : null, grandTotal: document.grand_total ?? null, outstandingAmount: document.outstanding_amount ?? null, currency: document.currency ? String(document.currency) : 'VND' };
     }
 
     async findCustomerByEmail(email: string) {

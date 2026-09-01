@@ -137,6 +137,11 @@ export class HealthcareController {
         try { return res.json({ success: true, data: await HealthcareService.listBillingIntents(actor(req as AuthRequest), parseBillingQuery(req.query)) }); }
         catch (error) { return sendError(res, error); }
     }
+    static async billingERPNextStatus(req: Request, res: Response) {
+        try { return res.json({ success: true, data: await HealthcareService.getBillingERPNextStatus(actor(req as AuthRequest), req.params.id) }); }
+        catch (error) { return sendError(res, error); }
+    }
+
     static async createBillingIntent(req: Request, res: Response) {
         try { return res.status(201).json({ success: true, data: await HealthcareService.createBillingIntent(actor(req as AuthRequest), parseBillingIntent(req.body)) }); }
         catch (error) { return sendError(res, error); }

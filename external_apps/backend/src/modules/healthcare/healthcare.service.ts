@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import prisma from '../../config/prisma';
+import { getERPNextClient } from './erpnext.client';
 import { ConflictError, ForbiddenError, NotFoundError } from './healthcare.errors';
 
 const TERMINAL = new Set(['cancelled', 'no_show', 'completed']);
@@ -220,6 +221,21 @@ export class HealthcareService {
             take: query.take,
         });
         return intents;
+    }
+
+    static async getBillingERPNextStatus(actor: Actor, billingIntentId: string) {
+        const intent = await prisma.billingIntent.findUnique({ where: { id: billingIntentId }, select: { id: true, tenantId: true, facilityId: true, amount: true, currency: true, status: true, erpnextName: true, lastError: true, updatedAt: true } });
+        if (!intent) throw new NotFoundError('Billing intent not found');
+        await assertScope(actor, intent.tenantId, intent.facilityId, ['platform_admin', 'tenant_admin', 'facility_admin', 'finance', 'auditor']);
+        const client = getERPNextClient();
+        if (!client) return { billingIntentId: intent.id, configured: false, linked: Boolean(intent.erpnextName), local: { amount: Number(intent.amount), currency: intent.currency, status: intent.status, updatedAt: intent.updatedAt }, erpnext: null, reconciliation: { status: 'unavailable', reason: 'ERPNext integration is not configured' } };
+        if (!intent.erpnextName) return { billingIntentId: intent.id, configured: true, linked: false, local: { amount: Number(intent.amount), currency: intent.currency, status: intent.status, updatedAt: intent.updatedAt }, erpnext: null, reconciliation: { status: 'unlinked', reason: 'Billing intent has no ERPNext invoice reference' } };
+        const invoice = await client.getSalesInvoice(intent.erpnextName);
+        const amountMatches = invoice.grandTotal === null || Number(invoice.grandTotal) === Number(intent.amount);
+        const currencyMatches = !invoice.currency || invoice.currency === intent.currency;
+        const normalizedStatus = String(invoice.status || '').toLowerCase();
+        const statusMatches = !normalizedStatus || normalizedStatus === String(intent.status).toLowerCase() || (intent.status === 'paid' && ['paid', 'completed'].includes(normalizedStatus));
+        return { billingIntentId: intent.id, configured: true, linked: true, local: { amount: Number(intent.amount), currency: intent.currency, status: intent.status, updatedAt: intent.updatedAt }, erpnext: invoice, reconciliation: { status: amountMatches && currencyMatches && statusMatches ? 'matched' : 'attention_required', amountMatches, currencyMatches, statusMatches } };
     }
 
     static async createBillingIntent(actor: Actor, data: { tenantId: string; facilityId: string; patientId: string; appointmentId?: string; amount: number; currency: string; correlationKey: string }) {
