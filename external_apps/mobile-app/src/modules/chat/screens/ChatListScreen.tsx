@@ -6,9 +6,9 @@ import api from '../../../services/api';
 import { Alert } from 'react-native';
 
 const ChatListScreen = () => {
-    const [channels, setChannels] = useState([]);
+    const [channels, setChannels] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     useEffect(() => {
         fetchChannels();

@@ -12,7 +12,7 @@ const LoginScreen = () => {
     const [password, setPassword] = useState('admin@123');
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     const handleLogin = async () => {
         setLoading(true);

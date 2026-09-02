@@ -10,10 +10,10 @@ import { Alert } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 
 const ChatRoomScreen = () => {
-    const route = useRoute();
+    const route = useRoute<{ key: string; name: string; params?: { channel?: { id: string } } }>();
     const { channel } = route.params || {};
     const { user } = useSelector((state: RootState) => state.auth);
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState<any[]>([]);
     const [messageInput, setMessageInput] = useState('');
     const [socket, setSocket] = useState<Socket | null>(null);
     const flatListRef = useRef<FlatList>(null);
@@ -30,6 +30,7 @@ const ChatRoomScreen = () => {
     }, [channel]);
 
     const initializeSocket = async () => {
+        if (!channel) return;
         const token = await authStorage.getAccessToken();
         const socketUrl = Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
 
@@ -50,6 +51,7 @@ const ChatRoomScreen = () => {
     };
 
     const fetchMessages = async () => {
+        if (!channel) return;
         try {
             const res = await api.get(`/chat/channels/${channel.id}/messages`);
             if (res.data.success) {
@@ -62,7 +64,7 @@ const ChatRoomScreen = () => {
     };
 
     const sendMessage = async () => {
-        if (!messageInput.trim()) return;
+        if (!channel || !messageInput.trim()) return;
 
         try {
             const res = await api.post(`/chat/channels/${channel.id}/messages`, {

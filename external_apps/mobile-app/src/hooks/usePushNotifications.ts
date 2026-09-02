@@ -8,6 +8,8 @@ import api from '../services/api';
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: false,
         shouldSetBadge: false,
     }),
@@ -16,8 +18,8 @@ Notifications.setNotificationHandler({
 export function usePushNotifications() {
     const [expoPushToken, setExpoPushToken] = useState<string | undefined>();
     const [notification, setNotification] = useState<Notifications.Notification | undefined>();
-    const notificationListener = useRef<Notifications.Subscription>();
-    const responseListener = useRef<Notifications.Subscription>();
+    const notificationListener = useRef<Notifications.Subscription | null>(null);
+    const responseListener = useRef<Notifications.Subscription | null>(null);
 
     async function registerForPushNotificationsAsync() {
         let token;
@@ -47,17 +49,13 @@ export function usePushNotifications() {
                 const projectId =
                     Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
                 if (!projectId) {
-                    // alert('Project ID not found');
+                    throw new Error('Expo project ID is not configured');
                 }
-                token = (await Notifications.getExpoPushTokenAsync({
-                    projectId,
-                })).data;
+                token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
                 console.log("Push Token:", token);
             } catch (e) {
                 console.error(e);
             }
-        } else {
-            // alert('Must use physical device for Push Notifications');
         }
 
         return token;
@@ -81,8 +79,10 @@ export function usePushNotifications() {
         });
 
         return () => {
-            Notifications.removeNotificationSubscription(notificationListener.current!);
-            Notifications.removeNotificationSubscription(responseListener.current!);
+            notificationListener.current?.remove();
+            responseListener.current?.remove();
+            notificationListener.current = null;
+            responseListener.current = null;
         };
     }, []);
 

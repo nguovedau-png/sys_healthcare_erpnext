@@ -11,11 +11,11 @@ const EmployeeFormScreen = () => {
     const [position, setPosition] = useState('');
     const [departmentId, setDepartmentId] = useState('');
     const [userId, setUserId] = useState('');
-    const [departments, setDepartments] = useState([]);
-    const [users, setUsers] = useState([]);
+    const [departments, setDepartments] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigation();
-    const route = useRoute();
+    const navigation = useNavigation<any>();
+    const route = useRoute<{ key: string; name: string; params?: { id?: string; employee?: any } }>();
     const { id, employee } = route.params || {};
 
     useEffect(() => {

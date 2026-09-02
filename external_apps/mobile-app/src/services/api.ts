@@ -52,9 +52,9 @@ api.interceptors.response.use(
                     return api(originalRequest);
                 }
             } catch (refreshError) {
-                // Refresh failed, logout user
+                // Refresh failed: clear the local session and propagate the auth error.
+                // Auth-aware screens handle navigation to the login route at their boundary.
                 await authStorage.clearTokens();
-                // TODO: Dispatch logout action safely or handle navigation to login
                 return Promise.reject(refreshError);
             }
         }

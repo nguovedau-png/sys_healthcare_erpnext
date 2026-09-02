@@ -8,8 +8,8 @@ import { Alert } from 'react-native';
 const EmployeeDetailScreen = () => {
     const [employee, setEmployee] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const navigation = useNavigation();
-    const route = useRoute();
+    const navigation = useNavigation<any>();
+    const route = useRoute<{ key: string; name: string; params?: { id?: string } }>();
     const { id } = route.params || {};
 
     useEffect(() => {

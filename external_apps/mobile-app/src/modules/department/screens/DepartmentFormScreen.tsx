@@ -9,8 +9,8 @@ const DepartmentFormScreen = () => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigation();
-    const route = useRoute();
+    const navigation = useNavigation<any>();
+    const route = useRoute<{ key: string; name: string; params?: { id?: string; department?: any } }>();
     const { id, department } = route.params || {};
 
     useEffect(() => {

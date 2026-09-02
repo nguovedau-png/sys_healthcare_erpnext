@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { RootState } from '../../../store';
 import { Plus, Trash2, File } from 'lucide-react-native';
 import axios from 'axios';
 import { API_URL } from '../../../services/api';

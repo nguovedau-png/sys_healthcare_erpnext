@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { VStack, Input, InputField, Button, ButtonText, Heading, Text, Center, Box, useToast, Toast, ToastTitle, ToastDescription } from '@gluestack-ui/themed';
+import { VStack, HStack, Input, InputField, Button, ButtonText, Heading, Text, Center, Box, useToast, Toast, ToastTitle, ToastDescription } from '@gluestack-ui/themed';
 import { useNavigation } from '@react-navigation/native';
 import api from '../../../services/api';
 import { Alert, Clipboard, TouchableOpacity } from 'react-native';

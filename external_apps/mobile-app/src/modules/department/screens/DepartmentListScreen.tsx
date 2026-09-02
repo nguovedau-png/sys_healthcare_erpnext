@@ -6,9 +6,9 @@ import api from '../../../services/api';
 import { Alert } from 'react-native';
 
 const DepartmentListScreen = () => {
-    const [departments, setDepartments] = useState([]);
+    const [departments, setDepartments] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     useEffect(() => {
         fetchDepartments();

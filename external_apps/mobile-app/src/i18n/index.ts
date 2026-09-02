@@ -1,7 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getLocales } from 'expo-localization'; // Optional, but good for auto-detect
 import en from './en.json';
 import vi from './vi.json';
 
@@ -22,8 +21,8 @@ const LANGUAGE_DETECTOR = {
         } catch (error) {
             console.log('Error reading language', error);
         }
-        // Fallback?
-        callback('en');
+        const deviceLanguage = Intl.DateTimeFormat().resolvedOptions().locale.split('-')[0];
+        callback(deviceLanguage === 'vi' ? 'vi' : 'en');
     },
     init: () => { },
     cacheUserLanguage: async (language: string) => {
@@ -42,7 +41,7 @@ i18n
         interpolation: {
             escapeValue: false,
         },
-        compatibilityJSON: 'v3' // For Android compatibility
+        compatibilityJSON: 'v4'
     });
 
 export default i18n;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { User, LogOut, FileImage, Link, Globe } from 'lucide-react-native';
 import { VStack, HStack, Text, Heading, Box, Input, InputField, Button, ButtonText, Switch } from '@gluestack-ui/themed';
 import api from '../../../services/api';
-import { Alert } from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';

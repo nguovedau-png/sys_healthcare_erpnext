@@ -6,9 +6,9 @@ import api from '../../../services/api';
 import { Alert } from 'react-native';
 
 const EmployeeListScreen = () => {
-    const [employees, setEmployees] = useState([]);
+    const [employees, setEmployees] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<any>();
 
     useEffect(() => {
         fetchEmployees();

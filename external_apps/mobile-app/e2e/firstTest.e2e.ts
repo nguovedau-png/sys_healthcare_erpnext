@@ -9,10 +9,9 @@ describe('Example', () => {
         await device.reloadReactNative();
     });
 
-    it('should have welcome screen', async () => {
-        // Expect some element to be visible
-        // await expect(element(by.text('Welcome'))).toBeVisible();
-        // For now just pass true
-        expect(true).toBe(true);
+    it('should render the login form', async () => {
+        await expect(element(by.id('email-input'))).toBeVisible();
+        await expect(element(by.id('password-input'))).toBeVisible();
+        await expect(element(by.id('login-button'))).toBeVisible();
     });
 });
