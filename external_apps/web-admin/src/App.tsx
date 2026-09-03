@@ -69,7 +69,6 @@ function App() {
           <Route path="/system/status" element={<SystemStatus />} />
           <Route path="/healthcare/operations" element={<HealthcareOperations />} />
           <Route path="/settings" element={<Settings />} />
-          {/* Add more routes here */}
         </Route>
 
         {/* 404 */}

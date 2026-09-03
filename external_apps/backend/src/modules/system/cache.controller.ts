@@ -8,13 +8,8 @@ export class CacheController {
             const pattern = (req.query.pattern as string) || '*';
             const keys = await cacheService.getAllKeys(pattern);
 
-            // Optional: Get details (value/ttl) for each key? 
-            // For now just return keys to be fast, or maybe enrich data.
-            // Let's return list of objects { key, ttl } for better UI?
-            // Doing mget or pipeline might be heavy if too many keys.
-            // Let's just return keys and let client fetch details if needed, 
-            // OR fetch details for the first N keys.
-            // Given "view data", better to have list first, then click to view details.
+            // Return key names only; values are fetched explicitly through getKeyDetail
+            // to avoid exposing the entire cache or performing an unbounded multi-read.
 
             res.status(200).json({ success: true, data: keys });
         } catch (error: any) {

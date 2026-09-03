@@ -5,6 +5,8 @@
         "users": "Users",
         "settings": "Settings",
         "logout": "Logout",
-        "profile": "Profile"
+        "profile": "Profile",
+        "employees": "Employees",
+        "departments": "Departments"
     }
 }

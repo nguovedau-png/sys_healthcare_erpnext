@@ -18,8 +18,8 @@ const handleSocialLogin = async (
     done: any
 ) => {
     try {
-        if (!email && provider === 'google') {
-            return done(new Error('No email found from provider'), false);
+        if (!email?.trim()) {
+            return done(new Error(`No verified email found from ${provider}`), false);
         }
 
         // 1. Check if social account exists
@@ -39,13 +39,10 @@ const handleSocialLogin = async (
 
         let user;
 
-        // 2. Start Transaction to ensure consistency
-        // If email exists, link it. If not, create new user.
-        // Note: Some providers like TikTok might not provide email easily without advanced permissions.
-        // If no email, we force create a new account or require mapping?
-        // For now, if no email, we generate a placeholder email: `id@provider.social`
-
-        const effectiveEmail = email || `${providerId}@${provider}.social`;
+        // 2. Start transaction to ensure consistency.
+        // Account linking requires a verified provider email so the user can
+        // recover the account and duplicate identities cannot be created.
+        const effectiveEmail = email.trim().toLowerCase();
 
         const existingUser = await prisma.user.findUnique({
             where: { email: effectiveEmail }

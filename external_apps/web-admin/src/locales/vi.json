@@ -5,6 +5,8 @@
         "users": "Người dùng",
         "settings": "Cài đặt",
         "logout": "Đăng xuất",
-        "profile": "Hồ sơ"
+        "profile": "Hồ sơ",
+        "employees": "Nhân viên",
+        "departments": "Khoa phòng"
     }
 }

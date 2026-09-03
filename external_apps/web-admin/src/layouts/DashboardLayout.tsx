@@ -100,13 +100,13 @@ const DashboardLayout: React.FC = () => {
         {
             key: '/employees',
             icon: <TeamOutlined />,
-            label: 'Employees', // TODO: Add to locale
+            label: t('common.employees'),
             permission: PERMISSIONS.VIEW_EMPLOYEES,
         },
         {
             key: '/departments',
             icon: <ApartmentOutlined />,
-            label: 'Departments', // TODO: Add to locale
+            label: t('common.departments'),
             permission: PERMISSIONS.VIEW_DEPARTMENTS,
         },
         {

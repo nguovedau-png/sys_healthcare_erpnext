@@ -153,11 +153,10 @@ export class JobController {
     static async deleteJob(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            // Delete from DB
+            // This endpoint removes the persisted execution history. Scheduled jobs
+            // must be cancelled through deleteScheduledJob before removing their log.
             await prisma.job.delete({ where: { id } });
-            // Note: Deleting from queue requires BullMQ ID which we might not have stored efficiently in this simple schema.
-            // For now, we mainly delete the DB record.
-            res.status(200).json({ success: true, message: 'Job log deleted' });
+            res.status(200).json({ success: true, message: 'Job history deleted; queued execution was not cancelled' });
         } catch (error: any) {
             res.status(500).json({ success: false, message: error.message });
         }
