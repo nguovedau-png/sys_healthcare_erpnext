@@ -24,20 +24,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: external_apps/backend/package-lock.json
+          cache: pnpm
+          cache-dependency-path: external_apps/backend/pnpm-lock.yaml
+      - name: Enable pnpm
+        run: corepack enable
       - name: Install dependencies and generate Prisma clients
-        run: npm ci
+        run: pnpm install --frozen-lockfile --ignore-scripts && pnpm exec prisma generate
       - name: Validate Prisma schema
         env:
           DATABASE_URL: postgresql://quality:quality@localhost:5432/quality
-        run: npm run prisma:validate && npx prisma generate
+        run: pnpm run prisma:validate && pnpm exec prisma generate
       - name: Typecheck
-        run: npm run typecheck
+        run: pnpm run typecheck
       - name: Unit and integration tests
-        run: npm test -- --runInBand --silent
+        run: pnpm exec jest --runInBand --silent
       - name: Production compile
-        run: npm run build
+        run: pnpm run build
       - name: Repository whitespace check
         working-directory: .
         run: git diff --check
