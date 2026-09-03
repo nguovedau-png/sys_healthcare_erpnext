@@ -9,7 +9,7 @@ Repository này cung cấp healthcare operations workspace cho web-admin, API ga
 | Variable | Required | Production rule |
 |---|---:|---|
 | `JWT_SECRET` | Yes | Secret ngẫu nhiên tối thiểu 32 bytes, dùng chung giữa auth-service và API gateway; không commit vào repository. |
-| `ERPNEXT_BASE_URL` | Yes for sync | Chỉ dùng HTTPS và phải trỏ tới site ERPNext đã được allowlist. |
+| `ERPNEXT_BASE_URL` | Yes for sync | Tên canonical; chỉ dùng HTTPS và phải trỏ tới site ERPNext đã được allowlist. Backend vẫn đọc `ERPNEXT_URL` như alias legacy trong giai đoạn chuyển đổi. |
 | `ERPNEXT_API_KEY` / `ERPNEXT_API_SECRET` | Yes for sync | Inject qua secret manager; không ghi vào log hoặc image layer. |
 | `ERPNEXT_RETRY_BASE_DELAY_MS` | No | Exponential backoff base in milliseconds; default `250`. |
 | `ERPNEXT_PROCESSING_LEASE_MS` | No | Lease duration before reclaiming abandoned processing; default `120000`. |
@@ -22,7 +22,7 @@ Repository này cung cấp healthcare operations workspace cho web-admin, API ga
 
 ## Release gate
 
-Trước mỗi release, chạy các lệnh sau từ thư mục backend và web-admin. Release chỉ được coi là đủ điều kiện khi toàn bộ unit tests, backend build, TypeScript build và Vite production build thành công.
+Trước mỗi release, chạy các lệnh sau từ thư mục backend và web-admin. Release chỉ được coi là đủ điều kiện khi toàn bộ unit tests, backend build, TypeScript build và Vite production build thành công. CI dùng pnpm và `pnpm-lock.yaml`; không dùng `npm ci` với package-lock legacy của backend.
 
 ```bash
 cd internal_apps/sys_healcare_system/backend

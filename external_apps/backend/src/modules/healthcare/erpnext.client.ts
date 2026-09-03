@@ -76,7 +76,8 @@ export class ERPNextClient {
 }
 
 export function getERPNextClient(): ERPNextClient | null {
-    const { ERPNEXT_URL, ERPNEXT_API_KEY, ERPNEXT_API_SECRET } = process.env;
-    if (!ERPNEXT_URL || !ERPNEXT_API_KEY || !ERPNEXT_API_SECRET) return null;
-    return new ERPNextClient({ baseUrl: ERPNEXT_URL, apiKey: ERPNEXT_API_KEY, apiSecret: ERPNEXT_API_SECRET, timeoutMs: Number(process.env.ERPNEXT_TIMEOUT_MS || 5000), maxRetries: Number(process.env.ERPNEXT_MAX_RETRIES || 3) });
+    const baseUrl = process.env.ERPNEXT_BASE_URL || process.env.ERPNEXT_URL;
+    const { ERPNEXT_API_KEY, ERPNEXT_API_SECRET } = process.env;
+    if (!baseUrl || !ERPNEXT_API_KEY || !ERPNEXT_API_SECRET) return null;
+    return new ERPNextClient({ baseUrl, apiKey: ERPNEXT_API_KEY, apiSecret: ERPNEXT_API_SECRET, timeoutMs: Number(process.env.ERPNEXT_TIMEOUT_MS || 5000), maxRetries: Number(process.env.ERPNEXT_MAX_RETRIES || 3) });
 }

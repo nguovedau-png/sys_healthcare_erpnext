@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { ERPNextClient } from '../src/modules/healthcare/erpnext.client';
+import { ERPNextClient, getERPNextClient } from '../src/modules/healthcare/erpnext.client';
 
 describe('ERPNextClient typed read-through', () => {
     function clientWith(request: jest.Mock) {
@@ -24,5 +24,18 @@ describe('ERPNextClient typed read-through', () => {
         const request = jest.fn();
         await expect(clientWith(request).getDocument('Employee', 'bad\nname')).rejects.toThrow('Invalid ERPNext document name');
         expect(request).not.toHaveBeenCalled();
+    });
+
+    test('uses the canonical ERPNext base URL environment variable', () => {
+        const previous = { base: process.env.ERPNEXT_BASE_URL, legacy: process.env.ERPNEXT_URL, key: process.env.ERPNEXT_API_KEY, secret: process.env.ERPNEXT_API_SECRET };
+        process.env.ERPNEXT_BASE_URL = 'https://erp.example';
+        delete process.env.ERPNEXT_URL;
+        process.env.ERPNEXT_API_KEY = 'key';
+        process.env.ERPNEXT_API_SECRET = 'secret';
+        expect(getERPNextClient()).not.toBeNull();
+        if (previous.base === undefined) delete process.env.ERPNEXT_BASE_URL; else process.env.ERPNEXT_BASE_URL = previous.base;
+        if (previous.legacy === undefined) delete process.env.ERPNEXT_URL; else process.env.ERPNEXT_URL = previous.legacy;
+        if (previous.key === undefined) delete process.env.ERPNEXT_API_KEY; else process.env.ERPNEXT_API_KEY = previous.key;
+        if (previous.secret === undefined) delete process.env.ERPNEXT_API_SECRET; else process.env.ERPNEXT_API_SECRET = previous.secret;
     });
 });
