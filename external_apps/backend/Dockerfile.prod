@@ -1,25 +1,24 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
 # Install PM2 globally
 RUN npm install -g pm2
 
-# Copy package files
-COPY package*.json ./
+# Copy package files and the workspace lockfile used by CI
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY prisma ./prisma/
 
-# Install dependencies including devDeps for building
-RUN npm install
+# Install the exact dependency graph; scripts are disabled until Prisma is generated explicitly.
+RUN corepack enable && corepack prepare pnpm@11.0.0 --activate
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy source code
 COPY . .
 
-# Generate Prisma Client
-RUN npx prisma generate
-
-# Build TypeScript
-RUN npm run build
+# Generate Prisma Client and compile the application
+RUN pnpm exec prisma generate
+RUN pnpm run build
 
 # Re-install only production dependencies (optional, but good for size)
 # RUN npm prune --production # Commented out to ensure devDeps typically needed for some runtime tasks if any remain available, but standard is prune.
