@@ -1,9 +1,9 @@
 # Healthcare ERPNext Platform — Release Candidate Status
 
-**Ngày đánh giá:** 03 tháng 09 năm 2026  
+**Ngày đánh giá:** 04 tháng 09 năm 2026
 **Repository:** `nguovedau-png/sys_healthcare_erpnext`  
 **Branch:** `main`  
-**HEAD đã push:** `6f88a23`
+**HEAD đã push:** `33073d3`
 
 ## Kết luận điều hành
 
@@ -18,11 +18,11 @@ Release candidate **chưa được tuyên bố production go-live tuyệt đối
 | Healthcare operations | Đạt baseline | Patient registration/matching, appointment state machine, queue, consent, family links, encounter boundary và billing intent đã có service/API tests. |
 | ERPNext integration | Đạt typed adapter baseline | Allowlisted read doctypes, bounded retry, safe document-name validation, Sales Invoice normalization và billing reconciliation status. `ERPNEXT_BASE_URL` là tên canonical; `ERPNEXT_URL` còn được hỗ trợ như alias chuyển đổi. |
 | Back-office ownership | Đúng nguyên tắc | CRM, ERP, HR và accounting master/transaction truth thuộc ERPNext; healthcare app chỉ lưu external references, orchestration và metadata cần thiết. |
-| Authorization | Đạt tested baseline | Query sensitive được scope theo tenant/facility và permission; billing reconciliation có test cho finance access và receptionist denial. |
+| Authorization | Đạt tested baseline | Query sensitive được scope theo tenant/facility và permission; OIDC client management nay yêu cầu `system/manage`; billing reconciliation có test cho finance access và receptionist denial. |
 | Mobile | Đã harden | Expo notification typings/API cleanup, auth refresh cleanup, route/state typing, i18n fallback Việt/Anh và media store import đã được sửa; TypeScript compile pass. |
 | Web admin | Đã harden | Operations workspace tồn tại; menu labels được đưa vào locale song ngữ; route placeholder bị loại bỏ; Vite production build pass. |
-| CI/CD | Đạt | GitHub Actions chuyển từ `npm ci` sai lockfile sang pnpm provision + frozen `pnpm-lock.yaml`; Prisma generate/validate, typecheck, Jest, build, whitespace và docs checks đều chạy pass trên GitHub. |
-| Production source hygiene | Đạt trong phạm vi đã audit | Đã loại bỏ TODO/placeholder đã phát hiện trong mobile, web-admin, social auth, job và cache controllers; form input `placeholder` hợp lệ không bị coi là unfinished implementation. |
+| CI/CD | Đạt | GitHub Actions chuyển từ `npm ci` sai lockfile sang pnpm provision + frozen `pnpm-lock.yaml`; Prisma generate/validate, typecheck, Jest, build, whitespace và docs checks đều chạy pass trên GitHub. Production Dockerfile cũng dùng Node 22 + pnpm frozen lockfile. |
+| Production source hygiene | Đạt trong phạm vi đã audit | Đã loại bỏ TODO/placeholder đã phát hiện trong mobile, web-admin, social auth, job và cache controllers; form input `placeholder` hợp lệ không bị coi là unfinished implementation. Production compose không còn credential mặc định và Redis không expose port host. |
 
 ## Các vòng lặp đã thực hiện
 
@@ -32,21 +32,25 @@ Vòng thứ hai rà soát ERPNext environment contract phát hiện runbook dùn
 
 Vòng thứ ba rà soát production source phát hiện social login có thể sinh placeholder email. Hành vi này đã được thay bằng yêu cầu verified email từ provider để tránh tạo identity không thể khôi phục. Đồng thời, job deletion và cache listing được làm rõ semantics, menu i18n web-admin được hoàn thiện và route comment unfinished được loại bỏ.
 
+Vòng convergence tiếp theo rà soát deployment và authorization. Production compose đã bỏ database/Grafana credentials hard-coded, buộc secret qua environment substitution, truyền ERPNext/JWT config rõ ràng và không expose Redis ra host. Dockerfile production dùng Node 22 và pnpm lockfile. OIDC management routes được bảo vệ bằng `system/manage` và bổ sung bốn regression tests cho authorization middleware.
+
 ## Kiểm chứng đã chạy
 
 | Gate | Kết quả |
 |---|---:|
-| Backend Jest local | **57 tests passed / 9 suites passed** |
+| Backend Jest local | **61 tests passed / 10 suites passed** |
 | ERPNext targeted regression | **4 tests passed** |
 | Backend TypeScript typecheck | **Pass** |
 | Backend production compile | **Pass** |
 | Prisma schema validation/generate | **Pass** |
 | Mobile TypeScript check | **Pass** |
 | Web-admin TypeScript/Vite production build | **Pass**; Vite còn cảnh báo bundle lớn hơn 500 kB, không phải build failure |
-| GitHub Actions run `33789956471` | **Success** trên commit `6f88a23` |
+| GitHub Actions run `33904115494` | **Success** trên commit `33073d3` |
 | Working tree | **Clean** sau khi push |
 
-> GitHub Actions đã xác nhận toàn bộ pipeline trên runner thật: pnpm setup, frozen install, Prisma validation/generation, typecheck, 57-test suite, production compile, whitespace check và active documentation check.
+> GitHub Actions đã xác nhận toàn bộ pipeline trên runner thật: pnpm setup, frozen install, Prisma validation/generation, typecheck, 61-test suite, production compile, whitespace check và active documentation check.
+
+Dependency audit hiện còn **3 moderate vulnerabilities**, chủ yếu trong transitive `firebase-admin`/Google Cloud `uuid` tree và `express`/`qs` tree. Chưa tự động ép major migration trong vòng này vì cần compatibility strategy riêng; đây là security gate mở, không phải test failure.
 
 ## Các commit đã push
 
@@ -57,6 +61,8 @@ Vòng thứ ba rà soát production source phát hiện social login có thể s
 | `8d77427` | Provision pnpm trước Node cache trong GitHub Actions |
 | `1864ca9` | Chuẩn hóa ERPNext environment contract và runbook |
 | `6f88a23` | Xóa production placeholders, harden social auth và admin flows |
+| `8afe9fc` | Harden production compose secrets và Docker build bằng pnpm |
+| `33073d3` | Bảo vệ OIDC management routes và thêm authorization regression tests |
 
 ## Release gates còn mở
 
@@ -81,8 +87,9 @@ Finance/accounting staff tiếp tục làm việc với invoice, payment, reconc
 - [`external_apps/backend/src/modules/healthcare/erpnext.client.ts`](../external_apps/backend/src/modules/healthcare/erpnext.client.ts): typed ERPNext adapter.
 - [`external_apps/backend/src/modules/healthcare/healthcare.service.ts`](../external_apps/backend/src/modules/healthcare/healthcare.service.ts): healthcare workflow và billing reconciliation.
 - [`external_apps/backend/tests/erpnext.client.test.ts`](../external_apps/backend/tests/erpnext.client.test.ts): ERPNext adapter regression tests.
-- [GitHub Actions run 33789956471](https://github.com/nguovedau-png/sys_healthcare_erpnext/actions/runs/33789956471): CI evidence cho commit `6f88a23`.
+- [`external_apps/backend/tests/auth.middleware.test.ts`](../external_apps/backend/tests/auth.middleware.test.ts): authorization regression tests.
+- [GitHub Actions run 33904115494](https://github.com/nguovedau-png/sys_healthcare_erpnext/actions/runs/33904115494): CI evidence cho commit `33073d3`.
 
 ## Trạng thái cuối
 
-**Technical RC: đạt. Production go-live: chờ đóng các gate môi trường thật nêu trên.** Repository ở `main`, đã push sạch lên GitHub và không chứa secrets trong các thay đổi của vòng này.
+**Technical RC: đạt. Production go-live: chờ đóng các gate môi trường thật và xử lý dependency vulnerabilities nêu trên.** Repository ở `main`, đã push sạch lên GitHub và không chứa secrets trong các thay đổi của vòng này.
