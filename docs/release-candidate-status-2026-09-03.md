@@ -3,7 +3,7 @@
 **Ngày đánh giá:** 04 tháng 09 năm 2026
 **Repository:** `nguovedau-png/sys_healthcare_erpnext`  
 **Branch:** `main`  
-**HEAD đã push:** `33073d3`
+**HEAD đã push:** `38f9cb1`
 
 ## Kết luận điều hành
 
@@ -34,6 +34,8 @@ Vòng thứ ba rà soát production source phát hiện social login có thể s
 
 Vòng convergence tiếp theo rà soát deployment và authorization. Production compose đã bỏ database/Grafana credentials hard-coded, buộc secret qua environment substitution, truyền ERPNext/JWT config rõ ràng và không expose Redis ra host. Dockerfile production dùng Node 22 và pnpm lockfile. OIDC management routes được bảo vệ bằng `system/manage` và bổ sung bốn regression tests cho authorization middleware.
 
+Vòng kiểm tra release gate đã xác nhận ERPNext reconciliation hiện mới có typed adapter, mock/API regression coverage và local billing comparison; chưa có request thành công tới một ERPNext staging thật vì repository không chứa staging URL hoặc credential. Database migration drill đã được đóng gói thành `external_apps/backend/scripts/database-migration-drill.sh`, gồm migrate deploy, custom-format dump, schema verification, restore target và verification sau restore. Script syntax pass nhưng sandbox không có `docker`, `psql`, `pg_dump` hoặc `pg_restore`, nên chưa có bằng chứng live migration/restore.
+
 ## Kiểm chứng đã chạy
 
 | Gate | Kết quả |
@@ -45,7 +47,7 @@ Vòng convergence tiếp theo rà soát deployment và authorization. Production
 | Prisma schema validation/generate | **Pass** |
 | Mobile TypeScript check | **Pass** |
 | Web-admin TypeScript/Vite production build | **Pass**; Vite còn cảnh báo bundle lớn hơn 500 kB, không phải build failure |
-| GitHub Actions run `33904115494` | **Success** trên commit `33073d3` |
+| GitHub Actions run `33983069129` | **Success** trên commit `38f9cb1` |
 | Working tree | **Clean** sau khi push |
 
 > GitHub Actions đã xác nhận toàn bộ pipeline trên runner thật: pnpm setup, frozen install, Prisma validation/generation, typecheck, 61-test suite, production compile, whitespace check và active documentation check.
@@ -63,13 +65,14 @@ Dependency audit hiện còn **3 moderate vulnerabilities**, chủ yếu trong t
 | `6f88a23` | Xóa production placeholders, harden social auth và admin flows |
 | `8afe9fc` | Harden production compose secrets và Docker build bằng pnpm |
 | `33073d3` | Bảo vệ OIDC management routes và thêm authorization regression tests |
+| `38f9cb1` | Thêm database migration/restore drill có kiểm soát và cập nhật runbook |
 
 ## Release gates còn mở
 
 | Gate | Lý do chưa thể tự xác nhận trong sandbox | Điều kiện đóng gate |
 |---|---|---|
 | ERPNext staging reconciliation | Chưa có URL/API key/API secret của site staging đích | Chạy health, Customer mapping, Sales Invoice matching, amount/currency/status mismatch và retry/idempotency test bằng dữ liệu fixture đã được phê duyệt. |
-| Database migration trên môi trường thật | Sandbox không đại diện cho PostgreSQL production và không được tự ý migrate dữ liệu đích | Backup, dry-run, apply migration, verify indexes/constraints và restore drill theo runbook. |
+| Database migration trên môi trường thật | Script đã có, nhưng sandbox thiếu PostgreSQL clients/server và không có target staging được cấp quyền | Chạy `database-migration-drill.sh` trên disposable/staging PostgreSQL với `DATABASE_URL`, `RESTORE_DATABASE_URL`, `CONFIRM_RESTORE=YES`; lưu migration ledger, backup checksum và restore evidence. |
 | Push notifications thiết bị thật | Sandbox không có device token iOS/Android thật | Đăng ký token thật, gửi notification, kiểm tra token rotation, logout và permission denial. |
 | Security/compliance sign-off | Cần chủ sở hữu pháp lý và vận hành của tổ chức | Xác nhận consent, retention, incident response, access review, secret rotation và production CORS/CSP origins. |
 | Bundle optimization | Vite cảnh báo JavaScript chunk lớn | Có thể xử lý ở vòng tối ưu riêng bằng route-level dynamic import; không chặn chức năng hiện tại. |
@@ -89,6 +92,7 @@ Finance/accounting staff tiếp tục làm việc với invoice, payment, reconc
 - [`external_apps/backend/tests/erpnext.client.test.ts`](../external_apps/backend/tests/erpnext.client.test.ts): ERPNext adapter regression tests.
 - [`external_apps/backend/tests/auth.middleware.test.ts`](../external_apps/backend/tests/auth.middleware.test.ts): authorization regression tests.
 - [GitHub Actions run 33904115494](https://github.com/nguovedau-png/sys_healthcare_erpnext/actions/runs/33904115494): CI evidence cho commit `33073d3`.
+- [GitHub Actions run 33983069129](https://github.com/nguovedau-png/sys_healthcare_erpnext/actions/runs/33983069129): CI evidence cho migration drill/runbook commit `38f9cb1`.
 
 ## Trạng thái cuối
 
